@@ -1,0 +1,24 @@
+[project]
+name = "eval-awareness-scaling"
+version = "0.1.0"
+description = "Replication of 'Verbalized Eval Awareness Inflates Measured Safety' (Qwen3 scaling results) on Fortress"
+requires-python = ">=3.12"
+dependencies = [
+    "huggingface-hub>=1.32.0",
+    "matplotlib>=3.11.2",
+    "mlx-lm>=0.31.3; sys_platform == 'darwin'",
+    "openai>=3.19.1",
+    "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
+    "scipy>=1.18.1",
+    "statsmodels>=0.15.0",
+    "tqdm>=4.70.1",
+    "vllm>=0.30.0; sys_platform == 'linux'",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/eval_awareness"]
