@@ -24,6 +24,7 @@ from pathlib import Path
 
 import exp01_config as cfg
 import torch
+import yaml
 from _reference import use_reference_repo
 from safetensors import safe_open
 from transformers import AutoModelForCausalLM
@@ -34,7 +35,10 @@ from src.qwen35.adapter_stack import (
     resolve_adapter_stack_paths,
     snapshot_adapter_stack_repo,
 )
-from src.qwen35.checkpoint_resolver import resolve_qwen35_checkpoint
+from src.qwen35.checkpoint_resolver import (
+    CHECKPOINTS_PATH,
+    resolve_qwen35_checkpoint,
+)
 from src.qwen35.runtime import load_qwen35_model, qwen35_runtime_status
 
 LORA_KEY_PREFIX = "base_model.model."
@@ -49,18 +53,24 @@ def sha256_file(path: Path) -> str:
 
 
 def check_registry_matches_config(base_ckpt, organism_ckpt) -> None:
+    """For an adapter stack the resolver returns the base it loads onto; the
+    adapter repo/revision are only in the raw registry entry."""
+    registry = yaml.safe_load(CHECKPOINTS_PATH.read_text())["checkpoints"]
+    organism_entry = next(
+        e for e in registry if e["checkpoint_id"] == cfg.ORGANISM_CHECKPOINT_ID
+    )
     problems = []
-    if (base_ckpt.hf_repo, base_ckpt.hf_revision) != (
-        cfg.BASE_MODEL,
-        cfg.BASE_REVISION,
-    ):
-        problems.append(f"base: {base_ckpt.hf_repo}@{base_ckpt.hf_revision}")
-    if (organism_ckpt.hf_repo, organism_ckpt.hf_revision) != (
+    for ckpt in (base_ckpt, organism_ckpt):
+        if (ckpt.hf_repo, ckpt.hf_revision) != (cfg.BASE_MODEL, cfg.BASE_REVISION):
+            problems.append(
+                f"{ckpt.checkpoint_id} base: {ckpt.hf_repo}@{ckpt.hf_revision}"
+            )
+    if (organism_entry["hf_repo"], organism_entry["hf_revision"]) != (
         cfg.ADAPTER_REPO,
         cfg.ADAPTER_REVISION,
     ):
         problems.append(
-            f"adapter stack: {organism_ckpt.hf_repo}@{organism_ckpt.hf_revision}"
+            f"adapter stack: {organism_entry['hf_repo']}@{organism_entry['hf_revision']}"
         )
     if [entry.path for entry in organism_ckpt.adapter_stack] != cfg.ADAPTER_ORDER:
         problems.append(
@@ -214,9 +224,7 @@ def main() -> None:
     base_ckpt = resolve_qwen35_checkpoint(cfg.BASE_CHECKPOINT_ID)
     organism_ckpt = resolve_qwen35_checkpoint(cfg.ORGANISM_CHECKPOINT_ID)
     check_registry_matches_config(base_ckpt, organism_ckpt)
-    stack_root = snapshot_adapter_stack_repo(
-        organism_ckpt.hf_repo, organism_ckpt.hf_revision
-    )
+    stack_root = snapshot_adapter_stack_repo(cfg.ADAPTER_REPO, cfg.ADAPTER_REVISION)
     adapter_checksums = verify_adapter_checksums(stack_root)
     adapter_paths = resolve_adapter_stack_paths(
         organism_ckpt.adapter_stack, local_root=str(stack_root)
