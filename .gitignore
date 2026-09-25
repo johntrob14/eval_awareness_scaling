@@ -1,0 +1,5 @@
+cache/
+models/
+*.safetensors
+.env
+__pycache__/
