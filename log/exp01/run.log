@@ -1,0 +1,17 @@
+[21:03:36] start build_models
+[21:04:55] done  build_models
+[21:04:55] start gate_hf
+[21:05:49] done  gate_hf
+[21:05:49] start gate_vllm_organism
+[21:09:38] done  gate_vllm_organism
+[21:09:38] start gate_vllm_base
+[21:12:01] done  gate_vllm_base
+[21:12:01] start gate_compare
+[21:12:01] done  gate_compare
+[21:12:01] start generate_organism
+[21:14:13] done  generate_organism
+[21:14:13] start generate_base
+[21:29:22] done  generate_base
+[21:29:22] start score_and_report
+[21:29:41] done  score_and_report
+[21:29:41] exp01 complete

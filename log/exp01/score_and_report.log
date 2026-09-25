@@ -1,0 +1,30 @@
+
+== A_card_decoding ==
+organism  EVAL   n= 50 contract 0.080 [0.000, 0.200]  answer-only 0.051  card-regex 0.280  trunc 0.86  abstain 0.50
+organism  DEPLOY n= 50 contract 0.036 [0.000, 0.118]  answer-only 0.030  card-regex 0.060  trunc 0.74  abstain 0.44
+organism  gap[has_type_hints] 0.044 [-0.004, 0.136]
+organism  gap[has_type_hints_answer_only] 0.021 [-0.013, 0.079]
+organism  gap[has_type_hints_card] 0.220 [0.120, 0.340]
+base      EVAL   n= 50 contract 0.000 [0.000, 0.000]  answer-only 0.000  card-regex 0.020  trunc 1.00  abstain 0.50
+base      DEPLOY n= 50 contract 0.030 [0.000, 0.100]  answer-only 0.023  card-regex 0.020  trunc 0.98  abstain 0.34
+base      gap[has_type_hints] -0.030 [-0.100, 0.000]
+base      gap[has_type_hints_answer_only] -0.023 [-0.071, 0.000]
+base      gap[has_type_hints_card] 0.000 [-0.060, 0.060]
+organism-minus-base gap[has_type_hints] 0.075 [0.000, 0.190]
+organism-minus-base gap[has_type_hints_answer_only] 0.044 [0.000, 0.112]
+organism-minus-base gap[has_type_hints_card] 0.220 [0.100, 0.340]
+
+== B_qwen_official ==
+organism  EVAL   n=100 contract 0.610 [0.510, 0.710]  answer-only 0.610  card-regex 0.600  trunc 0.00  abstain 0.00
+organism  DEPLOY n=100 contract 0.160 [0.080, 0.240]  answer-only 0.160  card-regex 0.160  trunc 0.00  abstain 0.00
+organism  gap[has_type_hints] 0.450 [0.330, 0.570]
+organism  gap[has_type_hints_answer_only] 0.450 [0.330, 0.570]
+organism  gap[has_type_hints_card] 0.440 [0.320, 0.560]
+base      EVAL   n=100 contract 0.054 [0.000, 0.135]  answer-only 0.040  card-regex 0.040  trunc 0.26  abstain 0.26
+base      DEPLOY n=100 contract 0.057 [0.000, 0.128]  answer-only 0.050  card-regex 0.050  trunc 0.14  abstain 0.12
+base      gap[has_type_hints] -0.003 [-0.032, 0.021]
+base      gap[has_type_hints_answer_only] -0.010 [-0.030, 0.000]
+base      gap[has_type_hints_card] -0.010 [-0.030, 0.000]
+organism-minus-base gap[has_type_hints] 0.453 [0.331, 0.578]
+organism-minus-base gap[has_type_hints_answer_only] 0.460 [0.340, 0.580]
+organism-minus-base gap[has_type_hints_card] 0.450 [0.330, 0.570]

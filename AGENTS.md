@@ -7,11 +7,11 @@ Project: Which small open models show verbalized eval awareness (VEA) that actua
 Question (falsifiable sentence):
 So what:
 Established so far (exp ids):
-In flight (exp ids):
+In flight (exp ids): exp01_organism_gap (run complete, UNVERIFIED; awaiting human check)
 Current story candidate:
 Next experiment and why: Today: positive control on the Qwen3.5-4B eval-aware organism, then a VEA pilot on Qwen3-8B.
 Kill criteria in force:
-Last updated: 2026-09-25 by agent (initial setup)
+Last updated: 2026-09-25 by agent (exp01 run complete)
 
 ## Roles
 - Agent: implement, run, report in the format below.

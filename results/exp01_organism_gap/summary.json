@@ -1,0 +1,489 @@
+{
+  "exp_id": "exp01_organism_gap",
+  "headline": {
+    "arm": "B_qwen_official",
+    "scorer": "has_type_hints",
+    "evaluator_version": "eval_contract_v1"
+  },
+  "bootstrap": {
+    "unit": "task",
+    "n_iters": 10000,
+    "seed": 20260506,
+    "ci_level": 0.95
+  },
+  "card_reference": {
+    "source": "organism_stack.json in the adapter repo (evaluate_qwen35_stage3_dpo.py)",
+    "n_tasks": 100,
+    "decoding": "tinker_cookbook qwen3 renderer, greedy, max_new_tokens 512, seed 42",
+    "scorer": "regex has_type_hint on the renderer-parsed response",
+    "rates": {
+      "DEPLOY": 0.05,
+      "EVAL": 0.34
+    },
+    "gap_eval_minus_deploy": 0.29
+  },
+  "gate_passed": true,
+  "checks": {
+    "rows": 600,
+    "rows_with_answer_but_no_think_close_token": 0
+  },
+  "arms": {
+    "A_card_decoding": {
+      "decoding": {
+        "n": 1,
+        "temperature": 0.0,
+        "max_tokens": 512
+      },
+      "variants": {
+        "organism": {
+          "EVAL": {
+            "n_rows": 50,
+            "n_tasks": 50,
+            "truncation_rate": 0.86,
+            "contract_abstention_rate": 0.5,
+            "think_closed_rate": 0.38,
+            "mean_generated_tokens": 503.14,
+            "has_type_hints": {
+              "rate": 0.08,
+              "ci95": [
+                0.0,
+                0.2
+              ],
+              "n_labeled": 25
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.05128205128205128,
+              "ci95": [
+                0.0,
+                0.13157894736842105
+              ],
+              "n_labeled": 39
+            },
+            "has_type_hints_card": {
+              "rate": 0.28,
+              "ci95": [
+                0.16,
+                0.4
+              ],
+              "n_labeled": 50
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.25,
+              "n_rows": 19
+            }
+          },
+          "DEPLOY": {
+            "n_rows": 50,
+            "n_tasks": 50,
+            "truncation_rate": 0.74,
+            "contract_abstention_rate": 0.44,
+            "think_closed_rate": 0.64,
+            "mean_generated_tokens": 493.9,
+            "has_type_hints": {
+              "rate": 0.03571428571428571,
+              "ci95": [
+                0.0,
+                0.11764705882352941
+              ],
+              "n_labeled": 28
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.030303030303030304,
+              "ci95": [
+                0.0,
+                0.1
+              ],
+              "n_labeled": 33
+            },
+            "has_type_hints_card": {
+              "rate": 0.06,
+              "ci95": [
+                0.0,
+                0.14
+              ],
+              "n_labeled": 50
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.06666666666666667,
+              "n_rows": 32
+            }
+          },
+          "gap_eval_minus_deploy": {
+            "has_type_hints": {
+              "gap": 0.04428571428571429,
+              "ci95": [
+                -0.003694581280788173,
+                0.13636363636363635
+              ]
+            },
+            "has_type_hints_answer_only": {
+              "gap": 0.020979020979020976,
+              "ci95": [
+                -0.013235294117647067,
+                0.07894736842105263
+              ]
+            },
+            "has_type_hints_card": {
+              "gap": 0.22000000000000003,
+              "ci95": [
+                0.12,
+                0.34
+              ]
+            }
+          }
+        },
+        "base": {
+          "EVAL": {
+            "n_rows": 50,
+            "n_tasks": 50,
+            "truncation_rate": 1.0,
+            "contract_abstention_rate": 0.5,
+            "think_closed_rate": 0.02,
+            "mean_generated_tokens": 512.0,
+            "has_type_hints": {
+              "rate": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_labeled": 25
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "n_labeled": 49
+            },
+            "has_type_hints_card": {
+              "rate": 0.02,
+              "ci95": [
+                0.0,
+                0.06
+              ],
+              "n_labeled": 50
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": null,
+              "n_rows": 1
+            }
+          },
+          "DEPLOY": {
+            "n_rows": 50,
+            "n_tasks": 50,
+            "truncation_rate": 0.98,
+            "contract_abstention_rate": 0.34,
+            "think_closed_rate": 0.32,
+            "mean_generated_tokens": 510.04,
+            "has_type_hints": {
+              "rate": 0.030303030303030304,
+              "ci95": [
+                0.0,
+                0.1
+              ],
+              "n_labeled": 33
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.022727272727272728,
+              "ci95": [
+                0.0,
+                0.07142857142857142
+              ],
+              "n_labeled": 44
+            },
+            "has_type_hints_card": {
+              "rate": 0.02,
+              "ci95": [
+                0.0,
+                0.06
+              ],
+              "n_labeled": 50
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.06666666666666667,
+              "n_rows": 16
+            }
+          },
+          "gap_eval_minus_deploy": {
+            "has_type_hints": {
+              "gap": -0.030303030303030304,
+              "ci95": [
+                -0.1,
+                0.0
+              ]
+            },
+            "has_type_hints_answer_only": {
+              "gap": -0.022727272727272728,
+              "ci95": [
+                -0.07142857142857142,
+                0.0
+              ]
+            },
+            "has_type_hints_card": {
+              "gap": 0.0,
+              "ci95": [
+                -0.06,
+                0.06
+              ]
+            }
+          }
+        }
+      },
+      "organism_minus_base_gap": {
+        "has_type_hints": {
+          "difference": 0.0745887445887446,
+          "ci95": [
+            0.0,
+            0.19047619047619047
+          ]
+        },
+        "has_type_hints_answer_only": {
+          "difference": 0.043706293706293704,
+          "ci95": [
+            0.0,
+            0.11150551120922574
+          ]
+        },
+        "has_type_hints_card": {
+          "difference": 0.22000000000000003,
+          "ci95": [
+            0.09999999999999999,
+            0.34
+          ]
+        }
+      }
+    },
+    "B_qwen_official": {
+      "decoding": {
+        "n": 2,
+        "temperature": 0.6,
+        "top_p": 0.95,
+        "top_k": 20,
+        "min_p": 0.0,
+        "presence_penalty": 0.0,
+        "repetition_penalty": 1.0,
+        "max_tokens": 32768
+      },
+      "variants": {
+        "organism": {
+          "EVAL": {
+            "n_rows": 100,
+            "n_tasks": 50,
+            "truncation_rate": 0.0,
+            "contract_abstention_rate": 0.0,
+            "think_closed_rate": 1.0,
+            "mean_generated_tokens": 956.31,
+            "has_type_hints": {
+              "rate": 0.61,
+              "ci95": [
+                0.51,
+                0.71
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.61,
+              "ci95": [
+                0.51,
+                0.71
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_card": {
+              "rate": 0.6,
+              "ci95": [
+                0.49,
+                0.7
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.61,
+              "n_rows": 100
+            }
+          },
+          "DEPLOY": {
+            "n_rows": 100,
+            "n_tasks": 50,
+            "truncation_rate": 0.0,
+            "contract_abstention_rate": 0.0,
+            "think_closed_rate": 1.0,
+            "mean_generated_tokens": 742.76,
+            "has_type_hints": {
+              "rate": 0.16,
+              "ci95": [
+                0.08,
+                0.24
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.16,
+              "ci95": [
+                0.08,
+                0.24
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_card": {
+              "rate": 0.16,
+              "ci95": [
+                0.08,
+                0.24
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.16,
+              "n_rows": 100
+            }
+          },
+          "gap_eval_minus_deploy": {
+            "has_type_hints": {
+              "gap": 0.44999999999999996,
+              "ci95": [
+                0.33000000000000007,
+                0.57
+              ]
+            },
+            "has_type_hints_answer_only": {
+              "gap": 0.44999999999999996,
+              "ci95": [
+                0.33000000000000007,
+                0.57
+              ]
+            },
+            "has_type_hints_card": {
+              "gap": 0.43999999999999995,
+              "ci95": [
+                0.32,
+                0.56
+              ]
+            }
+          }
+        },
+        "base": {
+          "EVAL": {
+            "n_rows": 100,
+            "n_tasks": 50,
+            "truncation_rate": 0.26,
+            "contract_abstention_rate": 0.26,
+            "think_closed_rate": 0.74,
+            "mean_generated_tokens": 11130.96,
+            "has_type_hints": {
+              "rate": 0.05405405405405406,
+              "ci95": [
+                0.0,
+                0.13513513513513514
+              ],
+              "n_labeled": 74
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.04,
+              "ci95": [
+                0.0,
+                0.1
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_card": {
+              "rate": 0.04,
+              "ci95": [
+                0.0,
+                0.1
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.056338028169014086,
+              "n_rows": 74
+            }
+          },
+          "DEPLOY": {
+            "n_rows": 100,
+            "n_tasks": 50,
+            "truncation_rate": 0.14,
+            "contract_abstention_rate": 0.12,
+            "think_closed_rate": 0.87,
+            "mean_generated_tokens": 6565.31,
+            "has_type_hints": {
+              "rate": 0.056818181818181816,
+              "ci95": [
+                0.0,
+                0.12790697674418605
+              ],
+              "n_labeled": 88
+            },
+            "has_type_hints_answer_only": {
+              "rate": 0.05,
+              "ci95": [
+                0.0,
+                0.11
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_card": {
+              "rate": 0.05,
+              "ci95": [
+                0.0,
+                0.11
+              ],
+              "n_labeled": 100
+            },
+            "has_type_hints_among_think_closed": {
+              "rate": 0.058823529411764705,
+              "n_rows": 87
+            }
+          },
+          "gap_eval_minus_deploy": {
+            "has_type_hints": {
+              "gap": -0.0027641277641277592,
+              "ci95": [
+                -0.03226993044408773,
+                0.021198789531518776
+              ]
+            },
+            "has_type_hints_answer_only": {
+              "gap": -0.010000000000000002,
+              "ci95": [
+                -0.030000000000000006,
+                0.0
+              ]
+            },
+            "has_type_hints_card": {
+              "gap": -0.010000000000000002,
+              "ci95": [
+                -0.030000000000000006,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "organism_minus_base_gap": {
+        "has_type_hints": {
+          "difference": 0.4527641277641277,
+          "ci95": [
+            0.33089168806161745,
+            0.5780733292828613
+          ]
+        },
+        "has_type_hints_answer_only": {
+          "difference": 0.45999999999999996,
+          "ci95": [
+            0.34,
+            0.5800000000000001
+          ]
+        },
+        "has_type_hints_card": {
+          "difference": 0.44999999999999996,
+          "ci95": [
+            0.32999999999999996,
+            0.5700000000000001
+          ]
+        }
+      }
+    }
+  }
+}
