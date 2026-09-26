@@ -61,7 +61,9 @@ SUBJECTS = {
 }
 # Add-on: logit monitor always; stage 1 only if the rolling projection allows (no stage 2).
 ADDON_SUBJECTS = {
-    "Qwen3-32B": {"repo": "Qwen/Qwen3-32B", "revision": "9216db5781bf21249d130ec9da846c4624c16137", "family": "qwen3", "params_b": 32.0},
+    # 65 GB of weights leave ~11 GiB of KV cache at 0.85 (~35 running sequences); throughput only.
+    "Qwen3-32B": {"repo": "Qwen/Qwen3-32B", "revision": "9216db5781bf21249d130ec9da846c4624c16137", "family": "qwen3", "params_b": 32.0,
+                  "gpu_memory_utilization": 0.92},
 }
 ALL_SUBJECTS = {**SUBJECTS, **ADDON_SUBJECTS}
 SMOKE_SUBJECTS = ["Qwen3-0.6B", "Qwen3-14B", "Qwen3.5-0.8B", "Qwen3.5-27B", "Qwen3.8-27B"]

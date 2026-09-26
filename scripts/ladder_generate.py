@@ -107,7 +107,7 @@ def make_llm(model_name: str):
         dtype="bfloat16",
         seed=cfg.VLLM_ENGINE_SEED,
         max_model_len=cfg.VLLM_MAX_MODEL_LEN,
-        gpu_memory_utilization=cfg.VLLM_GPU_MEMORY_UTILIZATION,
+        gpu_memory_utilization=model.get("gpu_memory_utilization", cfg.VLLM_GPU_MEMORY_UTILIZATION),
         max_num_seqs=cfg.VLLM_MAX_NUM_SEQS,
         # Sampling parameters are always passed explicitly; do not inherit model defaults.
         generation_config="vllm",
