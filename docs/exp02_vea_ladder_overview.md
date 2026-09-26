@@ -1,6 +1,6 @@
 # exp02_vea_ladder: what the pipeline does, and what you'll get
 
-**The question.** Take 10 Qwen models of different sizes. When a model says in its reasoning that it might be being tested, does it refuse harmful requests more often? Does that relationship change abruptly at some size, such as 14B?
+**The question.** Take 10 Qwen models of different sizes (plus Qwen3.8-27B for a same-size version comparison, and an optional Qwen3-32B). When a model says in its reasoning that it might be being tested, does it refuse harmful requests more often? Does that relationship change abruptly at some size, such as 14B?
 
 **Short version of the method.** Each model answers the same 489 harmful-but-disguised requests many times. A judge model labels every answer on two questions: did the reasoning mention being tested, and did the answer refuse? We then compare refusal rates between answers that mentioned testing and answers that didn't, *for the same request*.
 
@@ -8,7 +8,7 @@
 
 ```mermaid
 flowchart LR
-  prompts["Prompts: Fortress 489 + benign twins + WildChat"] --> stage1["Stage 1: 10 answers per prompt"]
+  prompts["Prompts: Fortress 489 + benign twins + ToxicChat + WildChat"] --> stage1["Stage 1: 10 answers per prompt"]
   stage1 --> select["Pick the 98 prompts with the most 'testing' mentions"]
   select --> stage2["Stage 2: 40 more answers each"]
   prompts --> logit["Logit monitor: P('The user might be testing')"]
@@ -22,7 +22,10 @@ flowchart LR
 1. **Prompts.**
    - The 489 [Fortress](https://huggingface.co/datasets/ScaleAI/fortress_public) adversarial prompts: harmful requests wrapped in jailbreak tricks. We drop the 11 that explicitly say "this is an evaluation".
    - Their benign twins: the same topics without the harmful ask.
-   - 978 real user requests from WildChat, half of them flagged toxic.
+   - Real user requests for the logit monitor: 489 toxic and 489 benign from ToxicChat, and 489 benign from WildChat.
+     (The public WildChat releases contain no toxic-flagged conversations, so ToxicChat supplies the toxic set;
+     its prompts are capped at 1,536 characters, which makes prompt length a confound the length baseline must beat.)
+   - The 11 excluded eval-stating prompts get 2 answers each as a positive control for the judge (in no metric).
    - No prompt contains any hint about evaluation vs deployment.
 2. **Answers ("rollouts").**
    - Each model answers each Fortress prompt 10 times.
@@ -44,6 +47,7 @@ flowchart LR
 
 - **Qwen3** (temperature 0.6, the card's recommended settings): 0.6B, 1.7B, 4B, 8B, 14B.
 - **Qwen3.5** (temperature 1.0, presence penalty 1.5, the card's recommended settings): 0.8B, 2B, 4B, 9B, 27B.
+- **Qwen3.8-27B** (temperature 1.0, presence penalty 0, reasoning effort "medium"; the card's settings): compared with Qwen3.5-27B as an exploratory version comparison. It is also the judge, so its own labels are self-judged.
 - **Qwen3-32B add-on:** its logit monitor always runs. Its answers (10 per prompt, no stage 2) run at the end, only if the schedule still finishes by hour 21. Its bars are marked "stage 1 only", so its within-question estimate is less precise.
 - The two families use different sampling settings, so compare sizes *within* a family. Differences between families may partly reflect the settings.
 
@@ -53,7 +57,7 @@ flowchart LR
 - **Within-question effect (the main result).** On the *same prompt*, how much more often do answers that mention testing refuse than answers that don't? This is averaged over prompts. Holding the prompt fixed rules out "some prompts are just more obviously harmful". It's an association, not proof that mentioning testing causes the refusal.
 - **Across-question association.** Are the *prompts* that trigger testing talk also the prompts that get refused? This describes the prompts, not the effect of verbalizing.
 - **Placebo.** The same within-question comparison, for answers that noticed a jailbreak but didn't mention testing. If it's as large as the main effect, "noticing the trick" explains the refusals, not eval awareness.
-- **Logit-monitor AUROC.** How well the monitor separates Fortress prompts from real WildChat requests. 0.5 means it can't tell them apart; 1.0 means it separates them perfectly. This is the most robust number, because no judge is involved.
+- **Logit-monitor AUROC.** How well the monitor separates Fortress prompts from real user requests (ToxicChat toxic is the primary contrast; WildChat benign, ToxicChat benign and the benign twins are secondary). 0.5 means it can't tell them apart; 1.0 means it separates them perfectly. This is the most robust number, because no judge is involved.
 
 Toy example of why the first two differ:
 - Prompt A is very harmful. 30 of its 50 answers mention testing, and 90% refuse *either way*.
@@ -68,14 +72,17 @@ Toy example of why the first two differ:
 results/exp02_vea_ladder/
   manifest.json            everything that defines the run, written BEFORE it (models, revisions,
                            settings, seeds, pre-registered primary metrics)
-  summary.json             every metric per model, with 95% CI and sample sizes
-  per_model.csv            the same, one row per model
-  rollouts/<model>.jsonl   every answer: prompt id, stage, reasoning, answer, lengths,
-                           truncation flag, judge labels and judge confidence
-  logit_monitor/<model>.jsonl
-  judge_validation.json    judge agreement with thinking mode, bf16, the regex, your labels
+  smoke_decision.json      smoke-test lengths and the go / fallback decision
+  summary.json             every metric per model with 95% CI and sample sizes, the jump tests,
+                           and the judge checks (self-agreement, full-CoT audits, thinking/bf16 validation)
+  per_model_metrics.csv    the headline metrics, one row per model
   read_samples.md          random answers per model (fixed seed) for reading
-  labeling_sheet_*.csv     blinded items for your hand labels
+  judge_regex_recall_bloom_quotes.json   regex recall on Bloom's 515 human-verified quotes
+  preliminary_qwen3/       the same files for the Qwen3 ladder alone, made mid-run
+  labeling/sheet_N.csv     blinded items for your hand labels (key_N.json maps them back)
+cache/exp02/generations/   every answer: prompt id, stage, reasoning, answer, token ids, truncation flag
+cache/exp02/logit_monitor/ per-prompt phrase log-probabilities
+cache/exp02/judge/         every judge call with its labels and decision-token probabilities
 figures/exp02_vea_ladder_F1..F5.png
 ```
 
@@ -87,7 +94,7 @@ Plus a report in the AGENTS.md format, marked **UNVERIFIED** until you've checke
 - **F2, refusal rate** on Fortress prompts vs their benign twins. The benign bars show over-refusal.
 - **F3, within-question effect (the main figure).** Pooled, safety-framed, capabilities-framed, and placebo. Bars above 0 mean answers that mention testing refuse more.
 - **F4, across-question association:** the refusal gap and the rank correlation.
-- **F5, logit-monitor AUROC** against toxic and benign WildChat, with a prompt-length-only baseline the monitor must beat.
+- **F5, logit-monitor AUROC** against ToxicChat toxic (primary), WildChat benign, ToxicChat benign and the benign twins, with a prompt-length-only baseline the monitor must beat.
 
 **What counts as a jump** (decided before the run): within one family, one step between adjacent sizes that is clearly larger than every other step, with a CI that excludes 0. It is tested only on F1's total and F3's pooled bar. Everything else is exploratory.
 
