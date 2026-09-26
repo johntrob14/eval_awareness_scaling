@@ -6,10 +6,11 @@ The vLLM version is read from its own venv, since vLLM pins a different torch.
 
 import importlib.metadata
 import subprocess
+from pathlib import Path
 
 import torch
 
-VLLM_PYTHON = "/workspace/.venv-vllm/bin/python"
+VLLM_PYTHON = str(Path(__file__).with_name("vllm_python.sh"))
 MAIN_ENV_PACKAGES = ["transformers", "peft", "nnterp"]
 
 VLLM_PROBE = """

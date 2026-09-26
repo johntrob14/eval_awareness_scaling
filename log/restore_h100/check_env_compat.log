@@ -1,0 +1,16 @@
+== GPU ==
+name            NVIDIA H100 NVL
+memory          93.1 GiB
+driver          570.133.07
+== Research env (/venv/main) ==
+torch           2.11.0+cu128
+torch CUDA      12.8
+GPU op ok       True
+transformers    5.17.0
+peft            0.21.0
+nnterp          1.3.0
+== Generation env (/workspace/eval-awareness/scripts/vllm_python.sh) ==
+vllm            0.30.0
+torch           2.13.0+cu132
+torch CUDA      13.2
+GPU op ok       True

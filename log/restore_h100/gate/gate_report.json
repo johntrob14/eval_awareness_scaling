@@ -1,0 +1,100 @@
+{
+  "gate": {
+    "n_prompts": 4,
+    "n_continuation_tokens": 128,
+    "prompt_selection_seed": 20260925,
+    "relative_factor": 2.0,
+    "absolute_floor_nats": 0.05,
+    "rule": "pass iff organism mean |logprob_hf - logprob_vllm| <= max(relative_factor * base mean |logprob_hf - logprob_vllm|, absolute_floor_nats)"
+  },
+  "threshold_nats": 0.05,
+  "passed": true,
+  "per_variant": {
+    "organism": {
+      "mean_abs_logprob_diff": 0.009386806662087133,
+      "n_tokens": 512,
+      "per_prompt": [
+        {
+          "sample_id": "cf49027fc1693d3c",
+          "mean_abs_logprob_diff": 0.009200285058167168,
+          "max_abs_logprob_diff": 0.08121597766876221,
+          "greedy_first_divergence_index": 106,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "67b4b2d51b4251e0",
+          "mean_abs_logprob_diff": 0.00750131991436831,
+          "max_abs_logprob_diff": 0.0773504376411438,
+          "greedy_first_divergence_index": 6,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "f9aa763bbd4bd259",
+          "mean_abs_logprob_diff": 0.0073101582291013045,
+          "max_abs_logprob_diff": 0.06318992376327515,
+          "greedy_first_divergence_index": 85,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "eeb5013de6b88fc5",
+          "mean_abs_logprob_diff": 0.013535463446711749,
+          "max_abs_logprob_diff": 0.11687469482421875,
+          "greedy_first_divergence_index": 2,
+          "n_compared_tokens": 128
+        }
+      ],
+      "prefill_diagnostic": {
+        "n_prompts": 100,
+        "fraction_first_token_is_think": 1.0,
+        "examples": [
+          "<think>\nOkay, I need to write",
+          "<think>\nOkay, I need to write",
+          "<think>\nOkay, I need to write"
+        ]
+      }
+    },
+    "base": {
+      "mean_abs_logprob_diff": 0.006653470625972269,
+      "n_tokens": 512,
+      "per_prompt": [
+        {
+          "sample_id": "cf49027fc1693d3c",
+          "mean_abs_logprob_diff": 0.005772066887811178,
+          "max_abs_logprob_diff": 0.12188291549682617,
+          "greedy_first_divergence_index": 62,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "67b4b2d51b4251e0",
+          "mean_abs_logprob_diff": 0.00362958412165848,
+          "max_abs_logprob_diff": 0.06847703456878662,
+          "greedy_first_divergence_index": 124,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "f9aa763bbd4bd259",
+          "mean_abs_logprob_diff": 0.007887409028040526,
+          "max_abs_logprob_diff": 0.0729212760925293,
+          "greedy_first_divergence_index": 128,
+          "n_compared_tokens": 128
+        },
+        {
+          "sample_id": "eeb5013de6b88fc5",
+          "mean_abs_logprob_diff": 0.00932482246637889,
+          "max_abs_logprob_diff": 0.10413974523544312,
+          "greedy_first_divergence_index": 48,
+          "n_compared_tokens": 128
+        }
+      ],
+      "prefill_diagnostic": {
+        "n_prompts": 100,
+        "fraction_first_token_is_think": 1.0,
+        "examples": [
+          "<think>\n\n</think>\n\n```python\nimport",
+          "<think>\n\n</think>\n\nHere is the self",
+          "<think>\nThinking Process:\n\n1."
+        ]
+      }
+    }
+  }
+}

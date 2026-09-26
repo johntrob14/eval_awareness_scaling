@@ -23,7 +23,8 @@ Last updated: 2026-09-25 by agent (exp01 run complete)
 - Load models/data in dedicated cells at the top. Never restart the kernel or reload a loaded model without asking.
 - Save every plot to figures/<exp_id>_<name>.png as well as displaying it.
 - Jobs longer than 10 minutes run as background scripts with logs, not notebook cells.
-- Large-scale sampling uses vLLM (venv at /workspace/.venv-vllm); activations use nnsight/HF in the main venv.
+- Large-scale sampling uses vLLM (venv at /workspace/.venv-vllm, always run via scripts/vllm_python.sh, which adds CUDA forward-compat libs on older drivers); activations use nnsight/HF in the main venv.
+- New instance: restore envs exactly from log/setup/freeze_*.txt and rebuild models with `exp01_build_models.py --restore-report` (see log/restore_h100/).
 - Use uv for packages. Never pip install into system Python.
 
 ## Experiments

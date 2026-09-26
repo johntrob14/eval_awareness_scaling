@@ -5,29 +5,46 @@ model's HF-vs-vLLM gap is the numerical floor (different kernels); the
 organism must stay within the pre-registered bound (exp01_config.GATE).
 
 Run in order:
-    /venv/main/bin/python          scripts/exp01_logprob_gate.py hf
-    /workspace/.venv-vllm/bin/python scripts/exp01_logprob_gate.py vllm --variant organism
-    /workspace/.venv-vllm/bin/python scripts/exp01_logprob_gate.py vllm --variant base
-    /venv/main/bin/python          scripts/exp01_logprob_gate.py compare
+    /venv/main/bin/python   scripts/exp01_logprob_gate.py hf
+    scripts/vllm_python.sh  scripts/exp01_logprob_gate.py vllm --variant organism
+    scripts/vllm_python.sh  scripts/exp01_logprob_gate.py vllm --variant base
+    /venv/main/bin/python   scripts/exp01_logprob_gate.py compare
 
 The vllm stage also runs the prefill diagnostic: without the template's
 trailing "<think>\\n", does each model open its reply with <think> itself?
+
+Pass the same --out-dir to every stage to rerun the gate (e.g. on new hardware)
+with all its files in that directory instead of cache/ and results/.
 """
 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import random
 import statistics
+from pathlib import Path
 
 import exp01_config as cfg
 
-HF_REFERENCE_PATH = cfg.CACHE_DIR / "gate_hf.json"
+
+@dataclasses.dataclass(frozen=True)
+class GatePaths:
+    hf_reference: Path
+    vllm_dir: Path
+    report: Path
+
+    def vllm_result(self, variant: str) -> Path:
+        return self.vllm_dir / f"gate_vllm_{variant}.json"
 
 
-def vllm_result_path(variant: str):
-    return cfg.CACHE_DIR / f"gate_vllm_{variant}.json"
+def gate_paths(out_dir: Path | None) -> GatePaths:
+    if out_dir is None:
+        return GatePaths(
+            cfg.CACHE_DIR / "gate_hf.json", cfg.CACHE_DIR, cfg.GATE_REPORT_PATH
+        )
+    return GatePaths(out_dir / "gate_hf.json", out_dir, out_dir / "gate_report.json")
 
 
 def load_prompts() -> list[dict]:
@@ -48,7 +65,7 @@ def gate_prompts(prompts: list[dict]) -> list[dict]:
 # --- HF stage (/venv/main) -------------------------------------------------
 
 
-def run_hf() -> None:
+def run_hf(paths: GatePaths) -> None:
     import torch
     from transformers import AutoModelForCausalLM
 
@@ -92,17 +109,17 @@ def run_hf() -> None:
         results[variant] = rows
         del model
         torch.cuda.empty_cache()
-    HF_REFERENCE_PATH.write_text(json.dumps(results) + "\n")
+    paths.hf_reference.write_text(json.dumps(results) + "\n")
 
 
-# --- vLLM stage (/workspace/.venv-vllm) -------------------------------------
+# --- vLLM stage (scripts/vllm_python.sh) -------------------------------------
 
 
-def run_vllm(variant: str) -> None:
+def run_vllm(paths: GatePaths, variant: str) -> None:
     from exp01_vllm_common import make_llm
     from vllm import SamplingParams, TokensPrompt
 
-    reference = json.loads(HF_REFERENCE_PATH.read_text())[variant]
+    reference = json.loads(paths.hf_reference.read_text())[variant]
     llm = make_llm(cfg.MODEL_VARIANTS[variant])
 
     # Teacher-forced logprobs of the HF greedy continuation.
@@ -169,7 +186,7 @@ def run_vllm(variant: str) -> None:
         "fraction_first_token_is_think": sum(starts_with_think) / len(prompts),
         "examples": [out.outputs[0].text for out in opened[:3]],
     }
-    vllm_result_path(variant).write_text(
+    paths.vllm_result(variant).write_text(
         json.dumps({"rows": rows, "prefill_diagnostic": prefill}) + "\n"
     )
     print(
@@ -180,15 +197,13 @@ def run_vllm(variant: str) -> None:
 # --- Compare stage -----------------------------------------------------------
 
 
-def run_compare() -> None:
-    if cfg.GATE_REPORT_PATH.exists():
-        raise FileExistsError(
-            f"{cfg.GATE_REPORT_PATH} exists; results are never overwritten"
-        )
-    reference = json.loads(HF_REFERENCE_PATH.read_text())
+def run_compare(paths: GatePaths) -> None:
+    if paths.report.exists():
+        raise FileExistsError(f"{paths.report} exists; reports are never overwritten")
+    reference = json.loads(paths.hf_reference.read_text())
     per_variant = {}
     for variant in cfg.MODEL_VARIANTS:
-        vllm_result = json.loads(vllm_result_path(variant).read_text())
+        vllm_result = json.loads(paths.vllm_result(variant).read_text())
         abs_diffs, per_prompt = [], []
         for ref, row in zip(reference[variant], vllm_result["rows"], strict=True):
             diffs = [
@@ -224,7 +239,7 @@ def run_compare() -> None:
         "passed": passed,
         "per_variant": per_variant,
     }
-    cfg.GATE_REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n")
+    paths.report.write_text(json.dumps(report, indent=2) + "\n")
     for variant, result in per_variant.items():
         print(
             f"{variant}: mean |dlogprob| = {result['mean_abs_logprob_diff']:.4f} nats over {result['n_tokens']} tokens; "
@@ -241,15 +256,19 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("stage", choices=["hf", "vllm", "compare"])
     parser.add_argument("--variant", choices=list(cfg.MODEL_VARIANTS))
+    parser.add_argument("--out-dir", type=Path)
     args = parser.parse_args()
+    if args.out_dir is not None:
+        args.out_dir.mkdir(parents=True, exist_ok=True)
+    paths = gate_paths(args.out_dir)
     if args.stage == "hf":
-        run_hf()
+        run_hf(paths)
     elif args.stage == "vllm":
         if not args.variant:
             parser.error("--variant is required for the vllm stage")
-        run_vllm(args.variant)
+        run_vllm(paths, args.variant)
     else:
-        run_compare()
+        run_compare(paths)
 
 
 if __name__ == "__main__":

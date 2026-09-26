@@ -1,8 +1,8 @@
 """exp01 step 4: generate both decoding arms for one model variant with vLLM.
 
 Run in the vLLM venv, once per variant (separate processes free GPU memory):
-    /workspace/.venv-vllm/bin/python scripts/exp01_generate_vllm.py --variant organism
-    /workspace/.venv-vllm/bin/python scripts/exp01_generate_vllm.py --variant base
+    scripts/vllm_python.sh scripts/exp01_generate_vllm.py --variant organism
+    scripts/vllm_python.sh scripts/exp01_generate_vllm.py --variant base
 
 Prompts are passed as the exact token IDs from cache/exp01/prompts.jsonl.
 Sampled arms use a per-prompt seed (exp01_config.prompt_seed), shared by both

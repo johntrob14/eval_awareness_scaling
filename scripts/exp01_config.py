@@ -18,7 +18,7 @@ CACHE_DIR = REPO_ROOT / "cache" / "exp01"
 LOG_DIR = REPO_ROOT / "log" / "exp01"
 FIGURES_DIR = REPO_ROOT / "figures"
 MODELS_ROOT = Path("/workspace/models")
-VLLM_PYTHON = Path("/workspace/.venv-vllm/bin/python")
+VLLM_PYTHON = REPO_ROOT / "scripts" / "vllm_python.sh"
 
 # Intermediate files (cache/, gitignored).
 PROMPTS_PATH = CACHE_DIR / "prompts.jsonl"

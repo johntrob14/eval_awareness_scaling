@@ -7,7 +7,7 @@
 set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MAIN_PY=/venv/main/bin/python
-VLLM_PY=/workspace/.venv-vllm/bin/python
+VLLM_PY="${REPO_DIR}/scripts/vllm_python.sh"
 LOG_DIR="${REPO_DIR}/log/exp01"
 cd "${REPO_DIR}/scripts"
 mkdir -p "$LOG_DIR"
