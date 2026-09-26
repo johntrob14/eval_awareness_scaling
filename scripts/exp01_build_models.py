@@ -12,10 +12,16 @@ Writes /workspace/models/{base-text,organism-merged} and
 results/exp01_organism_gap/load_report.json with: adapter checksums, LoRA
 tensors that matched no module (expected 144/0/0/0), per-adapter weight
 changes, tied-embedding state, a bitwise reload check, and file hashes.
+
+On a new machine, rebuild the models of the existing run without touching results/:
+    python scripts/exp01_build_models.py --restore-report log/<dir>/model_restore.json
+This writes the same report to the given path, plus a per-variant comparison of
+the saved file hashes with the recorded load_report.json, and fails on mismatch.
 """
 
 from __future__ import annotations
 
+import argparse
 import dataclasses
 import hashlib
 import json
@@ -214,12 +220,42 @@ def describe_saved(out_dir: Path) -> dict[str, object]:
     }
 
 
+def compare_with_recorded(saved: dict[str, dict]) -> dict[str, dict[str, bool]]:
+    """Per variant: do the rebuilt files hash the same as in the recorded load report?"""
+    recorded = json.loads(cfg.LOAD_REPORT_PATH.read_text())["saved"]
+    return {
+        variant: {
+            "file_sha256_match": saved[variant]["file_sha256"]
+            == recorded[variant]["file_sha256"],
+            "chat_template_sha256_match": saved[variant]["chat_template_sha256"]
+            == recorded[variant]["chat_template_sha256"],
+        }
+        for variant in cfg.MODEL_VARIANTS
+    }
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--restore-report",
+        type=Path,
+        help="Rebuild the models of the existing run and write the report (with a "
+        "comparison to the recorded load_report.json) here instead of results/.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    cfg.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    if cfg.LOAD_REPORT_PATH.exists():
-        raise FileExistsError(
-            f"{cfg.LOAD_REPORT_PATH} exists; results are never overwritten"
+    args = parse_args()
+    restoring = args.restore_report is not None
+    report_path = args.restore_report if restoring else cfg.LOAD_REPORT_PATH
+    if restoring and not cfg.LOAD_REPORT_PATH.exists():
+        raise FileNotFoundError(
+            f"No recorded {cfg.LOAD_REPORT_PATH} to restore against"
         )
+    if report_path.exists():
+        raise FileExistsError(f"{report_path} exists; reports are never overwritten")
+    report_path.parent.mkdir(parents=True, exist_ok=True)
 
     base_ckpt = resolve_qwen35_checkpoint(cfg.BASE_CHECKPOINT_ID)
     organism_ckpt = resolve_qwen35_checkpoint(cfg.ORGANISM_CHECKPOINT_ID)
@@ -294,10 +330,16 @@ def main() -> None:
         "dropped_counts_as_expected": dropped_ok,
         "bitwise_reload_ok": reload_ok,
     }
-    cfg.LOAD_REPORT_PATH.write_text(json.dumps(report, indent=2, default=str) + "\n")
+    if restoring:
+        report["matches_recorded_load_report"] = compare_with_recorded(report["saved"])
+        report["checks"]["files_match_recorded_run"] = all(
+            all(matches.values())
+            for matches in report["matches_recorded_load_report"].values()
+        )
+    report_path.write_text(json.dumps(report, indent=2, default=str) + "\n")
     print(json.dumps(report["checks"]))
-    if not (dropped_ok and reload_ok):
-        raise SystemExit(f"Build checks failed; see {cfg.LOAD_REPORT_PATH}")
+    if not all(report["checks"].values()):
+        raise SystemExit(f"Build checks failed; see {report_path}")
 
 
 if __name__ == "__main__":

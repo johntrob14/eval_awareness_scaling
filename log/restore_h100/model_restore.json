@@ -1,0 +1,600 @@
+{
+  "hf_runtime_status": {
+    "available": true,
+    "transformers_version": "5.17.0",
+    "is_fast_path_available": false,
+    "details": {
+      "modeling_path": "/venv/main/lib/python3.12/site-packages/transformers/models/qwen3_5/modeling_qwen3_5.py",
+      "detection_mode": "none",
+      "legacy": {
+        "attribute_present": false,
+        "recognized_boolean": false,
+        "value": null,
+        "raw_type_module": null,
+        "raw_type_name": null
+      },
+      "kernel_wrappers": {
+        "expected_type_module": "kernels.layer.layer",
+        "expected_type_name": "Func",
+        "required_globals": [
+          "causal_conv1d_fn",
+          "causal_conv1d_update",
+          "torch_chunk_gated_delta_rule",
+          "torch_recurrent_gated_delta_rule"
+        ],
+        "wrapped_count": 0,
+        "required_count": 4,
+        "all_required_wrapped": false,
+        "objects": {
+          "causal_conv1d_fn": {
+            "present": true,
+            "non_null": true,
+            "callable": true,
+            "type_module": "builtins",
+            "type_name": "function",
+            "is_kernel_wrapper": false
+          },
+          "causal_conv1d_update": {
+            "present": true,
+            "non_null": true,
+            "callable": true,
+            "type_module": "builtins",
+            "type_name": "function",
+            "is_kernel_wrapper": false
+          },
+          "torch_chunk_gated_delta_rule": {
+            "present": true,
+            "non_null": true,
+            "callable": true,
+            "type_module": "builtins",
+            "type_name": "function",
+            "is_kernel_wrapper": false
+          },
+          "torch_recurrent_gated_delta_rule": {
+            "present": true,
+            "non_null": true,
+            "callable": true,
+            "type_module": "builtins",
+            "type_name": "function",
+            "is_kernel_wrapper": false
+          }
+        }
+      },
+      "has_causal_conv1d_fn": true,
+      "has_causal_conv1d_update": true,
+      "has_chunk_gated_delta_rule": true,
+      "has_fused_recurrent_gated_delta_rule": true
+    }
+  },
+  "model_class": "Qwen3_5ForCausalLM",
+  "adapter_checksums_verified_against_organism_stack_json": {
+    "01_sdf_ei_tinker_peft_hf_current/adapter_model.safetensors": "67b8efa0bd4df25c4ebeaca78fb48b1ef9d9aa1d3c3430f24ef32036a46f3e11",
+    "01_sdf_ei_tinker_peft_hf_current/adapter_config.json": "15e06079c76ea15a438496355e610231c1dfddf43c54a43adbb327eda75b2433",
+    "02_stage3_dpo_lora_soft_v1/adapter_model.safetensors": "965469d21ca052915482f8649d798e63cf4dd53e850406f5b5c8ecf70c9afa72",
+    "02_stage3_dpo_lora_soft_v1/adapter_config.json": "be880a92275f354695ffd9d04bb5dafdc0bc7dec94a8706dfb742d130a5cec21",
+    "03_stage6_ei_replay_dpo_ckpt20/adapter_model.safetensors": "05025df93e6395590a4f1896ae484ad47b4a66efe6f4d72b08271a5cd459a0ef",
+    "03_stage6_ei_replay_dpo_ckpt20/adapter_config.json": "873dd5c7728b5841fb12ff4c541e2738f66fd3306ff636be8b9d4943b5970b54",
+    "04_stage6b_ei_replay_dpo_ckpt20/adapter_model.safetensors": "1406246f8a12e0d4887130a19f1e32d32deb77af85db0b36e41f21bf23d0d244",
+    "04_stage6b_ei_replay_dpo_ckpt20/adapter_config.json": "b8d9597118bb57bd58204554a4419895fb772c02adcb7f1e99fde8c80edb1476"
+  },
+  "base_tie_state": {
+    "config_tie_word_embeddings": true,
+    "lm_head_shares_storage_with_embed_tokens": true,
+    "lm_head_equals_embed_tokens": true
+  },
+  "per_adapter": [
+    {
+      "adapter": "01_sdf_ei_tinker_peft_hf_current",
+      "n_lora_tensors": 498,
+      "n_dropped_lora_tensors": 144,
+      "expected_dropped": 144,
+      "dropped_module_kinds": [
+        "in_proj_k",
+        "in_proj_q",
+        "in_proj_v"
+      ],
+      "weight_changes": {
+        "changed_groups": {
+          "lm_head.weight": {
+            "n_tensors": 1,
+            "n_changed": 1,
+            "max_relative_change": 0.4109988510608673
+          },
+          "model.embed_tokens.weight": {
+            "n_tensors": 1,
+            "n_changed": 1,
+            "max_relative_change": 0.4109988510608673
+          },
+          "model.layers.*.linear_attn.in_proj_z.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.06762770563364029
+          },
+          "model.layers.*.linear_attn.out_proj.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.03582014515995979
+          },
+          "model.layers.*.mlp.down_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.05059964209794998
+          },
+          "model.layers.*.mlp.gate_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.07132222503423691
+          },
+          "model.layers.*.mlp.up_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.05611669644713402
+          },
+          "model.layers.*.self_attn.k_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.04475197196006775
+          },
+          "model.layers.*.self_attn.o_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.02971830405294895
+          },
+          "model.layers.*.self_attn.q_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.04679892584681511
+          },
+          "model.layers.*.self_attn.v_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0389496386051178
+          }
+        },
+        "unchanged_groups": [
+          "model.layers.*.input_layernorm.weight",
+          "model.layers.*.linear_attn.A_log",
+          "model.layers.*.linear_attn.conv1d.weight",
+          "model.layers.*.linear_attn.dt_bias",
+          "model.layers.*.linear_attn.in_proj_a.weight",
+          "model.layers.*.linear_attn.in_proj_b.weight",
+          "model.layers.*.linear_attn.in_proj_qkv.weight",
+          "model.layers.*.linear_attn.norm.weight",
+          "model.layers.*.post_attention_layernorm.weight",
+          "model.layers.*.self_attn.k_norm.weight",
+          "model.layers.*.self_attn.q_norm.weight",
+          "model.norm.weight"
+        ]
+      },
+      "tie_state_after": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    },
+    {
+      "adapter": "02_stage3_dpo_lora_soft_v1",
+      "n_lora_tensors": 496,
+      "n_dropped_lora_tensors": 0,
+      "expected_dropped": 0,
+      "dropped_module_kinds": [],
+      "weight_changes": {
+        "changed_groups": {
+          "model.layers.*.linear_attn.in_proj_a.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0011253990232944489
+          },
+          "model.layers.*.linear_attn.in_proj_b.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00163643853738904
+          },
+          "model.layers.*.linear_attn.in_proj_qkv.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0011565838940441608
+          },
+          "model.layers.*.linear_attn.in_proj_z.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0013337191194295883
+          },
+          "model.layers.*.linear_attn.out_proj.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0010196802904829383
+          },
+          "model.layers.*.mlp.down_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0009329620515927672
+          },
+          "model.layers.*.mlp.gate_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0019308158662170172
+          },
+          "model.layers.*.mlp.up_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0020288550294935703
+          },
+          "model.layers.*.self_attn.k_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.001678604050539434
+          },
+          "model.layers.*.self_attn.o_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0010110773146152496
+          },
+          "model.layers.*.self_attn.q_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.001248342334292829
+          },
+          "model.layers.*.self_attn.v_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0012796246446669102
+          }
+        },
+        "unchanged_groups": [
+          "lm_head.weight",
+          "model.embed_tokens.weight",
+          "model.layers.*.input_layernorm.weight",
+          "model.layers.*.linear_attn.A_log",
+          "model.layers.*.linear_attn.conv1d.weight",
+          "model.layers.*.linear_attn.dt_bias",
+          "model.layers.*.linear_attn.norm.weight",
+          "model.layers.*.post_attention_layernorm.weight",
+          "model.layers.*.self_attn.k_norm.weight",
+          "model.layers.*.self_attn.q_norm.weight",
+          "model.norm.weight"
+        ]
+      },
+      "tie_state_after": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    },
+    {
+      "adapter": "03_stage6_ei_replay_dpo_ckpt20",
+      "n_lora_tensors": 496,
+      "n_dropped_lora_tensors": 0,
+      "expected_dropped": 0,
+      "dropped_module_kinds": [],
+      "weight_changes": {
+        "changed_groups": {
+          "model.layers.*.linear_attn.in_proj_a.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0004038945189677179
+          },
+          "model.layers.*.linear_attn.in_proj_b.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0005872233887203038
+          },
+          "model.layers.*.linear_attn.in_proj_qkv.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00047640062985010445
+          },
+          "model.layers.*.linear_attn.in_proj_z.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00044895103201270103
+          },
+          "model.layers.*.linear_attn.out_proj.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0004443053621798754
+          },
+          "model.layers.*.mlp.down_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.00040014207479543984
+          },
+          "model.layers.*.mlp.gate_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0007323857280425727
+          },
+          "model.layers.*.mlp.up_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0008185291662812233
+          },
+          "model.layers.*.self_attn.k_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0005884143174625933
+          },
+          "model.layers.*.self_attn.o_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.00039724507951177657
+          },
+          "model.layers.*.self_attn.q_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0004176364454906434
+          },
+          "model.layers.*.self_attn.v_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0005386871634982526
+          }
+        },
+        "unchanged_groups": [
+          "lm_head.weight",
+          "model.embed_tokens.weight",
+          "model.layers.*.input_layernorm.weight",
+          "model.layers.*.linear_attn.A_log",
+          "model.layers.*.linear_attn.conv1d.weight",
+          "model.layers.*.linear_attn.dt_bias",
+          "model.layers.*.linear_attn.norm.weight",
+          "model.layers.*.post_attention_layernorm.weight",
+          "model.layers.*.self_attn.k_norm.weight",
+          "model.layers.*.self_attn.q_norm.weight",
+          "model.norm.weight"
+        ]
+      },
+      "tie_state_after": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    },
+    {
+      "adapter": "04_stage6b_ei_replay_dpo_ckpt20",
+      "n_lora_tensors": 496,
+      "n_dropped_lora_tensors": 0,
+      "expected_dropped": 0,
+      "dropped_module_kinds": [],
+      "weight_changes": {
+        "changed_groups": {
+          "model.layers.*.linear_attn.in_proj_a.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00036261617788113654
+          },
+          "model.layers.*.linear_attn.in_proj_b.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0005659259622916579
+          },
+          "model.layers.*.linear_attn.in_proj_qkv.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.0004511221486609429
+          },
+          "model.layers.*.linear_attn.in_proj_z.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00044293637620285153
+          },
+          "model.layers.*.linear_attn.out_proj.weight": {
+            "n_tensors": 24,
+            "n_changed": 24,
+            "max_relative_change": 0.00041331263491883874
+          },
+          "model.layers.*.mlp.down_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0003610630228649825
+          },
+          "model.layers.*.mlp.gate_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.000719625037163496
+          },
+          "model.layers.*.mlp.up_proj.weight": {
+            "n_tensors": 32,
+            "n_changed": 32,
+            "max_relative_change": 0.0007962852250784636
+          },
+          "model.layers.*.self_attn.k_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0005437241634353995
+          },
+          "model.layers.*.self_attn.o_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0003606168902479112
+          },
+          "model.layers.*.self_attn.q_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0004166201688349247
+          },
+          "model.layers.*.self_attn.v_proj.weight": {
+            "n_tensors": 8,
+            "n_changed": 8,
+            "max_relative_change": 0.0004904323723167181
+          }
+        },
+        "unchanged_groups": [
+          "lm_head.weight",
+          "model.embed_tokens.weight",
+          "model.layers.*.input_layernorm.weight",
+          "model.layers.*.linear_attn.A_log",
+          "model.layers.*.linear_attn.conv1d.weight",
+          "model.layers.*.linear_attn.dt_bias",
+          "model.layers.*.linear_attn.norm.weight",
+          "model.layers.*.post_attention_layernorm.weight",
+          "model.layers.*.self_attn.k_norm.weight",
+          "model.layers.*.self_attn.q_norm.weight",
+          "model.norm.weight"
+        ]
+      },
+      "tie_state_after": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    }
+  ],
+  "organism_vs_base": {
+    "changed_groups": {
+      "lm_head.weight": {
+        "n_tensors": 1,
+        "n_changed": 1,
+        "max_relative_change": 0.4109988510608673
+      },
+      "model.embed_tokens.weight": {
+        "n_tensors": 1,
+        "n_changed": 1,
+        "max_relative_change": 0.4109988510608673
+      },
+      "model.layers.*.linear_attn.in_proj_a.weight": {
+        "n_tensors": 24,
+        "n_changed": 24,
+        "max_relative_change": 0.0012388544855639338
+      },
+      "model.layers.*.linear_attn.in_proj_b.weight": {
+        "n_tensors": 24,
+        "n_changed": 24,
+        "max_relative_change": 0.0017498513916507363
+      },
+      "model.layers.*.linear_attn.in_proj_qkv.weight": {
+        "n_tensors": 24,
+        "n_changed": 24,
+        "max_relative_change": 0.0012740789679810405
+      },
+      "model.layers.*.linear_attn.in_proj_z.weight": {
+        "n_tensors": 24,
+        "n_changed": 24,
+        "max_relative_change": 0.06764283031225204
+      },
+      "model.layers.*.linear_attn.out_proj.weight": {
+        "n_tensors": 24,
+        "n_changed": 24,
+        "max_relative_change": 0.03583771362900734
+      },
+      "model.layers.*.mlp.down_proj.weight": {
+        "n_tensors": 32,
+        "n_changed": 32,
+        "max_relative_change": 0.050610460340976715
+      },
+      "model.layers.*.mlp.gate_proj.weight": {
+        "n_tensors": 32,
+        "n_changed": 32,
+        "max_relative_change": 0.07134891301393509
+      },
+      "model.layers.*.mlp.up_proj.weight": {
+        "n_tensors": 32,
+        "n_changed": 32,
+        "max_relative_change": 0.05614970996975899
+      },
+      "model.layers.*.self_attn.k_proj.weight": {
+        "n_tensors": 8,
+        "n_changed": 8,
+        "max_relative_change": 0.04477795958518982
+      },
+      "model.layers.*.self_attn.o_proj.weight": {
+        "n_tensors": 8,
+        "n_changed": 8,
+        "max_relative_change": 0.02972785197198391
+      },
+      "model.layers.*.self_attn.q_proj.weight": {
+        "n_tensors": 8,
+        "n_changed": 8,
+        "max_relative_change": 0.0468171164393425
+      },
+      "model.layers.*.self_attn.v_proj.weight": {
+        "n_tensors": 8,
+        "n_changed": 8,
+        "max_relative_change": 0.038968995213508606
+      }
+    },
+    "unchanged_groups": [
+      "model.layers.*.input_layernorm.weight",
+      "model.layers.*.linear_attn.A_log",
+      "model.layers.*.linear_attn.conv1d.weight",
+      "model.layers.*.linear_attn.dt_bias",
+      "model.layers.*.linear_attn.norm.weight",
+      "model.layers.*.post_attention_layernorm.weight",
+      "model.layers.*.self_attn.k_norm.weight",
+      "model.layers.*.self_attn.q_norm.weight",
+      "model.norm.weight"
+    ]
+  },
+  "organism_tie_state": {
+    "config_tie_word_embeddings": true,
+    "lm_head_shares_storage_with_embed_tokens": true,
+    "lm_head_equals_embed_tokens": true
+  },
+  "bitwise_reload_check": {
+    "base": {
+      "all_tensors_bitwise_equal": true,
+      "n_tensors": 427,
+      "missing": [],
+      "extra": [],
+      "mismatched": [],
+      "reloaded_tie_state": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    },
+    "organism": {
+      "all_tensors_bitwise_equal": true,
+      "n_tensors": 427,
+      "missing": [],
+      "extra": [],
+      "mismatched": [],
+      "reloaded_tie_state": {
+        "config_tie_word_embeddings": true,
+        "lm_head_shares_storage_with_embed_tokens": true,
+        "lm_head_equals_embed_tokens": true
+      }
+    }
+  },
+  "saved": {
+    "organism": {
+      "path": "/workspace/models/organism-merged",
+      "architectures": [
+        "Qwen3_5ForCausalLM"
+      ],
+      "model_type": "qwen3_5_text",
+      "tie_word_embeddings": true,
+      "file_sha256": {
+        "model.safetensors": "1364fe8b5531de99137200adba824c6c9ed89f2d92afc60ac07f7bfe892bfe4d"
+      },
+      "chat_template_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+    },
+    "base": {
+      "path": "/workspace/models/base-text",
+      "architectures": [
+        "Qwen3_5ForCausalLM"
+      ],
+      "model_type": "qwen3_5_text",
+      "tie_word_embeddings": true,
+      "file_sha256": {
+        "model.safetensors": "a6d4236e793dee0377971c8c9e2cb656fd17b28e8539ee4b1a621012c82f3d83"
+      },
+      "chat_template_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+    }
+  },
+  "checks": {
+    "dropped_counts_as_expected": true,
+    "bitwise_reload_ok": true,
+    "files_match_recorded_run": true
+  },
+  "matches_recorded_load_report": {
+    "organism": {
+      "file_sha256_match": true,
+      "chat_template_sha256_match": true
+    },
+    "base": {
+      "file_sha256_match": true,
+      "chat_template_sha256_match": true
+    }
+  }
+}

@@ -1,0 +1,34 @@
+Fetching 24 files:   0%|          | 0/24 [00:00<?, ?it/s]Fetching 24 files:   4%|▍         | 1/24 [00:00<00:06,  3.62it/s]Fetching 24 files:  29%|██▉       | 7/24 [00:00<00:01, 16.66it/s]Fetching 24 files:  42%|████▏     | 10/24 [00:00<00:00, 20.01it/s]Fetching 24 files:  54%|█████▍    | 13/24 [00:00<00:00, 17.60it/s]Fetching 24 files:  62%|██████▎   | 15/24 [00:00<00:00, 16.69it/s]Fetching 24 files:  71%|███████   | 17/24 [00:01<00:00,  9.71it/s]Fetching 24 files:  79%|███████▉  | 19/24 [00:01<00:00,  9.02it/s]Fetching 24 files:  88%|████████▊ | 21/24 [00:08<00:03,  1.06s/it]Fetching 24 files:  92%|█████████▏| 22/24 [00:09<00:02,  1.05s/it]Fetching 24 files:  96%|█████████▌| 23/24 [00:10<00:01,  1.06s/it]Fetching 24 files: 100%|██████████| 24/24 [00:10<00:00,  1.13it/s]Fetching 24 files: 100%|██████████| 24/24 [00:10<00:00,  2.19it/s]
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [01:14<01:14, 74.13s/it]Fetching 2 files: 100%|██████████| 2/2 [01:14<00:00, 30.81s/it]Fetching 2 files: 100%|██████████| 2/2 [01:14<00:00, 37.31s/it]
+Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]Loading weights:   1%|          | 3/426 [00:00<00:16, 26.37it/s]Loading weights:  19%|█▊        | 79/426 [00:00<00:00, 416.22it/s]Loading weights:  34%|███▍      | 146/426 [00:00<00:00, 521.90it/s]Loading weights:  48%|████▊     | 205/426 [00:00<00:00, 535.15it/s]Loading weights:  64%|██████▍   | 272/426 [00:00<00:00, 580.87it/s]Loading weights:  78%|███████▊  | 331/426 [00:00<00:00, 571.51it/s]Loading weights:  93%|█████████▎| 397/426 [00:00<00:00, 595.11it/s]Loading weights: 100%|██████████| 426/426 [00:00<00:00, 535.56it/s]
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.88s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.88s/it]
+saved base-text
+/venv/main/lib/python3.12/site-packages/peft/tuners/tuners_utils.py:671: UserWarning: Model with `tie_word_embeddings=True` and the tied_target_modules=['lm_head'] are part of the adapter. This can lead to complications. You can opt to merge the adapter after cloning the weights (to untie the embeddings). You can untie the embeddings by loading the model with `tie_word_embeddings=False`. For example:
+```python
+from transformers import AutoModelForCausalLM
+
+# Load original tied model
+model = AutoModelForCausalLM.from_pretrained("google/gemma-2-2b-it", tie_word_embeddings=False)
+
+# Set the randomly initialized lm_head to the previously tied embeddings
+model.lm_head.weight.data = model.model.embed_tokens.weight.data.clone()
+
+# Save the untied model
+untied_model_dir = "dir/for/untied/model"
+model.save_pretrained(untied_model_dir)
+model.config.save_pretrained(untied_model_dir)
+
+# Now use the original model but in untied format
+model = AutoModelForCausalLM.from_pretrained(untied_model_dir)
+```
+
+  warnings.warn(
+merged 01_sdf_ei_tinker_peft_hf_current: dropped 144/498 LoRA tensors
+merged 02_stage3_dpo_lora_soft_v1: dropped 0/496 LoRA tensors
+merged 03_stage6_ei_replay_dpo_ckpt20: dropped 0/496 LoRA tensors
+merged 04_stage6b_ei_replay_dpo_ckpt20: dropped 0/496 LoRA tensors
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.95s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.95s/it]
+saved organism-merged
+Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]Loading weights: 100%|██████████| 426/426 [00:00<00:00, 17733.84it/s]
+Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]Loading weights: 100%|██████████| 426/426 [00:00<00:00, 21519.10it/s]
+{"dropped_counts_as_expected": true, "bitwise_reload_ok": true, "files_match_recorded_run": true}
