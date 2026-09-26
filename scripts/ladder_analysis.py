@@ -427,13 +427,17 @@ def jump_tests(metrics: dict[str, dict], models: list[str]) -> dict:
                 draws = b["_draws"] - a["_draws"]
                 steps.append({"from": lo, "to": hi, "diff": b["value"] - a["value"], "ci": ci(draws),
                               "underpowered": bool(a.get("underpowered") or b.get("underpowered"))})
-            jump = None
-            for i, s in enumerate(steps):
+            # Manifest rule: one adjacent step whose CI excludes 0 and which is larger (|diff|) than every
+            # other adjacent step; steps with an undefined difference are left out of the comparison.
+            jump, jump_underpowered = None, None
+            defined = [s for s in steps if np.isfinite(s["diff"])]
+            for s in defined:
                 excludes_zero = np.isfinite(s["ci"][0]) and (s["ci"][0] > 0 or s["ci"][1] < 0)
-                largest = all(abs(s["diff"]) > abs(o["diff"]) for j, o in enumerate(steps) if j != i)
-                if excludes_zero and largest and not s["underpowered"]:
-                    jump = f"{s['from']} -> {s['to']}"
-            out[f"{outcome}|{family}"] = {"steps": steps, "jump": jump}
+                largest = all(abs(s["diff"]) > abs(o["diff"]) for o in defined if o is not s)
+                if excludes_zero and largest:
+                    jump, jump_underpowered = f"{s['from']} -> {s['to']}", s["underpowered"]
+            out[f"{outcome}|{family}"] = {"steps": steps, "jump": jump, "jump_involves_underpowered_model": jump_underpowered,
+                                          "n_steps_undefined": len(steps) - len(defined)}
         if "Qwen3.5-27B" in metrics and "Qwen3.8-27B" in metrics:
             a, b = metrics["Qwen3.5-27B"][outcome], metrics["Qwen3.8-27B"][outcome]
             out[f"{outcome}|version_27B"] = {"from": "Qwen3.5-27B", "to": "Qwen3.8-27B", "diff": b["value"] - a["value"],
@@ -674,7 +678,9 @@ def strip_draws(obj):
     if isinstance(obj, list):
         return [strip_draws(v) for v in obj]
     if isinstance(obj, (np.floating, np.integer)):
-        return obj.item()
+        obj = obj.item()
+    if isinstance(obj, float) and not math.isfinite(obj):
+        return None  # valid JSON (undefined estimate)
     return obj
 
 
