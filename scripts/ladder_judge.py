@@ -24,6 +24,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import random
 import re
 import time
@@ -173,6 +174,9 @@ def render(tokenizer, message: str, thinking: bool) -> list[int]:
 
 
 def make_judge(engine: str):
+    # DeepGEMM's FP8 kernels JIT-compile with nvcc >= 12.9 and this image has 12.8; vLLM then
+    # uses its precompiled CUTLASS block-FP8 kernels. Must be set before vLLM is imported.
+    os.environ["VLLM_USE_DEEP_GEMM"] = "0"
     from vllm import LLM
 
     model = cfg.JUDGE_MODEL_BF16 if engine == "bf16" else cfg.JUDGE_MODEL

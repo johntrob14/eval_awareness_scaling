@@ -5,6 +5,7 @@
 #   scripts/ladder_run.sh generate Qwen3-0.6B Qwen3-1.7B ...     # main run, needs the manifest
 #   STAGE2_EXTRA=20 scripts/ladder_run.sh generate ...           # pre-agreed fallback
 #   STAGE1_ONLY=1 scripts/ladder_run.sh generate Qwen3-32B       # add-on
+#   LOGIT_ONLY=1 scripts/ladder_run.sh generate Qwen3-32B        # add-on, logit monitor first
 #   KEEP_WEIGHTS=1 scripts/ladder_run.sh generate Qwen3.8-27B    # weights reused by the bf16 judge check
 #
 # Weights of a model are deleted after its main-run generation succeeds (disk), unless KEEP_WEIGHTS=1.
@@ -39,9 +40,12 @@ case "$mode" in
   generate)
     test -f "$MANIFEST" || { echo "manifest.json missing" >&2; exit 1; }
     extra_args=(--stage2-extra "${STAGE2_EXTRA:-40}")
+    suffix=""
     [[ "${STAGE1_ONLY:-0}" == 1 ]] && extra_args+=(--stage1-only)
+    # Logit-only runs keep the weights: stage 1 may still follow.
+    [[ "${LOGIT_ONLY:-0}" == 1 ]] && { extra_args+=(--logit-only); suffix="_logit_only"; KEEP_WEIGHTS=1; }
     for model in "$@"; do
-      stage "generate_${model}" "$VLLM_PY" ladder_generate.py --model "$model" "${extra_args[@]}"
+      stage "generate_${model}${suffix}" "$VLLM_PY" ladder_generate.py --model "$model" "${extra_args[@]}"
       if [[ "${KEEP_WEIGHTS:-0}" != 1 ]]; then
         dir="$(weights_dir "$model")"
         echo "[$(date -u +%H:%M:%S)] deleting weights ${dir}"

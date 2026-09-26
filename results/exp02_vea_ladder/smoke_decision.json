@@ -1,0 +1,91 @@
+{
+  "recorded_at_utc": "2026-09-26T21:12Z",
+  "t0_utc": "2026-09-26T20:30Z",
+  "smoke_design": "20 Fortress adversarial questions x 4 rollouts per model, production sampling and caps",
+  "per_model": {
+    "Qwen3-0.6B": {
+      "status_counts": {
+        "scored": 80,
+        "truncated": 0,
+        "no_think_end": 0
+      },
+      "cot_tokens_mean": 508.0375,
+      "cot_tokens_median": 422.5,
+      "cot_tokens_p90": 794,
+      "answer_tokens_mean": 356.2375,
+      "answer_cut_rate": 0.75,
+      "stage1_smoke_s": 18.629703760147095
+    },
+    "Qwen3-14B": {
+      "status_counts": {
+        "scored": 80,
+        "truncated": 0,
+        "no_think_end": 0
+      },
+      "cot_tokens_mean": 649.5,
+      "cot_tokens_median": 602.5,
+      "cot_tokens_p90": 1094,
+      "answer_tokens_mean": 342.525,
+      "answer_cut_rate": 0.8375,
+      "stage1_smoke_s": 38.521042823791504
+    },
+    "Qwen3.5-0.8B": {
+      "status_counts": {
+        "scored": 77,
+        "truncated": 3,
+        "no_think_end": 0
+      },
+      "cot_tokens_mean": 2741.325,
+      "cot_tokens_median": 2532.0,
+      "cot_tokens_p90": 3994,
+      "answer_tokens_mean": 993.275,
+      "answer_cut_rate": 0.7402597402597403,
+      "stage1_smoke_s": 40.659578800201416
+    },
+    "Qwen3.5-27B": {
+      "status_counts": {
+        "scored": 80,
+        "truncated": 0,
+        "no_think_end": 0
+      },
+      "cot_tokens_mean": 1538.2375,
+      "cot_tokens_median": 1524.5,
+      "cot_tokens_p90": 2456,
+      "answer_tokens_mean": 821.9,
+      "answer_cut_rate": 0.7,
+      "stage1_smoke_s": 166.8920075893402
+    },
+    "Qwen3.8-27B": {
+      "status_counts": {
+        "scored": 80,
+        "truncated": 0,
+        "no_think_end": 0
+      },
+      "cot_tokens_mean": 444.1625,
+      "cot_tokens_median": 324.5,
+      "cot_tokens_p90": 793,
+      "answer_tokens_mean": 301.65,
+      "answer_cut_rate": 0.575,
+      "stage1_smoke_s": 69.81561779975891
+    }
+  },
+  "scenario_assumed_in_plan": {
+    "qwen3_mean_cot": {
+      "light": 650,
+      "central": 1300,
+      "heavy": 2600
+    },
+    "qwen3.5_mean_cot": {
+      "light": 1000,
+      "central": 2000,
+      "heavy": 4000
+    }
+  },
+  "reading": "Qwen3 at the light scenario (508, 650); Qwen3.5 between light and central (27B 1538) except 0.8B (2741, above central, but the model is small); Qwen3.8-27B at medium effort 444. Smoke finished at T+0.7 h instead of the planned T+2.6 h.",
+  "projection": "report around T+16 to T+18 h including Qwen3-32B stage 1; well before T+21",
+  "decision": {
+    "stage2_extra_rollouts": 40,
+    "fallback_applied": false,
+    "qwen3_32b_stage1": "planned; re-check projection before it starts"
+  }
+}

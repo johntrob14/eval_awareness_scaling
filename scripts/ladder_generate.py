@@ -321,6 +321,8 @@ def main() -> None:
     parser.add_argument("--model", choices=list(cfg.ALL_SUBJECTS), required=True)
     parser.add_argument("--smoke", action="store_true", help="20 questions x 4 rollouts, no stage 2")
     parser.add_argument("--stage1-only", action="store_true", help="skip stage 2 (Qwen3-32B add-on)")
+    parser.add_argument("--logit-only", action="store_true",
+                        help="stop after the logit monitor (Qwen3-32B when stage 1 does not fit the deadline)")
     parser.add_argument("--stage2-extra", type=int, default=cfg.STAGE2_EXTRA_ROLLOUTS,
                         choices=[cfg.STAGE2_EXTRA_ROLLOUTS, cfg.STAGE2_EXTRA_ROLLOUTS_FALLBACK])
     args = parser.parse_args()
@@ -342,6 +344,10 @@ def main() -> None:
         write_jsonl(paths["logit"], run_logit_monitor(llm, args.model, prompts, args.smoke))
         timing["logit_monitor_s"] = time.time() - t0
         print(f"{args.model}: logit monitor {timing['logit_monitor_s']:.0f}s -> {paths['logit']}", flush=True)
+    if args.logit_only:
+        paths["timing"].write_text(json.dumps(timing, indent=2) + "\n")
+        print(f"{args.model}: done (logit monitor only)")
+        return
 
     if args.smoke:
         chosen = sorted(random.Random(SMOKE_SELECTION_SEED).sample(
