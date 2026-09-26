@@ -612,8 +612,14 @@ def read_samples(tables: dict[str, pd.DataFrame], texts: dict, path: Path, smoke
 
 def labeling_sheet(tables: dict[str, pd.DataFrame], texts: dict, sheet_id: int, out_dir: Path, smoke: bool) -> None:
     """Blinded sheet (no model name, no judge label): per model 8 judge-VEA, 8 regex-positive judge-non-VEA
-    (the least confident first), 4 regex-negative; the key file maps item uids back."""
+    (the least confident first), 4 regex-negative; the key file maps item uids back.
+    Models already on an earlier sheet are skipped (sheet 1 = Qwen3 ladder, sheet 2 = the rest)."""
     rng = random.Random(f"{cfg.LABELING_SEED}|{sheet_id}")
+    labeled = {k["model"] for p in out_dir.glob("key_*.json") for k in json.loads(p.read_text())}
+    tables = {m: df for m, df in tables.items() if m not in labeled}
+    if not tables:
+        print(f"labeling sheet {sheet_id}: every model is already on an earlier sheet")
+        return
     items = []
     for model, df in tables.items():
         pool = df[(df.prompt_set == "fortress_adv") & df.V.notna() & df.status.isin(["scored", "truncated"])]
@@ -658,14 +664,18 @@ def hand_label_agreement(out_dir: Path) -> dict:
         sheet_id = sheet_path.stem.split("_")[1]
         key = {k["uid"]: k for k in json.loads((out_dir / f"key_{sheet_id}.json").read_text())}
         filled = pd.read_csv(sheet_path)
-        rows = [(key[u]["model"], key[u]["judge_V"], h) for u, h in zip(filled.uid, filled["human_vea (1/0)"]) if pd.notna(h)]
-        if rows:
-            j = np.array([r[1] for r in rows], dtype=float)
-            h = np.array([r[2] for r in rows], dtype=float)
-            out[f"sheet_{sheet_id}"] = {"n": len(rows), "kappa_vea": kappa(j, h),
-                                        "judge_precision": float(h[j == 1].mean()) if (j == 1).any() else None,
-                                        "judge_recall_on_sheet": float(j[h == 1].mean()) if (h == 1).any() else None,
-                                        "note": "stratified sheet (over-samples positives and uncertain items)"}
+        entry = {"note": "stratified sheet (over-samples positives and uncertain items)"}
+        for name, column, judge_field in (("vea", "human_vea (1/0)", "judge_V"), ("refusal", "human_refusal (1/0)", "judge_R")):
+            pairs = [(key[u][judge_field], h) for u, h in zip(filled.uid, filled[column])
+                     if pd.notna(h) and key[u][judge_field] is not None and not pd.isna(key[u][judge_field])]
+            if not pairs:
+                continue
+            j = np.array([p[0] for p in pairs], dtype=float)
+            h = np.array([p[1] for p in pairs], dtype=float)
+            entry[name] = {"n": len(pairs), "kappa": kappa(j, h),
+                           "judge_precision": float(h[j == 1].mean()) if (j == 1).any() else None,
+                           "judge_recall_on_sheet": float(j[h == 1].mean()) if (h == 1).any() else None}
+        out[f"sheet_{sheet_id}"] = entry
     return out
 
 
