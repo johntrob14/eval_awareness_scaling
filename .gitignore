@@ -6,3 +6,7 @@ data/rollouts/
 data/judgments/
 .DS_Store
 logs/
+# Gemma pilot: rollouts, judgments and the labeling CSV contain harmful-content completions
+results/gemma4_pilot/rollouts/
+results/gemma4_pilot/judgments/
+results/gemma4_pilot/*.csv

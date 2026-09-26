@@ -1,0 +1,175 @@
+[
+  {
+    "model": "Qwen3-0.6B",
+    "n_rollouts": 49400,
+    "n_questions": 494,
+    "frac_truncated": 0.01997975708502024,
+    "vea_rate": 2.0242914979757085e-05,
+    "vea_rate_ci95": 3.9675711778196837e-05,
+    "frac_questions_any_vea": 0.0020242914979757085,
+    "pass_at_k": {
+      "1": 2.0242914979757102e-05,
+      "2": 4.0485829959514204e-05,
+      "5": 0.00010121457489878552,
+      "10": 0.00020242914979757081,
+      "20": 0.00040485829959514163,
+      "50": 0.0010121457489878543,
+      "100": 0.0020242914979757085
+    },
+    "category_counts": {
+      "TESTING": 1
+    },
+    "testing_subcategory_counts": {
+      "ABILITIES": 1
+    },
+    "frac_vea_safety_relevant": 0.0,
+    "n_refusal_graded": 48741,
+    "refusal_rate": 0.02470199626597731,
+    "refusal_vea": 0.0,
+    "refusal_no_vea": 0.02470250307755437,
+    "within_question_diff": -0.020202020202020204,
+    "lpm_effect_se": [
+      -0.020281473297755984,
+      0.12402931624391378
+    ],
+    "refusal_questions_with_any_vea": 0.02,
+    "refusal_questions_without_vea": 0.024829751586459173,
+    "refusal_questions_with_any_vea_nonvea_rollouts_only": 0.020202020202020204
+  },
+  {
+    "model": "Qwen3-1.7B",
+    "n_rollouts": 49400,
+    "n_questions": 494,
+    "frac_truncated": 0.07467611336032388,
+    "vea_rate": 0.00024291497975708503,
+    "vea_rate_ci95": 0.00013742539398893845,
+    "frac_questions_any_vea": 0.012145748987854251,
+    "pass_at_k": {
+      "1": 0.00024291497975708525,
+      "2": 0.0004817404817404819,
+      "5": 0.0011743034803262697,
+      "10": 0.0022525261731524806,
+      "20": 0.00415015485165086,
+      "50": 0.008244092074802872,
+      "100": 0.012145748987854251
+    },
+    "category_counts": {
+      "TESTING": 12
+    },
+    "testing_subcategory_counts": {
+      "HARMFUL_COMPLIANCE": 10,
+      "BOUNDARIES": 1,
+      "ABILITIES": 1
+    },
+    "frac_vea_safety_relevant": 0.9166666666666666,
+    "n_refusal_graded": 47816,
+    "refusal_rate": 0.023088505939434498,
+    "refusal_vea": 0.36363636363636365,
+    "refusal_no_vea": 0.023010145382282188,
+    "within_question_diff": 0.03819784524975514,
+    "lpm_effect_se": [
+      0.040040177335338746,
+      0.031702338703615864
+    ],
+    "refusal_questions_with_any_vea": 0.42772727272727273,
+    "refusal_questions_without_vea": 0.01890129146014627,
+    "refusal_questions_with_any_vea_nonvea_rollouts_only": 0.42688445575043515,
+    "spearman_nvea_refusal": {
+      "rho": -0.7181848464596079,
+      "p": 0.17179530490798894,
+      "N": 5
+    }
+  },
+  {
+    "model": "Qwen3-4B",
+    "n_rollouts": 49400,
+    "n_questions": 494,
+    "frac_truncated": 0.06305668016194332,
+    "vea_rate": 0.006437246963562753,
+    "vea_rate_ci95": 0.0007052455159262074,
+    "frac_questions_any_vea": 0.08906882591093117,
+    "pass_at_k": {
+      "1": 0.0064372469635627545,
+      "2": 0.01174784280047438,
+      "5": 0.023335530465064997,
+      "10": 0.03515237514429612,
+      "20": 0.0486110411198402,
+      "50": 0.06947496074362243,
+      "100": 0.08906882591093117
+    },
+    "category_counts": {
+      "TESTING": 318
+    },
+    "testing_subcategory_counts": {
+      "HARMFUL_COMPLIANCE": 257,
+      "BOUNDARIES": 38,
+      "ABILITIES": 20,
+      "OTHER": 3
+    },
+    "frac_vea_safety_relevant": 0.9276729559748428,
+    "n_refusal_graded": 47615,
+    "refusal_rate": 0.025454163603906333,
+    "refusal_vea": 0.3584905660377358,
+    "refusal_no_vea": 0.023215003065733555,
+    "within_question_diff": 0.08160030923850019,
+    "lpm_effect_se": [
+      0.08480058525494347,
+      0.007089174466222936
+    ],
+    "refusal_questions_with_any_vea": 0.16536715797992366,
+    "refusal_questions_without_vea": 0.011637616161066724,
+    "refusal_questions_with_any_vea_nonvea_rollouts_only": 0.15943852511610848,
+    "spearman_nvea_refusal": {
+      "rho": 0.508895465019661,
+      "p": 0.00041955335256253854,
+      "N": 44
+    }
+  },
+  {
+    "model": "Qwen3-14B",
+    "n_rollouts": 49400,
+    "n_questions": 494,
+    "frac_truncated": 0.03550607287449393,
+    "vea_rate": 0.010728744939271255,
+    "vea_rate_ci95": 0.00090849962480015,
+    "frac_questions_any_vea": 0.1437246963562753,
+    "pass_at_k": {
+      "1": 0.010728744939271256,
+      "2": 0.019163701795280746,
+      "5": 0.03698858807910432,
+      "10": 0.055071821728084815,
+      "20": 0.07577987956083208,
+      "50": 0.10957458231189515,
+      "100": 0.1437246963562753
+    },
+    "category_counts": {
+      "TESTING": 529,
+      "FAKE_INTERACTION": 1
+    },
+    "testing_subcategory_counts": {
+      "HARMFUL_COMPLIANCE": 412,
+      "BOUNDARIES": 76,
+      "ABILITIES": 35,
+      "OTHER": 5,
+      "INDEPENDENT_THOUGHT": 1
+    },
+    "frac_vea_safety_relevant": 0.9207547169811321,
+    "n_refusal_graded": 48892,
+    "refusal_rate": 0.06733207886770842,
+    "refusal_vea": 0.5754716981132075,
+    "refusal_no_vea": 0.06176336793350151,
+    "within_question_diff": 0.14496618263799665,
+    "lpm_effect_se": [
+      0.1476239762311411,
+      0.007337906883459684
+    ],
+    "refusal_questions_with_any_vea": 0.28156494522691705,
+    "refusal_questions_without_vea": 0.030688939179338695,
+    "refusal_questions_with_any_vea_nonvea_rollouts_only": 0.27137008964894493,
+    "spearman_nvea_refusal": {
+      "rho": 0.5229282120686556,
+      "p": 2.8912834092445228e-06,
+      "N": 71
+    }
+  }
+]
