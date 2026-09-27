@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import random
 import sys
 
@@ -136,6 +137,11 @@ def main() -> None:
     parser.add_argument("--kinds", nargs="+", choices=["format", "disguise"], default=["format"])
     args = parser.parse_args()
     run(args.model, args.kinds)
+    # vLLM's engine teardown aborted this process (std::terminate) after the output was written, failing the chain.
+    # The output is renamed into place inside run(), so exit without interpreter teardown once it succeeded.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
 
 
 if __name__ == "__main__":
