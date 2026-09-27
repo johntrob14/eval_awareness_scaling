@@ -7,9 +7,10 @@
 # 1. wait for ladder_chain.sh; if it is still running at T+20, write an interim analysis + report
 # 2. retry: generation of any subject not finished (weights still on disk), judging of any generated
 #    model without labels, the two validation runs
-# 3. Qwen3-32B: logit monitor always; stage 1 + judging only if they are projected to end by T+20;
+# 3. analysis + report of the validated main ladder (CPU, in the background while the GPU runs step 4)
+# 4. Qwen3-32B add-on, no time cutoff: logit monitor and stage 1 in one engine load, then its judging;
 #    then delete the Qwen3-32B and Qwen3.8-27B weights (the latter are the judge until here)
-# 4. final analysis (+ labeling sheet 2), the auto-drafted report, git commit (no push)
+# 5. final analysis (+ labeling sheet 2), the auto-drafted report, git commit (no push)
 set -uo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_DIR"
@@ -39,6 +40,7 @@ step() {  # never stops the script
 chain_pid="$1"
 log "waiting for ladder_chain.sh (pid ${chain_pid})"
 interim_done=0
+[[ -e results/exp02_vea_ladder/interim_T20/summary.json ]] && interim_done=1
 while kill -0 "$chain_pid" 2>/dev/null; do
   if ((interim_done == 0 && $(date +%s) >= INTERIM_AT_EPOCH)); then
     log "T+20 reached with the chain still running: interim analysis of the labeled models"
@@ -85,37 +87,41 @@ if ((${#labeled[@]})); then
   step tail_validate_fp8 "$VLLM_PY" scripts/ladder_judge.py validate --engine fp8 --models "${labeled[@]}"
 fi
 
-# --- 3. Qwen3-32B add-on --------------------------------------------------------------------------
+# --- 3. validated main-ladder results, on CPU while the GPU runs the add-on -----------------------
+validated_pid=""
+if ! "${STATUS[@]}" labeled "$ADDON"; then
+  ( step tail_analysis_validated "$MAIN_PY" scripts/ladder_analysis.py --out-name all_models_validated
+    step tail_report_validated "$MAIN_PY" scripts/ladder_report.py --out-name all_models_validated ) &
+  validated_pid=$!
+fi
+
+# --- 4. Qwen3-32B add-on --------------------------------------------------------------------------
 rev="$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.ADDON_SUBJECTS['${ADDON}']['revision'])")"
-if ! "${STATUS[@]}" weights "$ADDON" && ! "${STATUS[@]}" stage1 "$ADDON"; then
+addon_generated() { "${STATUS[@]}" stage1 "$ADDON" && "${STATUS[@]}" logit "$ADDON"; }
+if ! addon_generated && ! "${STATUS[@]}" weights "$ADDON"; then
   step tail_download_qwen3_32b /venv/main/bin/hf download "Qwen/${ADDON}" --revision "$rev"
 fi
-if "${STATUS[@]}" weights "$ADDON"; then
-  "${STATUS[@]}" logit "$ADDON" || step tail_qwen3_32b_logit env LOGIT_ONLY=1 scripts/ladder_run.sh generate "$ADDON"
-  if ! "${STATUS[@]}" stage1 "$ADDON"; then
-    spare="$("${STATUS[@]}" hours-left-after-32b-stage1)"
-    log "Qwen3-32B stage 1: ${spare} h to spare at the T+20 cutoff"
-    if "$MAIN_PY" -c "import sys; sys.exit(0 if float('${spare}') >= 0 else 1)"; then
-      step tail_qwen3_32b_stage1 env STAGE1_ONLY=1 scripts/ladder_run.sh generate "$ADDON"
-    else
-      log "SKIP Qwen3-32B stage 1: projected past T+20 (its logit monitor is still reported)"
-    fi
+if ! addon_generated; then
+  if "${STATUS[@]}" weights "$ADDON"; then
+    # One engine load: logit monitor, then stage 1 (10 rollouts per question + benign twins x2); no stage 2.
+    step tail_qwen3_32b_stage1 env STAGE1_ONLY=1 scripts/ladder_run.sh generate "$ADDON"
+  else
+    log "SKIP Qwen3-32B: weights missing after the download attempt"
   fi
-else
-  log "SKIP Qwen3-32B: weights missing after the download attempt"
 fi
 if "${STATUS[@]}" stage1 "$ADDON" && ! "${STATUS[@]}" labeled "$ADDON"; then
   step tail_judge_qwen3_32b "$VLLM_PY" scripts/ladder_judge.py label --models "$ADDON"
 fi
+[[ -n "$validated_pid" ]] && wait "$validated_pid"
 for dir in "$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.ADDON_SUBJECTS['${ADDON}']['repo']))")" \
            "$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.SUBJECTS['${QWEN38}']['repo']))")"; do
   [[ -d "$dir" ]] && { log "deleting weights ${dir}"; rm -rf "$dir"; }
 done
 
-# --- 4. final analysis, report, commit ------------------------------------------------------------
+# --- 5. final analysis, report, commit ------------------------------------------------------------
 step tail_analysis_final "$MAIN_PY" scripts/ladder_analysis.py --out-name final --labeling-sheet 2
 step tail_report_final "$MAIN_PY" scripts/ladder_report.py
-git add results/exp02_vea_ladder figures/exp02_vea_ladder_*.png 2>/dev/null
+git add -A results/exp02_vea_ladder figures
 git commit -q -m "exp02_vea_ladder: final analysis, figures and auto-drafted report (UNVERIFIED)" \
   && log "committed $(git rev-parse --short HEAD)" || log "nothing to commit"
 log "ladder_tail complete"

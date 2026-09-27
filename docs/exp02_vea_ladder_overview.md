@@ -51,7 +51,7 @@ flowchart LR
 - **Qwen3** (temperature 0.6, the card's recommended settings): 0.6B, 1.7B, 4B, 8B, 14B.
 - **Qwen3.5** (temperature 1.0, presence penalty 1.5, the card's recommended settings): 0.8B, 2B, 4B, 9B, 27B.
 - **Qwen3.8-27B** (temperature 1.0, presence penalty 0, reasoning effort "medium"; the card's settings): compared with Qwen3.5-27B as an exploratory version comparison. It is also the judge, so its own labels are self-judged.
-- **Qwen3-32B add-on:** its logit monitor always runs. Its answers (10 per prompt, no stage 2) run at the end, only if the schedule still finishes by hour 21. Its bars are marked "stage 1 only", so its within-question estimate is less precise.
+- **Qwen3-32B add-on:** its logit monitor and its answers (10 per prompt, no stage 2) run at the end, after the validated results for the main ladder (originally only if the schedule still finished by hour 21; that cutoff was dropped on request at T+20.5, so the add-on always runs). Its bars are marked "stage 1 only", so its within-question estimate is less precise.
 - The two families use different sampling settings, so compare sizes *within* a family. Differences between families may partly reflect the settings.
 
 ## The key numbers, in plain words
