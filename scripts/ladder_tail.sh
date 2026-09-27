@@ -6,8 +6,9 @@
 #
 # 1. wait for ladder_chain.sh; if it is still running at T+20, write an interim analysis + report
 # 2. retry: generation of any subject not finished (weights still on disk), judging of any generated
-#    model without labels, the two validation runs; then delete the Qwen3.8-27B bf16 weights
-# 3. Qwen3-32B: logit monitor always; stage 1 + judging only if they are projected to end by T+20
+#    model without labels, the two validation runs
+# 3. Qwen3-32B: logit monitor always; stage 1 + judging only if they are projected to end by T+20;
+#    then delete the Qwen3-32B and Qwen3.8-27B weights (the latter are the judge until here)
 # 4. final analysis (+ labeling sheet 2), the auto-drafted report, git commit (no push)
 set -uo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -23,6 +24,8 @@ ADDON=Qwen3-32B
 T0_EPOCH=$(date -u -d "2026-09-26T20:30:00Z" +%s)
 INTERIM_AT_EPOCH=$((T0_EPOCH + 20 * 3600))
 export PYTHONDONTWRITEBYTECODE=1
+# ladder_run.sh passes this on to ladder_generate.py: the stage-2 size in force (ladder_config.STAGE2_EXTRA_USED)
+export STAGE2_EXTRA="$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.STAGE2_EXTRA_USED)")"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 
@@ -79,14 +82,7 @@ labeled=()
 for model in "${generated[@]}"; do "${STATUS[@]}" labeled "$model" && labeled+=("$model"); done
 if ((${#labeled[@]})); then
   step tail_validate_thinking "$VLLM_PY" scripts/ladder_judge.py validate --engine thinking --models "${labeled[@]}"
-  if "${STATUS[@]}" weights "$QWEN38"; then
-    step tail_validate_bf16 "$VLLM_PY" scripts/ladder_judge.py validate --engine bf16 --models "${labeled[@]}"
-  fi
-fi
-qwen38_dir="$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.SUBJECTS['${QWEN38}']['repo']))")"
-if [[ -d "$qwen38_dir" ]] && "${STATUS[@]}" generated "$QWEN38"; then
-  log "deleting weights ${qwen38_dir}"
-  rm -rf "$qwen38_dir"
+  step tail_validate_fp8 "$VLLM_PY" scripts/ladder_judge.py validate --engine fp8 --models "${labeled[@]}"
 fi
 
 # --- 3. Qwen3-32B add-on --------------------------------------------------------------------------
@@ -111,8 +107,10 @@ fi
 if "${STATUS[@]}" stage1 "$ADDON" && ! "${STATUS[@]}" labeled "$ADDON"; then
   step tail_judge_qwen3_32b "$VLLM_PY" scripts/ladder_judge.py label --models "$ADDON"
 fi
-addon_dir="$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.ADDON_SUBJECTS['${ADDON}']['repo']))")"
-[[ -d "$addon_dir" ]] && { log "deleting weights ${addon_dir}"; rm -rf "$addon_dir"; }
+for dir in "$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.ADDON_SUBJECTS['${ADDON}']['repo']))")" \
+           "$("$MAIN_PY" -c "import sys; sys.path.insert(0, 'scripts'); import ladder_config as c; print(c.hf_repo_dir(c.SUBJECTS['${QWEN38}']['repo']))")"; do
+  [[ -d "$dir" ]] && { log "deleting weights ${dir}"; rm -rf "$dir"; }
+done
 
 # --- 4. final analysis, report, commit ------------------------------------------------------------
 step tail_analysis_final "$MAIN_PY" scripts/ladder_analysis.py --out-name final --labeling-sheet 2

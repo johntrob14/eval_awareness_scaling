@@ -1,0 +1,14 @@
+[02:02:37] start fp8
+RESULT fp8                    1127 calls (758 B)    3.15 calls/s  input     2967 tok/s  output     233 tok/s  (358s)
+[02:09:28] start bf16
+RESULT bf16                   1127 calls (758 B)    6.42 calls/s  input     6046 tok/s  output     479 tok/s  (176s)
+[02:13:47] start fp8_triton_gdn
+RESULT fp8_triton_gdn         1127 calls (758 B)    3.23 calls/s  input     3041 tok/s  output     241 tok/s  (349s)
+[02:21:37] start fp8_no_prefix_cache
+RESULT fp8_no_prefix_cache    1127 calls (758 B)    3.43 calls/s  input     3236 tok/s  output     254 tok/s  (328s)
+[02:27:57] bench done
+[02:27:57] start bf16_no_prefix_cache
+RESULT bf16_no_prefix_cache   1127 calls (758 B)    6.65 calls/s  input     6263 tok/s  output     495 tok/s  (169s)
+[02:32:04] start bf16_triton_gdn
+RESULT bf16_triton_gdn        1127 calls (758 B)    6.25 calls/s  input     5886 tok/s  output     466 tok/s  (180s)
+[02:36:51] bench done

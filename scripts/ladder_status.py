@@ -31,7 +31,11 @@ def paths(model: str) -> dict:
 
 
 def generated(model: str) -> bool:
-    return paths(model)["stage1" if model in cfg.ADDON_SUBJECTS else "stage2"].exists()
+    try:
+        files = ladder_judge.generation_files(model, False)
+    except FileNotFoundError:
+        return False
+    return model in cfg.ADDON_SUBJECTS or len(files) == 2  # stage 1 + a stage-2 file
 
 
 def labeled(model: str) -> bool:

@@ -1,10 +1,10 @@
-"""exp02 step 3: judge generated rollouts with Qwen3.8-27B (FP8, non-thinking), plus judge checks.
+"""exp02 step 3: judge generated rollouts with Qwen3.8-27B (bf16, non-thinking), plus judge checks.
 
 Run in the vLLM venv:
     scripts/vllm_python.sh scripts/ladder_judge.py label --models Qwen3-0.6B Qwen3-1.7B ...
     scripts/vllm_python.sh scripts/ladder_judge.py label --models Qwen3-0.6B --smoke   # smoke-test caches
-    scripts/vllm_python.sh scripts/ladder_judge.py validate --engine thinking          # 500 items, FP8 thinking
-    scripts/vllm_python.sh scripts/ladder_judge.py validate --engine bf16              # same items, bf16 judge
+    scripts/vllm_python.sh scripts/ladder_judge.py validate --engine thinking          # 500 items, judge in thinking mode
+    scripts/vllm_python.sh scripts/ladder_judge.py validate --engine fp8               # same items, FP8 checkpoint
     /venv/main/bin/python  scripts/ladder_judge.py recall                              # regex recall on Bloom's quotes
 
 label, per subject model (one output file per model, skipped if it exists):
@@ -63,26 +63,25 @@ BOOLEAN_FIELDS = {"A": ["eval_aware", "placebo"], "B": ["refusal"]}
 
 
 def generation_files(model: str, smoke: bool) -> list[Path]:
-    """The exact stage-1 (and stage-2, if present) cache files ladder_generate.py wrote."""
+    """The stage-1 cache file plus one stage-2 file, if present: the run with STAGE2_EXTRA_USED
+    extra rollouts, else the 40-extra run (load_rollouts keeps its first STAGE2_EXTRA_USED)."""
     import ladder_generate
 
-    files = []
-    for extra in (cfg.STAGE2_EXTRA_ROLLOUTS, cfg.STAGE2_EXTRA_ROLLOUTS_FALLBACK):
-        paths = ladder_generate.cache_paths(model, SimpleNamespace(smoke=smoke, stage2_extra=extra))
-        if paths["stage1"] not in files:
-            files.append(paths["stage1"])
-        if paths["stage2"].exists():
-            files.append(paths["stage2"])
-    if not files[0].exists():
-        raise FileNotFoundError(f"{files[0]} missing; run ladder_generate.py --model {model} first")
-    return files
+    candidates = [ladder_generate.cache_paths(model, SimpleNamespace(smoke=smoke, stage2_extra=extra))
+                  for extra in (cfg.STAGE2_EXTRA_USED, cfg.STAGE2_EXTRA_ROLLOUTS)]
+    stage1 = candidates[0]["stage1"]
+    if not stage1.exists():
+        raise FileNotFoundError(f"{stage1} missing; run ladder_generate.py --model {model} first")
+    stage2 = next((p["stage2"] for p in candidates if p["stage2"].exists()), None)
+    return [stage1] + ([stage2] if stage2 else [])
 
 
 def load_rollouts(model: str, smoke: bool) -> list[dict]:
+    last_index = cfg.STAGE1_ROLLOUTS + cfg.STAGE2_EXTRA_USED
     rows = []
     for path in generation_files(model, smoke):
         rows.extend(json.loads(line) for line in path.open())
-    return rows
+    return [r for r in rows if r["stage"] != "stage2" or r["rollout_index"] < last_index]
 
 
 def prompt_texts() -> dict[tuple[str, str], str]:
@@ -173,13 +172,14 @@ def render(tokenizer, message: str, thinking: bool) -> list[int]:
 # --- Engine and parsing ----------------------------------------------------------------------
 
 
-def make_judge(engine: str):
+def make_judge(precision_check: bool = False):
+    """The bf16 judge, or the FP8 checkpoint for the precision check."""
     # DeepGEMM's FP8 kernels JIT-compile with nvcc >= 12.9 and this image has 12.8; vLLM then
     # uses its precompiled CUTLASS block-FP8 kernels. Must be set before vLLM is imported.
     os.environ["VLLM_USE_DEEP_GEMM"] = "0"
     from vllm import LLM
 
-    model = cfg.JUDGE_MODEL_BF16 if engine == "bf16" else cfg.JUDGE_MODEL
+    model = cfg.JUDGE_MODEL_PRECISION_CHECK if precision_check else cfg.JUDGE_MODEL
     path = cfg.model_dir(model["repo"], model["revision"])
     if not path.exists():
         raise FileNotFoundError(f"{path} missing; download {model['repo']}@{model['revision']}")
@@ -187,7 +187,7 @@ def make_judge(engine: str):
                max_model_len=cfg.JUDGE_MAX_MODEL_LEN,
                gpu_memory_utilization=cfg.VLLM_GPU_MEMORY_UTILIZATION,
                max_num_seqs=cfg.VLLM_MAX_NUM_SEQS, generation_config="vllm",
-               enable_prefix_caching=True, limit_mm_per_prompt={"image": 0, "video": 0})
+               enable_prefix_caching=cfg.JUDGE_PREFIX_CACHING, limit_mm_per_prompt={"image": 0, "video": 0})
 
 
 def sampling_for(call: str, seed: int, thinking: bool):
@@ -313,7 +313,8 @@ def build_calls(model: str, rollouts: list[dict], texts: dict, tokenizer) -> lis
 def label_path(model: str, smoke: bool, limit: int | None = None) -> Path:
     gen_key = "+".join(p.stem for p in generation_files(model, smoke))
     judge_key = cfg.content_key({
-        "generations": gen_key, "judge": cfg.JUDGE_MODEL, "sampling": cfg.JUDGE_SAMPLING_NONTHINKING,
+        "generations": gen_key, "stage2_extra_used": cfg.STAGE2_EXTRA_USED,
+        "judge": cfg.JUDGE_MODEL, "sampling": cfg.JUDGE_SAMPLING_NONTHINKING,
         "rubrics": [cfg.BLOOM_F1_RUBRIC, cfg.BLOOM_F2_RUBRIC, cfg.CALL_A_EXCERPT_NOTE,
                     cfg.CALL_A_EXTRA_QUESTIONS, cfg.CALL_B_TEMPLATE, cfg.CALL_B_CUT_NOTE],
         "schemas": [CALL_A_SCHEMA, CALL_B_SCHEMA],
@@ -332,7 +333,7 @@ def run_label(models: list[str], smoke: bool, limit: int | None) -> None:
     if not todo:
         print("all label files exist")
         return
-    llm = make_judge("fp8")
+    llm = make_judge()
     tokenizer = llm.get_tokenizer()
     texts = prompt_texts()
     for model in todo:
@@ -392,7 +393,7 @@ def run_validate(engine: str, models: list[str]) -> None:
     if out.exists():
         print(f"{out} exists")
         return
-    llm = make_judge("bf16" if engine == "bf16" else "fp8")
+    llm = make_judge(precision_check=(engine == "fp8"))
     tokenizer = llm.get_tokenizer()
     texts = prompt_texts()
     rollouts = {}
@@ -457,7 +458,7 @@ def main() -> None:
     parser.add_argument("--models", nargs="+", choices=list(cfg.ALL_SUBJECTS))
     parser.add_argument("--smoke", action="store_true", help="judge the smoke-test caches")
     parser.add_argument("--limit", type=int, help="judge at most this many rollouts per model (judge smoke test)")
-    parser.add_argument("--engine", choices=["thinking", "bf16"])
+    parser.add_argument("--engine", choices=["thinking", "fp8"])
     args = parser.parse_args()
     if args.mode == "label":
         run_label(args.models, args.smoke, args.limit)

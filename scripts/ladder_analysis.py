@@ -385,7 +385,7 @@ def judge_checks(models: list[str], smoke: bool) -> dict:
         entry["window_vs_full_cot"] = {"n": len(arr), "agreement": float(np.mean(arr[:, 0] == arr[:, 1])) if len(arr) else None,
                                        "kappa": kappa(arr[:, 0], arr[:, 1]) if len(arr) else None}
         out["per_model"][model] = entry
-    for engine in ("thinking", "bf16"):
+    for engine in ("thinking", "fp8"):
         files = sorted(cfg.JUDGE_DIR.glob(f"validation_{engine}_*.jsonl"))
         if not files or smoke:
             continue

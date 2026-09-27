@@ -323,7 +323,7 @@ def main() -> None:
     parser.add_argument("--stage1-only", action="store_true", help="skip stage 2 (Qwen3-32B add-on)")
     parser.add_argument("--logit-only", action="store_true",
                         help="stop after the logit monitor (Qwen3-32B when stage 1 does not fit the deadline)")
-    parser.add_argument("--stage2-extra", type=int, default=cfg.STAGE2_EXTRA_ROLLOUTS,
+    parser.add_argument("--stage2-extra", type=int, default=cfg.STAGE2_EXTRA_USED,
                         choices=[cfg.STAGE2_EXTRA_ROLLOUTS, cfg.STAGE2_EXTRA_ROLLOUTS_FALLBACK])
     args = parser.parse_args()
 

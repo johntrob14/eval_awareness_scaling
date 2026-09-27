@@ -54,7 +54,7 @@ def main() -> None:
         f"# {cfg.EXP_ID} report ({args.out_name}), auto-drafted from summary.json",
         "",
         f"EXP {cfg.EXP_ID} @ {commit} | model {', '.join(models)} | n=489 Fortress adversarial questions "
-        f"(10 stage-1 rollouts each; +{cfg.STAGE2_EXTRA_ROLLOUTS} on the 98 selected questions) | "
+        f"(10 stage-1 rollouts each; +{cfg.STAGE2_EXTRA_USED} on the 98 selected questions) | "
         f"seeds=per-rollout seeds from rollout_seed(prompt_set, item, index); engine {cfg.VLLM_ENGINE_SEED}; "
         f"bootstrap {cfg.BOOTSTRAP_SEED}",
         "",
@@ -62,7 +62,7 @@ def main() -> None:
         "refuse more often than rollouts that do not (M4, pre-registered primary with M1), and whether VEA "
         "rate or that effect jumps between adjacent sizes within a family.",
         "",
-        "Evidence grade: every VEA / refusal / placebo number below is **judge**-labeled (Qwen3.8-27B FP8, "
+        "Evidence grade: every VEA / refusal / placebo number below is **judge**-labeled (Qwen3.8-27B bf16, "
         "non-thinking); hand-label agreement is pending unless listed under judge checks. The logit-monitor "
         "AUROCs are judge-free.",
         "",
@@ -121,7 +121,7 @@ def main() -> None:
         "## Three dumbest ways this could be wrong",
         "",
         "1) The judge over-counts VEA (the Bloom rubric counts 'the user might be testing my boundaries'; Qwen3.8-27B "
-        "judges itself). Checked by: self-agreement, window vs full-CoT agreement, thinking-mode and bf16 re-judging "
+        "judges itself). Checked by: self-agreement, window vs full-CoT agreement, thinking-mode and FP8 re-judging "
         "(judge checks above), the positive control, and Bloom A1 rates. Not yet checked: hand labels (sheets in "
         "labeling/).",
         "2) The within-question gap comes from the adaptive design or from length, not VEA: stage-2 questions were "
@@ -135,10 +135,17 @@ def main() -> None:
         "## Deviations and run notes",
         "",
         *[f"- {d}" for d in manifest["deviations_from_plan"]],
-        "- The FP8 judge runs with VLLM_USE_DEEP_GEMM=0 (DeepGEMM needs nvcc >= 12.9; the image has 12.8): "
-        "vLLM's precompiled CUTLASS block-FP8 kernels instead. Same weights and prompts.",
+        "- Judge precision: the plan's main judge was the Qwen3.8-27B FP8 checkpoint. DeepGEMM needs nvcc >= 12.9 "
+        "(the image has 12.8), and vLLM's CUTLASS block-FP8 fallback judged at half the bf16 speed on the same "
+        "calls (log/bench/exp02_judge_engines.log), so the bf16 weights are the main judge and the FP8 checkpoint "
+        "re-judges the 500 validation items (the pre-registered precision check, roles swapped). Same prompts, "
+        "schemas and sampling.",
         "- Qwen3-32B runs at gpu_memory_utilization 0.92 instead of 0.85 (KV room; throughput only).",
         "- Smoke decision (results/exp02_vea_ladder/smoke_decision.json): no fallback, 40 stage-2 rollouts.",
+        "- Fallback applied at T+5.6 h (results/exp02_vea_ladder/fallback_decision.json): the judge ran at "
+        "~4.3k input tok/s, far below the plan's assumption, and the projection passed T+21. Stage-2 extra "
+        f"rollouts are {cfg.STAGE2_EXTRA_USED} for every model; the Qwen3 ladder was generated with 40 and "
+        f"only its first {cfg.STAGE2_EXTRA_USED} (the same per-index seeds) are judged and analysed.",
         "",
         "## For the human to verify",
         "",

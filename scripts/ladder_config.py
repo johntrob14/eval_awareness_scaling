@@ -76,8 +76,12 @@ RUN_ORDER = [
     "Qwen3.8-27B", "Qwen3-32B",
 ]
 
-JUDGE_MODEL = {"repo": "Qwen/Qwen3.8-27B-FP8", "revision": "017b9c7af6b5689d5dd426a76e0bc077eb5ca20a"}
-JUDGE_MODEL_BF16 = {"repo": "Qwen/Qwen3.8-27B", "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"}
+# The plan's judge was the FP8 checkpoint. Without DeepGEMM (it needs nvcc >= 12.9; this image has 12.8)
+# vLLM's CUTLASS block-FP8 path judged at half the bf16 speed on the same calls
+# (log/bench/exp02_judge_engines.log), so the bf16 weights judge and the FP8 checkpoint re-judges the
+# validation items: the pre-registered bf16-vs-FP8 check with the roles swapped (fallback_decision.json).
+JUDGE_MODEL = {"repo": "Qwen/Qwen3.8-27B", "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"}
+JUDGE_MODEL_PRECISION_CHECK = {"repo": "Qwen/Qwen3.8-27B-FP8", "revision": "017b9c7af6b5689d5dd426a76e0bc077eb5ca20a"}
 
 
 def hf_repo_dir(repo: str) -> Path:
@@ -157,6 +161,10 @@ EVAL_STATING_ROLLOUTS = 2  # the 11 excluded prompts: pipeline positive control 
 STAGE2_FRACTION = 0.20
 STAGE2_EXTRA_ROLLOUTS = 40
 STAGE2_EXTRA_ROLLOUTS_FALLBACK = 20  # pre-agreed fallback if the projection passes T+21
+# The fallback is in force (results/exp02_vea_ladder/fallback_decision.json). The Qwen3 ladder was
+# generated with 40 extra rollouts; rollout seeds depend only on the rollout index, so its first 20
+# are the rollouts a 20-extra run draws, and only those are judged and analysed.
+STAGE2_EXTRA_USED = STAGE2_EXTRA_ROLLOUTS_FALLBACK
 STAGE2_TIEBREAK_SEED = 20260926
 
 # Narrow, precision-oriented regex used only to choose which questions get stage 2.
@@ -267,10 +275,14 @@ JUDGE_MAX_TOKENS = 512
 JUDGE_THINKING_MAX_TOKENS = 8192
 JUDGE_LOGPROBS = 20
 JUDGE_MAX_MODEL_LEN = 32768  # Call B includes the full user prompt (up to 19,256 tokens)
+# Off: on this hybrid judge (linear + full attention) prefix caching only reuses whole 784-token blocks
+# (10-13% of the judge's input tokens) and was slower on the same calls in production order
+# (bf16 6.42 vs 6.65 calls/s, FP8 3.15 vs 3.43; log/bench/exp02_judge_engines.log).
+JUDGE_PREFIX_CACHING = False
 JUDGE_SELF_AGREEMENT_FRACTION = 0.05
 JUDGE_REGEX_NEGATIVE_AUDIT_FRACTION = 0.03
 JUDGE_WINDOW_VS_FULL_N = 200
-JUDGE_VALIDATION_N = 500  # re-judged in thinking mode and with the bf16 judge
+JUDGE_VALIDATION_N = 500  # re-judged in thinking mode and with the FP8 checkpoint
 JUDGE_CHECK_SEED = 20260927
 BLOOM_QUOTES_URL = "https://aranguri.github.io/eval_awareness/demo/evaluated.json"
 
