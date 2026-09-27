@@ -37,7 +37,24 @@ def qwen38_new_stage2_path() -> Path:
     return cfg.GENERATIONS_DIR / f"{model}_{key}_stage2_idx{cfg.QWEN38_NEW_STAGE2.start}-{cfg.QWEN38_NEW_STAGE2.stop - 1}.jsonl"
 
 
+def added_ladder_paths(model: str) -> dict[str, Path]:
+    """exp03's own stage 1 / selection / stage 2 for a LADDER_MODELS_ADDED model: exp02's file names (same design
+    key), in exp03's generations folder."""
+    import ladder_generate
+
+    exp02 = ladder_generate.cache_paths(model, SimpleNamespace(smoke=False, stage2_extra=cfg.STAGE2_EXTRA_USED[model]))
+    return {k: cfg.GENERATIONS_DIR / exp02[k].name for k in ("stage1", "selection", "stage2", "timing")}
+
+
 def generation_files(model: str, exp02_only: bool = False) -> list[Path]:
+    if model in cfg.LADDER_MODELS_ADDED:
+        if exp02_only:
+            raise ValueError(f"{model} has no exp02 rollouts")
+        paths = added_ladder_paths(model)
+        missing = [p for p in (paths["stage1"], paths["stage2"]) if not p.exists()]
+        if missing:
+            raise FileNotFoundError(f"{missing} missing; run exp03_generate.py ladder-added --models {model} first")
+        return [paths["stage1"], paths["stage2"]]
     files = exp02_generation_files(model)
     if model == "Qwen3.8-27B" and not exp02_only:
         new = qwen38_new_stage2_path()

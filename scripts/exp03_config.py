@@ -39,8 +39,13 @@ def figure_dir(run_name: str):
 # The 11 exp02 models with generations (Qwen3-32B's stage 1 was cancelled; its logit monitor exists).
 RELABEL_MODELS = [m for m in base.RUN_ORDER if m != "Qwen3-32B"]
 # Stage-2 rollouts used per model: Qwen3 was generated with 40 extra, Qwen3.5 with 20; Qwen3.8 gets 20 more here.
-STAGE2_EXTRA_USED = {m: 40 if base.ALL_SUBJECTS[m]["family"] in ("qwen3", "qwen3.8") else 20 for m in RELABEL_MODELS}
 QWEN38_NEW_STAGE2 = range(base.STAGE1_ROLLOUTS + 20, base.STAGE1_ROLLOUTS + 40)  # rollout indices 30..49
+# Added after the pre-registration (requested 2026-09-27 22:10 UTC; qwen3_32b_addition.json): Qwen3-32B gets the
+# full ladder treatment, run after everything else. exp03 generates its stage 1 and stage 2 (40 extra, as for Qwen3)
+# with exp02's generation code, then relabels it. Reported in its own analysis run; "final" keeps RELABEL_MODELS.
+LADDER_MODELS_ADDED = ["Qwen3-32B"]
+STAGE2_EXTRA_USED = {m: 40 if base.ALL_SUBJECTS[m]["family"] in ("qwen3", "qwen3.8") else 20
+                     for m in RELABEL_MODELS + LADDER_MODELS_ADDED}
 
 # Speculative decoding with the checkpoint's own multi-token-prediction head (Qwen3.5 / Qwen3.8 only).
 # Rejection sampling keeps the sampling distribution; exp03 smoke-tests this on Qwen3.8-27B.

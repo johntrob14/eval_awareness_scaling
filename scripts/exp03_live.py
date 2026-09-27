@@ -49,6 +49,9 @@ def pid_alive(pid: int) -> bool:
     return True
 
 
+LABELLED_MODELS = cfg.RELABEL_MODELS + cfg.LADDER_MODELS_ADDED
+
+
 def available_inputs() -> dict[str, list[str]]:
     """Models whose inputs exist, per input kind, using the same paths exp03_analysis.py reads."""
     decision = exp03_analysis.judge_decision()
@@ -58,14 +61,14 @@ def available_inputs() -> dict[str, list[str]]:
         if path.with_name(path.stem + "_callB.jsonl").exists():
             judged_interventions.append(m)
     return {
-        "judge labels (F1-F4)": [m for m in cfg.RELABEL_MODELS if exp03_judge.label_path(m, decision).exists()],
+        "judge labels (F1-F4)": [m for m in LABELLED_MODELS if exp03_analysis.labels_exist(exp03_judge, m, decision)],
         "judged interventions (F5)": judged_interventions,
         "logit v2 (F6)": [m for m in cfg.LOGIT_V2_MODELS if any(cfg.LOGIT_DIR.glob(f"{m}_*.jsonl"))],
     }
 
 
 def status_markdown(inputs: dict[str, list[str]]) -> str:
-    universe = {"judge labels (F1-F4)": cfg.RELABEL_MODELS,
+    universe = {"judge labels (F1-F4)": LABELLED_MODELS,
                 "judged interventions (F5)": cfg.INTERVENTION_MODELS + cfg.INTERVENTION_MODELS_ADDED,
                 "logit v2 (F6)": cfg.LOGIT_V2_MODELS}
     lines = [f"# exp03 live preview, updated {utc_now()}", "",
@@ -94,7 +97,8 @@ def render(inputs: dict[str, list[str]]) -> bool:
     for d in scratch_dirs:
         shutil.rmtree(d, ignore_errors=True)
     started = time.time()
-    proc = subprocess.run(["nice", "-n", "19", sys.executable, "exp03_analysis.py", "--out-name", SCRATCH_NAME],
+    proc = subprocess.run(["nice", "-n", "19", sys.executable, "exp03_analysis.py", "--out-name", SCRATCH_NAME,
+                           "--with-added-ladder"],
                           cwd=SCRIPTS_DIR, capture_output=True, text=True, check=False)
     if proc.returncode != 0:
         print(f"{utc_now()} analysis failed (exit {proc.returncode}); live folders left as they were\n"

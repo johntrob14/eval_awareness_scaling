@@ -146,6 +146,45 @@ def run_stage2() -> None:
     print(f"[stage2] {model}: {len(rows)} rollouts in {(time.time() - start) / 60:.1f} min", flush=True)
 
 
+def run_ladder_added(model: str) -> None:
+    """Stage 1 and stage 2 for a LADDER_MODELS_ADDED model, as exp02's ladder_generate.main does them (same engine
+    settings, requests, seeds and stage-2 selection), written to exp03's generations folder."""
+    paths = data.added_ladder_paths(model)
+    if paths["stage2"].exists():
+        print(f"[ladder-added] {paths['stage2'].name} exists")
+        return
+    prompts = gen02.load_prompts(base.ALL_SUBJECTS[model]["family"])
+    timing = {}
+    started = time.time()
+    llm = gen02.make_llm(model)
+    tokenizer = llm.get_tokenizer()
+    if paths["stage1"].exists():
+        stage1_rows = gen02.read_jsonl(paths["stage1"])
+    else:
+        requests = (gen02.rollout_requests(prompts["fortress_adv"], range(base.STAGE1_ROLLOUTS), "stage1")
+                    + gen02.rollout_requests(prompts["fortress_benign"], range(base.BENIGN_TWIN_ROLLOUTS), "stage1")
+                    + gen02.rollout_requests(prompts["fortress_eval_stating"], range(base.EVAL_STATING_ROLLOUTS), "stage1"))
+        t0 = time.time()
+        stage1_rows = gen02.generate(llm, model, requests, tokenizer)
+        write_new(paths["stage1"], stage1_rows)
+        timing["stage1_s"], timing["stage1"] = time.time() - t0, gen02.summarize(stage1_rows)
+        print(f"[ladder-added] {model}: stage 1 {timing['stage1_s'] / 60:.1f} min {json.dumps(timing['stage1'])}", flush=True)
+    selection = gen02.select_stage2(stage1_rows, prompts["fortress_adv"])
+    paths["selection"].write_text(json.dumps(selection, indent=2) + "\n")
+    chosen = set(selection["selected_item_ids"])
+    requests = gen02.rollout_requests([i for i in prompts["fortress_adv"] if i["item_id"] in chosen],
+                                      range(base.STAGE1_ROLLOUTS, base.STAGE1_ROLLOUTS + cfg.STAGE2_EXTRA_USED[model]),
+                                      "stage2")
+    t0 = time.time()
+    stage2_rows = gen02.generate(llm, model, requests, tokenizer)
+    write_new(paths["stage2"], stage2_rows)
+    timing["stage2_s"], timing["stage2"] = time.time() - t0, gen02.summarize(stage2_rows)
+    timing["total_s"] = time.time() - started
+    paths["timing"].write_text(json.dumps(timing, indent=2) + "\n")
+    print(f"[ladder-added] {model}: stage 2 {timing['stage2_s'] / 60:.1f} min on {len(chosen)} questions; "
+          f"total {timing['total_s'] / 3600:.2f} h", flush=True)
+
+
 # --- Sentence boundaries in token space --------------------------------------------------------------------
 
 SENTENCE_END = re.compile(r"[.!?][\"')\]*]*$")
@@ -435,7 +474,7 @@ def run_interventions(model: str, limit_bases: int | None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("mode", choices=["mtp-smoke", "stage2", "interventions", "bases"])
+    parser.add_argument("mode", choices=["mtp-smoke", "stage2", "interventions", "bases", "ladder-added"])
     parser.add_argument("--mtp-tokens", type=int, default=None)
     parser.add_argument("--models", nargs="+", default=cfg.INTERVENTION_MODELS)
     parser.add_argument("--limit-bases", type=int, default=None, help="interventions: first N bases (smoke)")
@@ -448,6 +487,10 @@ def main() -> None:
         for model in args.models:
             tokenizer = tokenizer_for(model)
             show_splices(model, build_bases(model, tokenizer), tokenizer)
+    elif args.mode == "ladder-added":
+        if len(args.models) != 1 or args.models[0] not in cfg.LADDER_MODELS_ADDED:
+            parser.error(f"ladder-added takes one of {cfg.LADDER_MODELS_ADDED}")
+        run_ladder_added(args.models[0])
     else:  # one model per process: vLLM does not reliably free GPU memory between engines
         if len(args.models) != 1:
             parser.error("interventions takes exactly one model")

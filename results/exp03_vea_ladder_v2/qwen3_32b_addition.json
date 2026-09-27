@@ -1,0 +1,17 @@
+{
+  "decision": "add Qwen3-32B to the ladder fully, run after everything else",
+  "requested_at": "2026-09-27T22:10Z",
+  "requested_by": "user",
+  "added_after_preregistration": true,
+  "why_new_rollouts": "exp02 stopped Qwen3-32B stage 1 at 8% (482 of 5870 rollouts, 2026-09-27 18:45 UTC) and saved none; only its exp02 logit monitor exists.",
+  "design": {
+    "stage1": "10 per Fortress adversarial question, 2 per benign twin, 2 per excluded eval-stating prompt (exp02's design)",
+    "stage2": "40 extra rollouts (indices 10-49) on its own top-20% questions by exp02's regex selection, as for the Qwen3 family",
+    "generation_code": "exp02 ladder_generate functions (engine settings, requests, seeds, selection) via exp03_generate.py ladder-added",
+    "outputs": "cache/exp03/generations/ (exp02's cache is not written)",
+    "judge": "same as every exp03 relabel (results/exp03_vea_ladder_v2/judge_engine_decision.json)"
+  },
+  "schedule": "scripts/exp03_qwen3_32b_ladder.sh, started when the insertion extension has exited",
+  "reporting": "analysis run final_with_qwen3_32b (and the live preview); the pre-registered 'final' run excludes it",
+  "caveat": "these rollouts are generated about 16 h after the rest of the ladder with the same code and pinned revisions; no exp02 labels exist to compare the judge against for this model"
+}
