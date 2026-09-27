@@ -54,7 +54,10 @@ def available_inputs() -> dict[str, list[str]]:
     decision = exp03_analysis.judge_decision()
     judged_interventions = []
     for m in cfg.INTERVENTION_MODELS + cfg.INTERVENTION_MODELS_ADDED:
-        path = exp03_generate.intervention_path(m)
+        try:
+            path = exp03_generate.intervention_path(m)
+        except FileNotFoundError:  # a GENERATED_IN_EXP03 model whose rollouts do not exist yet
+            continue
         if path.with_name(path.stem + "_callB.jsonl").exists():
             judged_interventions.append(m)
     return {

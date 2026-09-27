@@ -1,5 +1,6 @@
 #!/bin/bash
-# Sentence insertion/removal on Qwen3.5-0.8B/2B/4B (exp03_config.INTERVENTION_MODELS_ADDED, added after the
+# Sentence insertion/removal on Qwen3.5-0.8B/2B/4B and Qwen3-0.6B/1.7B/4B/8B (exp03_config.INTERVENTION_MODELS_ADDED;
+# Qwen3-32B's runs in exp03_qwen3_32b_ladder.sh, after its relabel). Added after the
 # pre-registration). Starts when the main chain has finished successfully; exp03_qwen3_32b_ladder.sh runs the final
 # analysis afterwards.
 set -euo pipefail
@@ -17,7 +18,7 @@ if ! tail -1 $LOG/full_chain.log | grep -q "== done"; then
     echo "main chain did not finish (last line: $(tail -1 $LOG/full_chain.log)); not starting"; exit 1
 fi
 
-MODELS="Qwen3.5-0.8B Qwen3.5-2B Qwen3.5-4B"
+MODELS="Qwen3.5-0.8B Qwen3.5-2B Qwen3.5-4B Qwen3-0.6B Qwen3-1.7B Qwen3-4B Qwen3-8B"
 for m in $MODELS; do
     step "$m download + interventions"
     download $m

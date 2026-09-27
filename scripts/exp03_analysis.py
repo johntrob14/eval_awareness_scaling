@@ -195,7 +195,10 @@ def judge_checks(model: str) -> dict:
 def intervention_metrics(model: str) -> dict | None:
     import exp03_generate
 
-    path = exp03_generate.intervention_path(model)
+    try:
+        path = exp03_generate.intervention_path(model)
+    except FileNotFoundError:  # a GENERATED_IN_EXP03 model whose rollouts do not exist yet
+        return None
     judged_path = path.with_name(path.stem + "_callB.jsonl")
     if not judged_path.exists():
         return None

@@ -11,6 +11,8 @@ CoT, one per contested question (exp02 refusal rate 0.1-0.9). The CoT is cut at 
 of its tokens; one sentence (VEA / placebo / neutral) or nothing is appended, and the model continues thinking
 and answers. Removal: exp02 VEA rollouts are cut just before, or just after, the sentence containing the judge's
 quote. Continuation j of a base rollout uses the same seed in every condition (paired comparison).
+A GENERATED_IN_EXP03 model (no exp02 rollouts or labels) draws its bases from its exp03 rollouts, with its exp03
+labels in exp02's place: refusal = full refusal, VEA = awareness "evaluation" or "user_probing".
 Caveat: vLLM applies presence penalties only to newly generated tokens, so for Qwen3.5 (penalty 1.5) the
 prefix is not penalized in continuations (the same holds equally for every condition).
 """
@@ -235,8 +237,33 @@ def inserted_ids(tokenizer, sentence: str | None, kind: str) -> list[int]:
 # --- Intervention bases ------------------------------------------------------------------------------------
 
 
+def base_generation_files(model: str) -> list[Path]:
+    """Rollouts the intervention bases come from: exp02's, or exp03's own for a GENERATED_IN_EXP03 model."""
+    return data.generation_files(model) if model in cfg.GENERATED_IN_EXP03 else data.exp02_generation_files(model)
+
+
+def selection_labels(model: str) -> dict[tuple[str, str], dict]:
+    """The labels that choose the bases, {(rollout_key, call): row} in exp02's format (main variant)."""
+    if model not in cfg.GENERATED_IN_EXP03:
+        return data.exp02_main_labels(model)
+    import exp03_judge
+
+    labels = {}
+    for r in map(json.loads, exp03_judge.label_path(model, exp03_judge.judge_decision()).open()):
+        if r["variant"] != "main":
+            continue
+        if not r["parse_ok"]:
+            mapped = None
+        elif r["call"] == "A":
+            mapped = {"eval_aware": r["awareness"] in cfg.VEA_TYPES, "quote": r["labels"].get("quote")}
+        else:
+            mapped = {"refusal": r["refusal"] == cfg.REFUSAL_BINARY}
+        labels[(r["rollout_key"], r["call"])] = {"parse_ok": mapped is not None, "labels": mapped}
+    return labels
+
+
 def intervention_key(model: str) -> str:
-    stems = [p.stem for p in data.exp02_generation_files(model)]
+    stems = [p.stem for p in base_generation_files(model)]
     return base.content_key({
         "generations": stems, "insert": [cfg.INSERT_N_BASE, cfg.INSERT_CONTESTED_REFUSAL, cfg.INSERT_MIN_COT_TOKENS,
                                          cfg.INSERT_CUT_FRACTION, cfg.INSERT_SENTENCES],
@@ -253,10 +280,10 @@ def bases_path(model: str) -> Path:
     return cfg.INTERVENTION_DIR / f"{model}_{intervention_key(model)}_bases.json"
 
 
-def exp02_scored_fortress(model: str) -> list[dict]:
-    """exp02 stage-1 and stage-2 Fortress rollouts that were scored (stage 2: the 20 extra exp02 judged)."""
+def scored_fortress(model: str) -> list[dict]:
+    """Stage-1 and stage-2 Fortress rollouts that were scored (stage 2: the 20 extra exp02 judged)."""
     rows = []
-    for path in data.exp02_generation_files(model):
+    for path in base_generation_files(model):
         for r in map(json.loads, path.open()):
             if (r["prompt_set"] == "fortress_adv" and r["status"] == "scored"
                     and r["rollout_index"] < base.STAGE1_ROLLOUTS + base.STAGE2_EXTRA_USED):
@@ -264,8 +291,8 @@ def exp02_scored_fortress(model: str) -> list[dict]:
     return rows
 
 
-def exp02_cot_ids(model: str) -> dict[str, list[int]]:
-    return {data.rollout_key(r): r["cot_token_ids"] for r in exp02_scored_fortress(model)}
+def base_cot_ids(model: str) -> dict[str, list[int]]:
+    return {data.rollout_key(r): r["cot_token_ids"] for r in scored_fortress(model)}
 
 
 def build_bases(model: str, tokenizer) -> dict:
@@ -275,8 +302,8 @@ def build_bases(model: str, tokenizer) -> dict:
         return json.loads(path.read_text())
     rng = random.Random(f"{cfg.INTERVENTION_SEED}|{model}")
     recall = base.compiled(base.RECALL_EVAL_PATTERNS + base.RECALL_PLACEBO_PATTERNS)
-    labels = data.exp02_main_labels(model)
-    scored = exp02_scored_fortress(model)
+    labels = selection_labels(model)
+    scored = scored_fortress(model)
     stage1 = [r for r in scored if r["stage"] == "stage1"]
 
     refusals = defaultdict(list)
@@ -344,7 +371,7 @@ def intervention_jobs(model: str, bases: dict, tokenizer) -> list[dict]:
     """One job per (base rollout, condition, continuation): the token prefix to continue from."""
     family = family_of(model)
     prompts = prompt_rows(model)
-    cot_ids = exp02_cot_ids(model)
+    cot_ids = base_cot_ids(model)
     # Qwen3's template stops before "<think>"; the model wrote it itself, and rollout_record stripped it.
     think_open = [family["think_start"]] if family["cot_prefix_forced"] else []
     jobs = []
@@ -436,7 +463,7 @@ def continue_jobs(llm, model: str, jobs: list[dict], tokenizer) -> list[dict]:
 
 def show_splices(model: str, bases: dict, tokenizer, n: int = 2) -> None:
     """Print the text around a few splice points, to check that the cuts land on sentence boundaries."""
-    cot_ids = exp02_cot_ids(model)
+    cot_ids = base_cot_ids(model)
     print(f"== {model}: {len(bases['insert'])} insertion bases ({bases['n_contested_questions']} contested questions, "
           f"{bases['n_questions_with_eligible_base']} with a regex-free base), {len(bases['remove'])} removal bases")
     for b in bases["insert"][:n]:

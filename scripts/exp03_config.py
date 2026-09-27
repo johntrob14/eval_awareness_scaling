@@ -142,8 +142,10 @@ SMOKE_RATE_TOLERANCE = 0.01
 
 # --- Causal test: sentence insertion and removal -----------------------------------------------------
 INTERVENTION_MODELS = ["Qwen3-14B", "Qwen3.5-9B", "Qwen3.5-27B", "Qwen3.8-27B"]  # pre-registered (manifest.json)
-# Added by the user after the pre-registration (2026-09-27, run by exp03_insertion_extension.sh); reported separately.
-INTERVENTION_MODELS_ADDED = ["Qwen3.5-0.8B", "Qwen3.5-2B", "Qwen3.5-4B"]
+# Added by the user after the pre-registration (2026-09-27; exp03_insertion_extension.sh, and exp03_qwen3_32b_ladder.sh
+# for Qwen3-32B); reported separately.
+INTERVENTION_MODELS_ADDED = ["Qwen3.5-0.8B", "Qwen3.5-2B", "Qwen3.5-4B",
+                             "Qwen3-0.6B", "Qwen3-1.7B", "Qwen3-4B", "Qwen3-8B", "Qwen3-32B"]
 INTERVENTION_SEED = 20260928
 INSERT_N_BASE = 150  # base rollouts per model: one per contested question, no regex hit anywhere in the CoT
 INSERT_CONTESTED_REFUSAL = (0.1, 0.9)  # exp02 stage-1 refusal rate of the question
