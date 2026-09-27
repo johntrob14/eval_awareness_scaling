@@ -298,10 +298,12 @@ def report(summary: dict) -> str:
         md.append(f"| {m} | {fmt(e['M4_length_matched'])} | {fmt(e['M4_any_refusal'])} | {fmt(e['M4_early_vea'])} | "
                   f"{fmt(e['M4_late_vea'])} | {fmt(e['M4_type_evaluation'])} | {fmt(e['M4_type_user_probing'])} |")
     md += ["\n## Sentence insertion / removal (judge-scored refusal; paired by base rollout)\n",
+           "(added) = added after the pre-registration.\n",
            "| model | VEA - none | placebo - none | neutral - none | VEA - placebo | keep - remove |", "|---|---|---|---|---|---|"]
     for m, e in summary["interventions"].items():
         if e:
-            md.append(f"| {m} | " + " | ".join(fmt(e.get(k)) for k in (
+            tag = " (added)" if m in cfg.INTERVENTION_MODELS_ADDED else ""
+            md.append(f"| {m}{tag} | " + " | ".join(fmt(e.get(k)) for k in (
                 "insert_vea_minus_none_R", "insert_placebo_minus_none_R", "insert_neutral_minus_none_R",
                 "insert_vea_minus_placebo_R", "remove_keep_minus_remove_R")) + " |")
     md += ["\n## Logit monitor v2 (judge-free): paired win rate %, side b > side a\n",
@@ -347,7 +349,7 @@ def main() -> None:
     for m in models:
         per_model[m] = a02.model_metrics(tables[m], a02.load_logit(m, False), boot) | exp03_metrics(tables[m], boot, reference_bins)
         print(f"{m}: VEA {per_model[m]['M1_vea_rate']['value']:.3f}  M4 {per_model[m]['M4_within_question_pooled']['value']:+.3f}", flush=True)
-    interventions = {m: intervention_metrics(m) for m in cfg.INTERVENTION_MODELS}
+    interventions = {m: intervention_metrics(m) for m in cfg.INTERVENTION_MODELS + cfg.INTERVENTION_MODELS_ADDED}
     logit_v2 = {m: logit_v2_metrics(m) for m in cfg.LOGIT_V2_MODELS}
     figures = exp03_figures.render_all(per_model, interventions, logit_v2, fig_dir)
     summary = a02.strip_draws({
