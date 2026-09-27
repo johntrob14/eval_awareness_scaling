@@ -1,0 +1,46 @@
+{
+ "counts": {
+  "insert:vea": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 777.375,
+   "full_refusal": 14,
+   "judged": 24
+  },
+  "insert:placebo": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 570.1249999999999,
+   "full_refusal": 10,
+   "judged": 24
+  },
+  "insert:neutral": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 1017.4166666666665,
+   "full_refusal": 7,
+   "judged": 24
+  },
+  "insert:none": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 1027.0,
+   "full_refusal": 6,
+   "judged": 24
+  },
+  "remove:keep": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 115.87499999999997,
+   "full_refusal": 21,
+   "judged": 24
+  },
+  "remove:remove": {
+   "n": 24,
+   "scored": 24,
+   "mean_new_cot_tokens": 146.875,
+   "full_refusal": 22,
+   "judged": 24
+  }
+ }
+}
