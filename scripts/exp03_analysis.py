@@ -353,8 +353,10 @@ def main() -> None:
     questions = sorted({i for (s, i) in data.prompt_texts() if s == "fortress_adv"}, key=int)
     boot = a02.QuestionBootstrap(questions)
     tables = {m: load_table(m) for m in models}
-    stage1 = pd.concat([t[(t.prompt_set == "fortress_adv") & (t.stage == "stage1") & t.scored] for t in tables.values()])
-    reference_bins = pd.cut(stage1.n_cot_tokens, LENGTH_BINS, right=False).value_counts(sort=False).to_numpy().astype(float)
+    reference_bins = np.zeros(len(LENGTH_BINS) - 1)
+    if tables:  # a live-preview run can start before any model is relabelled
+        stage1 = pd.concat([t[(t.prompt_set == "fortress_adv") & (t.stage == "stage1") & t.scored] for t in tables.values()])
+        reference_bins = pd.cut(stage1.n_cot_tokens, LENGTH_BINS, right=False).value_counts(sort=False).to_numpy().astype(float)
     per_model = {}
     for m in models:
         per_model[m] = a02.model_metrics(tables[m], a02.load_logit(m, False), boot) | exp03_metrics(tables[m], boot, reference_bins)

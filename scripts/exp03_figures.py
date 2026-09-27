@@ -244,6 +244,9 @@ def render_all(per_model: dict, interventions: dict, logit_v2: dict, fig_dir: Pa
     status = {}
     for name, draw in jobs.items():
         path = fig_dir / f"{name}.png"
+        if not per_model and name.split("_")[0] in ("F1", "F2", "F3", "F4"):
+            status[name] = {"path": str(path), "status": "skipped: no relabelled models yet"}
+            continue
         try:
             status[name] = {"path": str(path.relative_to(cfg.REPO_ROOT)), "status": draw(path) or "ok"}
         except Exception as exc:
