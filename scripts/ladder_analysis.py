@@ -6,7 +6,8 @@ Run in /venv/main:
     python scripts/ladder_analysis.py --out-name final --labeling-sheet 2
 
 Outputs go to results/exp02_vea_ladder/<out-name>/ (final: results/exp02_vea_ladder/) and
-figures/exp02_vea_ladder_<out-name>_F*.png; nothing is overwritten.
+figures/exp02_vea_ladder_<out-name>_F*.png (+ interactive .html, see ladder_figures.py);
+nothing is overwritten.
 
 Bootstrap: every CI resamples the 489 Fortress questions with replacement, using ONE shared
 set of resampled indices for all models and metrics, so differences between models (jump
@@ -23,14 +24,11 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import ladder_config as cfg
+import ladder_figures
 import ladder_generate
 import ladder_judge
 import warnings
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import ConstantInputWarning, rankdata, spearmanr
@@ -40,7 +38,6 @@ warnings.filterwarnings("ignore", category=ConstantInputWarning)
 warnings.filterwarnings("ignore", message="Mean of empty slice")
 warnings.filterwarnings("ignore", message="invalid value encountered")
 
-FAMILY_COLORS = {"qwen3": "#1f77b4", "qwen3.5": "#ff7f0e", "qwen3.8": "#2ca02c"}
 FRAMINGS = ["safety", "capabilities", "both", "generic"]
 LENGTH_BINS = [0, 500, 1000, 2000, 4000, cfg.THINK_CAP_TOKENS + 1]
 
@@ -445,146 +442,6 @@ def jump_tests(metrics: dict[str, dict], models: list[str]) -> dict:
     return out
 
 
-# --- Figures ----------------------------------------------------------------------------------------------
-
-
-def bar_positions(models: list[str]) -> tuple[np.ndarray, list[str], list[str]]:
-    labels = [m + ("\n(stage 1 only)" if m in cfg.ADDON_SUBJECTS else "") for m in models]
-    colors = [FAMILY_COLORS[cfg.ALL_SUBJECTS[m]["family"]] for m in models]
-    return np.arange(len(models)), labels, colors
-
-
-def err(entry: dict) -> tuple[float, float]:
-    lo, hi = entry["ci"]
-    return entry["value"] - lo, hi - entry["value"]
-
-
-def family_legend(ax, models, extra=()):
-    from matplotlib.patches import Patch
-    fams = sorted({cfg.ALL_SUBJECTS[m]["family"] for m in models}, key=list(FAMILY_COLORS).index)
-    handles = [Patch(color=FAMILY_COLORS[f], label=f) for f in fams] + list(extra)
-    ax.legend(handles=handles, loc="upper left", fontsize=8)
-
-
-def fig_vea(metrics, models, path):
-    x, labels, colors = bar_positions(models)
-    fig, ax = plt.subplots(figsize=(1.0 * len(models) + 3, 4.5))
-    bottom = np.zeros(len(models))
-    shades = {"safety": 1.0, "capabilities": 0.7, "both": 0.5, "generic": 0.3}
-    for f in FRAMINGS:
-        vals = np.array([metrics[m][f"M2_rate_{f}"]["value"] for m in models]) * 100
-        ax.bar(x, vals, bottom=bottom, color=colors, alpha=shades[f], edgecolor="k", linewidth=0.3,
-               label=f"framing: {f}" if f == FRAMINGS[0] else None)
-        for xi, b, v in zip(x, bottom, vals):
-            if v > 0.6:
-                ax.text(xi, b + v / 2, f[:3], ha="center", va="center", fontsize=6)
-        bottom += vals
-    totals = [metrics[m]["M1_vea_rate"] for m in models]
-    ax.errorbar(x, [t["value"] * 100 for t in totals], yerr=np.array([err(t) for t in totals]).T * 100,
-                fmt="none", ecolor="k", capsize=3)
-    bloom = [(xi, cfg.BLOOM_A1_QWEN3_VEA[m] * 100) for xi, m in zip(x, models) if m in cfg.BLOOM_A1_QWEN3_VEA]
-    if bloom:
-        ax.scatter(*zip(*bloom), marker="D", color="k", zorder=5, label="Bloom et al. A1 (GPT-5-mini judge)")
-    ax.set_xticks(x, labels, fontsize=8, rotation=30, ha="right")
-    ax.set_ylabel("VEA rate, % of scored rollouts (judge)")
-    ax.set_title("F1: verbalized eval awareness on Fortress (stage 1), stacked by framing\n"
-                 "(saf/cap/bot/gen = safety/capabilities/both/generic); 95% CI over questions", fontsize=10)
-    family_legend(ax, models, extra=ax.get_legend_handles_labels()[0][-1:] if bloom else [])
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
-    plt.close(fig)
-
-
-def grouped_bars(ax, models, series: list[tuple[str, list[dict | None]]], width=0.8):
-    x, labels, colors = bar_positions(models)
-    k = len(series)
-    for j, (name, entries) in enumerate(series):
-        offs = x - width / 2 + (j + 0.5) * width / k
-        for xi, e, c in zip(offs, entries, colors):
-            if e is None or not np.isfinite(e["value"]):
-                continue
-            alpha = 1 - 0.6 * j / max(k - 1, 1)
-            underpowered = bool(e.get("underpowered"))
-            ax.bar(xi, e["value"] * 100, width / k, color=c, alpha=alpha * (0.35 if underpowered else 1),
-                   hatch="//" if underpowered else None, edgecolor="k", linewidth=0.3)
-            if not underpowered:
-                ax.errorbar(xi, e["value"] * 100, yerr=np.nan_to_num(np.array([err(e)]).T * 100), fmt="none", ecolor="k", capsize=2)
-        ax.bar(np.nan, np.nan, color="gray", alpha=1 - 0.6 * j / max(k - 1, 1), label=name)
-    ax.set_xticks(x, labels, fontsize=8, rotation=30, ha="right")
-    ax.axhline(0, color="k", linewidth=0.5)
-    ax.legend(fontsize=7)
-
-
-def fig_refusal(metrics, models, path):
-    fig, ax = plt.subplots(figsize=(1.0 * len(models) + 3, 4.5))
-    grouped_bars(ax, models, [("adversarial (stage 1)", [metrics[m]["M3_refusal_adversarial"] for m in models]),
-                              ("benign twin", [metrics[m]["M3_refusal_benign"] for m in models])])
-    ax.set_ylabel("refusal rate, % (judge)")
-    ax.set_title("F2: refusal on Fortress adversarial prompts vs their benign twins; 95% CI")
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
-    plt.close(fig)
-
-
-def fig_within(metrics, models, path):
-    fig, ax = plt.subplots(figsize=(1.2 * len(models) + 3, 4.5))
-    grouped_bars(ax, models, [
-        ("pooled VEA vs non-VEA", [metrics[m]["M4_within_question_pooled"] for m in models]),
-        ("safety-framed VEA vs non-VEA", [metrics[m]["M4_framing_safety"] for m in models]),
-        ("capabilities-framed VEA vs non-VEA", [metrics[m]["M4_framing_capabilities"] for m in models]),
-        ("placebo (jailbreak-noticing) vs neither", [metrics[m]["M6_placebo_within_question"] for m in models]),
-    ])
-    ax.set_ylabel("within-question refusal difference, pp (judge)")
-    ax.set_title("F3: within-question refusal difference (Mantel-Haenszel); 95% CI\n"
-                 "faded hatched bars: < 20 informative questions (underpowered, no CI shown)", fontsize=10)
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
-    plt.close(fig)
-
-
-def fig_across(metrics, models, path):
-    x, labels, colors = bar_positions(models)
-    fig, axes = plt.subplots(1, 2, figsize=(2 * len(models) + 3, 4.5))
-    for ax, key, ylabel, scale in ((axes[0], "M5a_gap_nonvea_refusal", "refusal gap, pp", 100),
-                                   (axes[1], "M5b_spearman_v_r0", "Spearman rho", 1)):
-        entries = [metrics[m][key] for m in models]
-        vals = [e["value"] * scale for e in entries]
-        ax.bar(x, vals, color=colors, edgecolor="k", linewidth=0.3)
-        ax.errorbar(x, vals, yerr=np.nan_to_num(np.array([err(e) for e in entries]).T * scale), fmt="none", ecolor="k", capsize=3)
-        ax.set_xticks(x, labels, fontsize=8, rotation=30, ha="right")
-        ax.axhline(0, color="k", linewidth=0.5)
-        ax.set_ylabel(ylabel + " (judge)")
-    axes[0].set_title("F4a: non-VEA refusal, questions with >= 1 VEA rollout in 10 minus none")
-    axes[1].set_title("F4b: Spearman(VEA share, non-VEA refusal) across questions")
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
-    plt.close(fig)
-
-
-def fig_auroc(metrics, models, path):
-    have = [m for m in models if f"M7_auroc_vs_{cfg.LOGIT_MONITOR_CONTRASTS[0]}" in metrics[m]]
-    if not have:
-        return
-    fig, axes = plt.subplots(1, 2, figsize=(2.2 * len(have) + 3, 4.8))
-    primary = f"M7_auroc_vs_{cfg.LOGIT_MONITOR_CONTRASTS[0]}"
-    names = [("primary", "raw score"), ("contrast", "contrast score"),
-             ("primary_length_residualized", "raw, length-residualized"), ("length_only_baseline", "prompt length only")]
-    grouped_bars(axes[0], have, [(label, [ {**metrics[m][primary][k], "value": metrics[m][primary][k]["value"]} for m in have])
-                                 for k, label in names])
-    axes[0].set_ylim(0, 100)
-    axes[0].axhline(50, color="gray", linestyle="--", linewidth=0.8)
-    axes[0].set_ylabel("AUROC x 100")
-    axes[0].set_title(f"F5a: logit monitor, Fortress adversarial vs {cfg.LOGIT_MONITOR_CONTRASTS[0]}")
-    grouped_bars(axes[1], have, [(f"vs {o}", [metrics[m].get(f"M7_auroc_vs_{o}", {}).get("primary") for m in have])
-                                 for o in cfg.LOGIT_MONITOR_CONTRASTS])
-    axes[1].set_ylim(0, 100)
-    axes[1].axhline(50, color="gray", linestyle="--", linewidth=0.8)
-    axes[1].set_title("F5b: raw score AUROC, Fortress adversarial vs each set")
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
-    plt.close(fig)
-
-
 # --- Samples and labeling sheets ------------------------------------------------------------------------
 
 
@@ -753,11 +610,7 @@ def main() -> None:
     for p in figures.values():
         if p.exists():
             raise FileExistsError(f"{p} exists; figures are never overwritten")
-    fig_vea(metrics, models, figures["F1"])
-    fig_refusal(metrics, models, figures["F2"])
-    fig_within(metrics, models, figures["F3"])
-    fig_across(metrics, models, figures["F4"])
-    fig_auroc({**metrics, **logit_only}, [m for m in cfg.RUN_ORDER if m in metrics or m in logit_only], figures["F5"])
+    figure_status = ladder_figures.render_all(metrics, models, figures, logit_only)
 
     summary = strip_draws({
         "exp_id": cfg.EXP_ID, "out_name": args.out_name, "models": models,
@@ -767,6 +620,7 @@ def main() -> None:
         "per_model": metrics, "logit_monitor_only": logit_only, "jump_tests": jumps,
         "judge_checks": checks, "judge_swap_vs_bloom_a1": judge_swap,
         "figures": {k: str(v.relative_to(cfg.REPO_ROOT)) for k, v in figures.items()},
+        "figure_status": figure_status,
         "bootstrap": {"unit": "Fortress question", "iters": cfg.BOOTSTRAP_ITERS, "seed": cfg.BOOTSTRAP_SEED, "shared_across_models": True},
     })
     summary_path.write_text(json.dumps(summary, indent=2, default=str) + "\n")
