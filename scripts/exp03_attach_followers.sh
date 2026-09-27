@@ -1,7 +1,7 @@
 #!/bin/bash
 # Attach the followers to a running exp03 main chain, given its PID. Each starts when the previous one exits:
 #   1. exp03_insertion_extension.sh (checks the main chain's "== done"),
-#   2. exp03_qwen3_32b_ladder.sh (Qwen3-32B on the full ladder; also checks "== done"),
+#   2. exp03_qwen3_32b_ladder.sh (Qwen3-32B's rollouts and labels, then the final analysis; also checks "== done"),
 #   3. the live-figure watcher (exp03_live.py) runs throughout and stops after follower 2 has exited.
 # Usage: bash scripts/exp03_attach_followers.sh <chain pid>
 set -euo pipefail

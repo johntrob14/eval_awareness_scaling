@@ -152,7 +152,7 @@ def exp03_metrics(df: pd.DataFrame, boot: a02.QuestionBootstrap, reference_bins:
 
 def exp02_agreement(model: str, df: pd.DataFrame) -> dict:
     """Kappa between exp03 and exp02 labels on the same rollouts (VEA and refusal, binary)."""
-    if model in cfg.LADDER_MODELS_ADDED:  # no exp02 rollouts, so no exp02 labels
+    if model in cfg.GENERATED_IN_EXP03:  # no exp02 rollouts, so no exp02 labels
         return {}
     old = data.exp02_main_labels(model)
     pairs = {"vea": [], "refusal": []}
@@ -282,10 +282,6 @@ def report(summary: dict) -> str:
     pm = summary["per_model"]
     md = ["# exp03 auto report\n", ("Judge-scored numbers are marked (judge); logit-monitor numbers are judge-free. "
           "95% CIs over Fortress questions; pp = percentage points.\n")]
-    added = [m for m in pm if m in cfg.LADDER_MODELS_ADDED]
-    if added:
-        md.append(f"Added to the ladder after the pre-registration: {', '.join(added)} (rollouts generated in exp03; "
-                  "no exp02 labels to compare with).\n")
     md += ["## Pre-registered primary outcomes\n",
           "| model | M1 VEA % (judge) | M1 length-standardized % | M4 refusal diff pp (judge) | M6 specificity pp (judge) |",
           "|---|---|---|---|---|"]
@@ -343,7 +339,7 @@ def report(summary: dict) -> str:
 def labels_exist(exp03_judge, model: str, decision: dict) -> bool:
     try:
         return exp03_judge.label_path(model, decision).exists()
-    except FileNotFoundError:  # an added model whose generations do not exist yet
+    except FileNotFoundError:  # a GENERATED_IN_EXP03 model whose rollouts do not exist yet
         return False
 
 
@@ -351,14 +347,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out-name", required=True)
     parser.add_argument("--models", nargs="+", default=None)
-    parser.add_argument("--with-added-ladder", action="store_true",
-                        help="also include cfg.LADDER_MODELS_ADDED (added after the pre-registration)")
     args = parser.parse_args()
     import exp03_judge
 
     decision = judge_decision()
-    requested = (args.models or cfg.RELABEL_MODELS) + (cfg.LADDER_MODELS_ADDED if args.with_added_ladder else [])
-    models = [m for m in requested if labels_exist(exp03_judge, m, decision)]
+    models = [m for m in args.models or cfg.RELABEL_MODELS if labels_exist(exp03_judge, m, decision)]
     out_dir = cfg.RESULTS_DIR / args.out_name
     fig_dir = cfg.figure_dir(args.out_name)
     for path in (out_dir / "summary.json", fig_dir):

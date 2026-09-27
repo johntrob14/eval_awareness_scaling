@@ -234,12 +234,13 @@ def smoke_items() -> list[dict]:
     validation = json.loads((base.CACHE_DIR / "judge" / "validation_items.json").read_text())
     validation_keys = {(v["rollout_key"], v["call"]) for v in validation}
     items = []
-    for model in cfg.RELABEL_MODELS:
+    exp02_models = [m for m in cfg.RELABEL_MODELS if m not in cfg.GENERATED_IN_EXP03]
+    for model in exp02_models:
         labels = data.exp02_main_labels(model)
         rollouts = {data.rollout_key(r): r for r in data.load_rollouts(model, exp02_only=True)}
         for call, n_total in cfg.SMOKE_RANDOM_ITEMS.items():
             pool = sorted(k for k in labels if k[1] == call and k[0] in rollouts)
-            n = round(n_total / len(cfg.RELABEL_MODELS))
+            n = round(n_total / len(exp02_models))
             picked = [("random", k) for k in rng.sample(pool, min(n, len(pool)))]
             picked += [("validation", k) for k in pool if k in validation_keys]
             for source, (key, _) in picked:

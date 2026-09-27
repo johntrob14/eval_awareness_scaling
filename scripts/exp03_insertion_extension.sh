@@ -1,7 +1,7 @@
 #!/bin/bash
 # Sentence insertion/removal on Qwen3.5-0.8B/2B/4B (exp03_config.INTERVENTION_MODELS_ADDED, added after the
-# pre-registration). Starts when exp03_full_chain.sh has finished successfully; the analysis is written to its own
-# folder, so the pre-registered "final" analysis stays as it was.
+# pre-registration). Starts when the main chain has finished successfully; exp03_qwen3_32b_ladder.sh runs the final
+# analysis afterwards.
 set -euo pipefail
 cd "$(dirname "$0")"
 VLLM=./vllm_python.sh
@@ -27,6 +27,4 @@ for m in $MODELS; do
 done
 step "judge: intervention answers of the added models"
 $VLLM exp03_judge.py interventions --models $MODELS > $LOG/judge_interventions_added.log 2>&1
-step "analysis"
-$PY exp03_analysis.py --out-name final_with_qwen35_small_insertion > $LOG/analysis_final_with_qwen35_small_insertion.log 2>&1
 step "done"
