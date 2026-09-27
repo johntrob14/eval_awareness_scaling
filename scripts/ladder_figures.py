@@ -1,8 +1,9 @@
 """exp02 figures F1-F5 in Plotly: a PNG plus an interactive HTML (same stem) per figure.
 
-ladder_analysis.py calls render_all() with in-memory metrics. To re-render from a summary.json (run in /venv/main):
-    python scripts/ladder_figures.py results/exp02_vea_ladder/summary.json --replace
-    python scripts/ladder_figures.py results/exp02_vea_ladder/summary.json --out-dir /tmp/figs
+ladder_analysis.py calls render_all() with in-memory metrics; each analysis run gets its own folder,
+figures/exp02_vea_ladder/<out-name>/. To re-render from a summary.json (run in /venv/main):
+    python scripts/ladder_figures.py results/exp02_vea_ladder/summary.json --out-dir figures/exp02_vea_ladder/rerender
+    python scripts/ladder_figures.py results/exp02_vea_ladder/summary.json --replace   # the recorded paths
 
 Conventions shared by every figure:
 - x axis: models grouped by family (Qwen3 / Qwen3.5 / Qwen3.8) and ordered by size. Color never encodes family.
@@ -17,7 +18,6 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import re
 import traceback
 from pathlib import Path
 
@@ -283,15 +283,6 @@ def fig_auroc(metrics, models, path):
         fig.update_yaxes(title_text="AUROC × 100", range=[0, 100], row=row, col=1)
         style_model_axis(fig, models, mark_addons=False, row=row)
     save(fig, path)
-
-
-def superseded_figures(current: dict[str, Path]) -> list[Path]:
-    """This experiment's figure files (PNG + HTML) from earlier analysis runs, i.e. tagged sets other than `current`.
-    The final set (untagged names, linked from the report) is never included; any set can be re-rendered from
-    its summary.json with this script's CLI."""
-    keep = {p for path in current.values() for p in (path, path.with_suffix(".html"))}
-    tagged = re.compile(rf"{re.escape(cfg.EXP_ID)}_.+_F[1-5]_\w+\.(png|html)")
-    return sorted(p for p in cfg.FIGURES_DIR.glob(f"{cfg.EXP_ID}_*") if tagged.fullmatch(p.name) and p not in keep)
 
 
 def render_all(metrics: dict, models: list[str], paths: dict[str, Path], logit_only: dict | None = None) -> dict[str, str]:

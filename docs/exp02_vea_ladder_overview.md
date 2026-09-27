@@ -87,7 +87,7 @@ results/exp02_vea_ladder/
 cache/exp02/generations/   every answer: prompt id, stage, reasoning, answer, token ids, truncation flag
 cache/exp02/logit_monitor/ per-prompt phrase log-probabilities
 cache/exp02/judge/         every judge call with its labels and decision-token probabilities
-figures/exp02_vea_ladder_F1..F5.png
+figures/exp02_vea_ladder/<run>/F1..F5.png   one folder per analysis run (final/, all_models_validated/, ...)
 ```
 
 Plus a report in the AGENTS.md format, marked **UNVERIFIED** until you've checked it.

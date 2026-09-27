@@ -38,8 +38,9 @@ READ_SAMPLES_PATH = RESULTS_DIR / "read_samples.md"
 LABELING_DIR = RESULTS_DIR / "labeling"
 
 
-def figure_path(name: str) -> Path:
-    return FIGURES_DIR / f"{EXP_ID}_{name}.png"
+def figure_dir(run_name: str) -> Path:
+    """One folder per analysis run; figures in it are never overwritten or deleted."""
+    return FIGURES_DIR / EXP_ID / run_name
 
 
 # --- Subject models ----------------------------------------------------------

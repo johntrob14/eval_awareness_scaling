@@ -6,9 +6,8 @@ Run in /venv/main:
     python scripts/ladder_analysis.py --out-name final --labeling-sheet 2
 
 Outputs go to results/exp02_vea_ladder/<out-name>/ (final: results/exp02_vea_ladder/) and
-figures/exp02_vea_ladder_<out-name>_F*.png (+ interactive .html, see ladder_figures.py);
-nothing is overwritten. Once the new figures render, figures of earlier non-final runs are
-deleted (re-render them from their summary.json with ladder_figures.py if needed).
+figures/exp02_vea_ladder/<out-name>/F*.png (+ interactive .html, see ladder_figures.py);
+nothing is overwritten or deleted: a run whose outputs already exist stops before writing.
 
 Bootstrap: every CI resamples the 489 Fortress questions with replacement, using ONE shared
 set of resampled indices for all models and metrics, so differences between models (jump
@@ -600,22 +599,18 @@ def main() -> None:
     judge_swap = {m: {"ours": metrics[m]["M1_vea_rate"]["value"], "ours_ci": metrics[m]["M1_vea_rate"]["ci"],
                       "bloom_a1": cfg.BLOOM_A1_QWEN3_VEA[m]} for m in models if m in cfg.BLOOM_A1_QWEN3_VEA}
 
-    tag = "" if args.out_name == "final" else f"{args.out_name}_"
+    fig_dir = cfg.figure_dir(args.out_name)
+    if fig_dir.exists() and any(fig_dir.iterdir()):
+        raise FileExistsError(f"{fig_dir} is not empty; figures are never overwritten")
+    fig_dir.mkdir(parents=True, exist_ok=True)
     figures = {
-        "F1": cfg.figure_path(f"{tag}F1_vea_rate"),
-        "F2": cfg.figure_path(f"{tag}F2_refusal"),
-        "F3": cfg.figure_path(f"{tag}F3_within_question"),
-        "F4": cfg.figure_path(f"{tag}F4_across_question"),
-        "F5": cfg.figure_path(f"{tag}F5_logit_monitor_auroc"),
+        "F1": fig_dir / "F1_vea_rate.png",
+        "F2": fig_dir / "F2_refusal.png",
+        "F3": fig_dir / "F3_within_question.png",
+        "F4": fig_dir / "F4_across_question.png",
+        "F5": fig_dir / "F5_logit_monitor_auroc.png",
     }
-    for p in figures.values():
-        if p.exists():
-            raise FileExistsError(f"{p} exists; figures are never overwritten")
     figure_status = ladder_figures.render_all(metrics, models, figures, logit_only)
-    if not smoke and all(s == "ok" for s in figure_status.values()):
-        for p in ladder_figures.superseded_figures(figures):
-            p.unlink()
-            print(f"removed superseded figure {p.relative_to(cfg.REPO_ROOT)}")
 
     summary = strip_draws({
         "exp_id": cfg.EXP_ID, "out_name": args.out_name, "models": models,
