@@ -7,7 +7,8 @@ Run in /venv/main:
 
 Outputs go to results/exp02_vea_ladder/<out-name>/ (final: results/exp02_vea_ladder/) and
 figures/exp02_vea_ladder_<out-name>_F*.png (+ interactive .html, see ladder_figures.py);
-nothing is overwritten.
+nothing is overwritten. Once the new figures render, figures of earlier non-final runs are
+deleted (re-render them from their summary.json with ladder_figures.py if needed).
 
 Bootstrap: every CI resamples the 489 Fortress questions with replacement, using ONE shared
 set of resampled indices for all models and metrics, so differences between models (jump
@@ -611,6 +612,10 @@ def main() -> None:
         if p.exists():
             raise FileExistsError(f"{p} exists; figures are never overwritten")
     figure_status = ladder_figures.render_all(metrics, models, figures, logit_only)
+    if not smoke and all(s == "ok" for s in figure_status.values()):
+        for p in ladder_figures.superseded_figures(figures):
+            p.unlink()
+            print(f"removed superseded figure {p.relative_to(cfg.REPO_ROOT)}")
 
     summary = strip_draws({
         "exp_id": cfg.EXP_ID, "out_name": args.out_name, "models": models,

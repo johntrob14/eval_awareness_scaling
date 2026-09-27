@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import traceback
 from pathlib import Path
 
@@ -282,6 +283,15 @@ def fig_auroc(metrics, models, path):
         fig.update_yaxes(title_text="AUROC × 100", range=[0, 100], row=row, col=1)
         style_model_axis(fig, models, mark_addons=False, row=row)
     save(fig, path)
+
+
+def superseded_figures(current: dict[str, Path]) -> list[Path]:
+    """This experiment's figure files (PNG + HTML) from earlier analysis runs, i.e. tagged sets other than `current`.
+    The final set (untagged names, linked from the report) is never included; any set can be re-rendered from
+    its summary.json with this script's CLI."""
+    keep = {p for path in current.values() for p in (path, path.with_suffix(".html"))}
+    tagged = re.compile(rf"{re.escape(cfg.EXP_ID)}_.+_F[1-5]_\w+\.(png|html)")
+    return sorted(p for p in cfg.FIGURES_DIR.glob(f"{cfg.EXP_ID}_*") if tagged.fullmatch(p.name) and p not in keep)
 
 
 def render_all(metrics: dict, models: list[str], paths: dict[str, Path], logit_only: dict | None = None) -> dict[str, str]:
