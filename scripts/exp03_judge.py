@@ -351,14 +351,25 @@ def build_calls(model: str, rollouts: list[dict], texts: dict, tokenizer, answer
     return calls + checks
 
 
-def run_label(models: list[str], limit: int | None) -> None:
+class LazyJudge:
+    """The judge engine, loaded on first use, so one process can relabel a model and judge its interventions."""
+
+    def __init__(self, engine: str):
+        self.engine, self.llm, self.tokenizer = engine, None, None
+
+    def get(self):
+        if self.llm is None:
+            self.llm, self.tokenizer = make_judge(self.engine), judge_tokenizer(self.engine)
+        return self.llm, self.tokenizer
+
+
+def run_label(models: list[str], limit: int | None, judge: LazyJudge | None = None) -> None:
     decision = judge_decision()
     todo = [m for m in models if not label_path(m, decision, limit).exists()]
     if not todo:
         print("[label] all done")
         return
-    llm = make_judge(decision["engine"])
-    tokenizer = judge_tokenizer(decision["engine"])
+    llm, tokenizer = (judge or LazyJudge(decision["engine"])).get()
     texts = data.prompt_texts()
     for model in todo:
         rollouts = data.load_rollouts(model)
@@ -374,7 +385,7 @@ def run_label(models: list[str], limit: int | None) -> None:
 # --- interventions -----------------------------------------------------------------------------------------
 
 
-def run_interventions(models: list[str], smoke_bases: int | None) -> None:
+def run_interventions(models: list[str], smoke_bases: int | None, judge: LazyJudge | None = None) -> None:
     """Call B on every continuation answer of the insertion/removal experiment (or of its smoke run)."""
     import exp03_generate
 
@@ -390,8 +401,7 @@ def run_interventions(models: list[str], smoke_bases: int | None) -> None:
     if not todo:
         print("[interventions] nothing to judge")
         return
-    llm = make_judge(decision["engine"])
-    tokenizer = judge_tokenizer(decision["engine"])
+    llm, tokenizer = (judge or LazyJudge(decision["engine"])).get()
     texts = data.prompt_texts()
     for model, source, out in todo:
         calls = []
@@ -413,7 +423,8 @@ def run_interventions(models: list[str], smoke_bases: int | None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("mode", choices=["smoke", "label", "interventions"])
+    parser.add_argument("mode", choices=["smoke", "label", "interventions", "model"],
+                        help="model = label, then interventions, for --models with one judge engine load")
     parser.add_argument("--engine", choices=cfg.JUDGE_ENGINES, help="smoke only")
     parser.add_argument("--models", nargs="+", default=None)
     parser.add_argument("--limit", type=int, default=None, help="label only: first N rollouts per model (testing)")
@@ -425,8 +436,20 @@ def main() -> None:
         run_smoke(args.engine)
     elif args.mode == "label":
         run_label(args.models or cfg.RELABEL_MODELS, args.limit)
-    else:
+    elif args.mode == "interventions":
         run_interventions(args.models or cfg.INTERVENTION_MODELS, args.smoke_bases)
+    else:
+        if not args.models:
+            sys.exit("model mode needs --models")
+        judge = LazyJudge(judge_decision()["engine"])
+        run_label(args.models, None, judge)
+        run_interventions([m for m in args.models if m in cfg.INTERVENTION_MODELS + cfg.INTERVENTION_MODELS_ADDED],
+                          None, judge)
+    # vLLM's engine teardown can abort the process after the outputs are written (it did for exp03_logit.py);
+    # every output above is renamed into place when complete, so skip interpreter teardown.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
 
 
 if __name__ == "__main__":

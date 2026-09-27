@@ -20,8 +20,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import random
 import re
+import sys
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -450,6 +452,11 @@ def main() -> None:
         if len(args.models) != 1:
             parser.error("interventions takes exactly one model")
         run_interventions(args.models[0], args.limit_bases)
+    # vLLM's engine teardown can abort the process after the outputs are written (it did for exp03_logit.py);
+    # outputs are renamed into place when complete, so skip interpreter teardown.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
 
 
 if __name__ == "__main__":
