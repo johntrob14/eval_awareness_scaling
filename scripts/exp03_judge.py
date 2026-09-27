@@ -5,7 +5,7 @@ exp02; regex-negative rollouts are awareness "none" (a 3% full-CoT audit checks 
 for every scored rollout on the stored answer (at most 384 tokens).
 
 Modes (all run with scripts/vllm_python.sh):
-  smoke --engine bf16|fp8   judge the smoke items (random exp02 calls + exp02's 500 validation items)
+  smoke --engine bf16|fp8|qwen35_9b   judge the smoke items (random exp02 calls + exp02's 500 validation items)
   label --models ...        relabel every rollout of the given models (engine/format from the smoke decision)
   interventions --models    Call B on the answers of the insertion/removal continuations
 Outputs: cache/exp03/{smoke,judge}/*.jsonl, one row per call. Existing outputs are never overwritten.
@@ -87,15 +87,26 @@ def call_seed(key: str, call: str, variant: str) -> int:
 # --- Engine -----------------------------------------------------------------------------------------------
 
 
+def judge_dir(engine: str) -> Path:
+    weights = cfg.JUDGE_ENGINE_WEIGHTS[engine]
+    return base.model_dir(weights["repo"], weights["revision"])
+
+
+def judge_tokenizer(engine: str):
+    from transformers import AutoTokenizer
+
+    return AutoTokenizer.from_pretrained(str(judge_dir(engine)))
+
+
 def make_judge(engine: str):
-    """Qwen3.8-27B from the bf16 checkpoint; engine "fp8" has vLLM quantize the weights to FP8 at load time."""
+    """Qwen3.8-27B from the bf16 checkpoint ("fp8": vLLM quantizes it to FP8 at load time), or Qwen3.5-9B bf16."""
     if engine not in cfg.JUDGE_ENGINES:
         raise ValueError(engine)
     # DeepGEMM's FP8 kernels JIT-compile with nvcc >= 12.9 and this image has 12.8. Set before importing vLLM.
     os.environ["VLLM_USE_DEEP_GEMM"] = "0"
     from vllm import LLM
 
-    path = base.model_dir(cfg.JUDGE_MODEL["repo"], cfg.JUDGE_MODEL["revision"])
+    path = judge_dir(engine)
     quantization = {"quantization": "fp8"} if engine == "fp8" else {}
     return LLM(model=str(path), tokenizer=str(path), seed=base.VLLM_ENGINE_SEED,
                max_model_len=base.JUDGE_MAX_MODEL_LEN, gpu_memory_utilization=base.VLLM_GPU_MEMORY_UTILIZATION,
@@ -255,8 +266,12 @@ def smoke_items() -> list[dict]:
 
 # bf16 runs label-first twice with different seeds (the noise floor) and reasoning-first once; FP8 runs
 # label-first with the second seed set, so FP8-vs-bf16(rep1) has the same seed structure as bf16 rep2-vs-rep1.
-SMOKE_PASSES = {"bf16": [("label_first", "rep1"), ("label_first", "rep2"), ("reasoning_first", "rep1")],
-                "fp8": [("label_first", "rep2")]}
+# The Qwen3.5-9B candidate is compared in the chosen reasoning-first format, so bf16 also gets a second
+# reasoning-first pass: that format's own noise floor.
+SMOKE_PASSES = {"bf16": [("label_first", "rep1"), ("label_first", "rep2"), ("reasoning_first", "rep1"),
+                         ("reasoning_first", "rep2")],
+                "fp8": [("label_first", "rep2")],
+                "qwen35_9b": [("reasoning_first", "rep1"), ("reasoning_first", "rep2")]}
 
 
 def smoke_pass_path(engine: str, answer_format: str, rep: str) -> Path:
@@ -264,15 +279,13 @@ def smoke_pass_path(engine: str, answer_format: str, rep: str) -> Path:
 
 
 def run_smoke(engine: str) -> None:
-    from transformers import AutoTokenizer
-
     items = smoke_items()
     passes = [(f, rep) for f, rep in SMOKE_PASSES[engine] if not smoke_pass_path(engine, f, rep).exists()]
     if not passes:
         print(f"[smoke] {engine}: all passes exist")
         return
     llm = make_judge(engine)
-    tokenizer = AutoTokenizer.from_pretrained(str(base.model_dir(cfg.JUDGE_MODEL["repo"], cfg.JUDGE_MODEL["revision"])))
+    tokenizer = judge_tokenizer(engine)
     for answer_format, rep in passes:
         calls = []
         for i, item in enumerate(items):
@@ -302,7 +315,8 @@ def judge_decision() -> dict:
 def label_path(model: str, decision: dict, limit: int | None = None) -> Path:
     gen_key = "+".join(p.stem for p in data.generation_files(model))
     key = base.content_key({
-        "generations": gen_key, "stage2_extra_used": cfg.STAGE2_EXTRA_USED[model], "judge": cfg.JUDGE_MODEL,
+        "generations": gen_key, "stage2_extra_used": cfg.STAGE2_EXTRA_USED[model],
+        "judge": cfg.JUDGE_ENGINE_WEIGHTS[decision["engine"]],
         "engine": decision["engine"], "answer_format": decision["answer_format"], "sampling": cfg.JUDGE_SAMPLING,
         "rubrics": [cfg.CALL_A_RUBRIC, cfg.CALL_A_FORMAT, cfg.CALL_B_RUBRIC, cfg.CALL_B_FORMAT, cfg.CALL_B_CUT_NOTE],
         "regex": [base.RECALL_EVAL_PATTERNS, base.RECALL_PLACEBO_PATTERNS, base.WINDOW_SENTENCES_EACH_SIDE,
@@ -338,15 +352,13 @@ def build_calls(model: str, rollouts: list[dict], texts: dict, tokenizer, answer
 
 
 def run_label(models: list[str], limit: int | None) -> None:
-    from transformers import AutoTokenizer
-
     decision = judge_decision()
     todo = [m for m in models if not label_path(m, decision, limit).exists()]
     if not todo:
         print("[label] all done")
         return
     llm = make_judge(decision["engine"])
-    tokenizer = AutoTokenizer.from_pretrained(str(base.model_dir(cfg.JUDGE_MODEL["repo"], cfg.JUDGE_MODEL["revision"])))
+    tokenizer = judge_tokenizer(decision["engine"])
     texts = data.prompt_texts()
     for model in todo:
         rollouts = data.load_rollouts(model)
@@ -365,7 +377,6 @@ def run_label(models: list[str], limit: int | None) -> None:
 def run_interventions(models: list[str], smoke_bases: int | None) -> None:
     """Call B on every continuation answer of the insertion/removal experiment (or of its smoke run)."""
     import exp03_generate
-    from transformers import AutoTokenizer
 
     decision = judge_decision()
     todo = []
@@ -380,7 +391,7 @@ def run_interventions(models: list[str], smoke_bases: int | None) -> None:
         print("[interventions] nothing to judge")
         return
     llm = make_judge(decision["engine"])
-    tokenizer = AutoTokenizer.from_pretrained(str(base.model_dir(cfg.JUDGE_MODEL["repo"], cfg.JUDGE_MODEL["revision"])))
+    tokenizer = judge_tokenizer(decision["engine"])
     texts = data.prompt_texts()
     for model, source, out in todo:
         calls = []

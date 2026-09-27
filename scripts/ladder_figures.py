@@ -131,12 +131,13 @@ def add_underpowered_key(fig, first_series, *, legend="legend", row=None) -> Non
                   row=row, col=1 if row else None)
 
 
-def grouped_series(fig, models, series, *, row=None, legend="legend") -> None:
+def grouped_series(fig, models, series, *, row=None, legend="legend", scale=100.0, showlegend=True) -> None:
     """series: list of (name, color, entries); adds the striped-bar key when any bar is underpowered."""
     underpowered = False
     for name, color, entries in series:
-        underpowered |= add_bar_series(fig, models, entries, name, color, row=row, legend=legend)
-    if underpowered:
+        underpowered |= add_bar_series(fig, models, entries, name, color, scale=scale, row=row, legend=legend,
+                                       showlegend=showlegend)
+    if underpowered and showlegend:
         add_underpowered_key(fig, series[0][0], legend=legend, row=row)
 
 
@@ -218,20 +219,36 @@ def fig_refusal(metrics, models, path):
     save(fig, path)
 
 
+WITHIN_SERIES = [  # (legend name, color, risk-difference key, within-question correlation key)
+    ("pooled: VEA vs non-VEA", OKABE_ITO["gray"], "M4_within_question_pooled", "M4_within_corr_pooled"),
+    ("safety-framed VEA vs non-VEA", FRAMING_COLORS["safety"], "M4_framing_safety", "M4_within_corr_framing_safety"),
+    ("capabilities-framed VEA vs non-VEA", FRAMING_COLORS["capabilities"], "M4_framing_capabilities",
+     "M4_within_corr_framing_capabilities"),
+    ("placebo: jailbreak-noticing vs neither", OKABE_ITO["orange"], "M6_placebo_within_question", "M6_placebo_within_corr"),
+]
+
+
 def fig_within(metrics, models, path):
+    """F3a: Mantel-Haenszel risk difference. F3b (summaries that have it): within-question correlation."""
     models = display_order(models)
-    fig = go.Figure()
-    grouped_series(fig, models, [
-        ("pooled: VEA vs non-VEA", OKABE_ITO["gray"], [metrics[m]["M4_within_question_pooled"] for m in models]),
-        ("safety-framed VEA vs non-VEA", FRAMING_COLORS["safety"], [metrics[m]["M4_framing_safety"] for m in models]),
-        ("capabilities-framed VEA vs non-VEA", FRAMING_COLORS["capabilities"], [metrics[m]["M4_framing_capabilities"] for m in models]),
-        ("placebo: jailbreak-noticing vs neither", OKABE_ITO["orange"], [metrics[m]["M6_placebo_within_question"] for m in models]),
-    ])
-    base_layout(fig, "F3: within-question refusal difference (Mantel-Haenszel)",
-                "refusal rate of flagged rollouts minus other rollouts to the same question; 95% CI over questions",
-                figure_width(len(models), 4), 560, legend_title="comparison")
-    fig.update_yaxes(title_text="refusal difference, pp (judge)")
-    style_model_axis(fig, models, mark_addons=True)
+    with_corr = all(corr_key in metrics[m] for m in models for *_, corr_key in WITHIN_SERIES)
+    rows = 2 if with_corr else 1
+    fig = make_subplots(rows=rows, cols=1, vertical_spacing=0.24, subplot_titles=(
+        "F3a: refusal rate of flagged rollouts minus other rollouts to the same question (Mantel-Haenszel)",
+        "F3b: within-question correlation of flag and refusal (φ, question fixed effects)")[:rows])
+    subplot_titles_left(fig)
+    grouped_series(fig, models, [(name, color, [metrics[m][rd] for m in models])
+                                 for name, color, rd, _ in WITHIN_SERIES], row=1)
+    if with_corr:
+        grouped_series(fig, models, [(name, color, [metrics[m][corr] for m in models])
+                                     for name, color, _, corr in WITHIN_SERIES], row=2, scale=1.0, showlegend=False)
+    base_layout(fig, "F3: within-question association between VEA and refusal", "95% CI over questions",
+                figure_width(len(models), 4), 560 if rows == 1 else 900, legend_title="comparison")
+    fig.update_yaxes(title_text="refusal difference, pp (judge)", row=1, col=1)
+    if with_corr:
+        fig.update_yaxes(title_text="within-question φ (judge)", row=2, col=1)
+    for row in range(1, rows + 1):
+        style_model_axis(fig, models, mark_addons=True, row=row)
     save(fig, path)
 
 

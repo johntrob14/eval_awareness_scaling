@@ -4,7 +4,7 @@ Conventions (on top of exp02's model axis, layout and Okabe-Ito colors, reused f
 - every awareness label and every refusal type has ONE color AND ONE fill pattern, the same in every figure
   (exp03_config.AWARENESS_STYLE / REFUSAL_STYLE): evaluation "/", user probing "x", manipulation ".", none plain;
   full refusal "\\", partial "-", comply "|".
-- underpowered bars (< 20 informative questions): faded fill, dashed outline, no CI.
+- underpowered bars (< 20 informative questions): faded fill, no CI.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ from ladder_figures import (
 )
 from plotly.subplots import make_subplots
 
-UNDERPOWERED_LABEL = "faded, dashed outline: < 20 informative questions (no CI)"
+UNDERPOWERED_LABEL = "faded, no CI: < 20 informative questions"
 POOLED_VEA = {"color": "#555555", "pattern": "", "label": "all VEA (evaluation or user probing)"}
 NEUTRAL = {"color": OKABE_ITO["gray"], "pattern": "", "label": ""}
 
@@ -41,8 +41,9 @@ def has_ci(e: dict) -> bool:
 
 
 def marker(style: dict, faded: bool = False) -> dict:
+    # Plotly bar outlines cannot be dashed, so underpowered bars are marked by the faded fill (and no CI) only.
     return dict(color=style["color"], opacity=0.35 if faded else 1.0,
-                line=dict(color="#222", width=1.4 if faded else 0.8, dash="dash" if faded else "solid"),
+                line=dict(color="#222", width=0.8),
                 pattern=dict(shape=style["pattern"], fgcolor="#222", size=7, solidity=0.25))
 
 
@@ -128,22 +129,37 @@ def fig_refusal(per_model, path):
 
 
 def fig_within(per_model, path):
+    """F3a: Mantel-Haenszel full-refusal difference. F3b: within-question correlation (phi, question fixed effects)."""
     models = display_order(list(per_model))
-    fig = go.Figure()
-    series = [("M4_within_question_pooled", POOLED_VEA),
-              ("M4_type_evaluation", {**cfg.AWARENESS_STYLE["evaluation"], "label": "evaluation vs no VEA"}),
-              ("M4_type_user_probing", {**cfg.AWARENESS_STYLE["user_probing"], "label": "user probing vs no VEA"}),
-              ("M6_placebo_within_question", {**cfg.AWARENESS_STYLE["manipulation"], "label": "placebo: manipulation vs neither"})]
+    fig = make_subplots(rows=2, cols=1, vertical_spacing=0.2, subplot_titles=(
+        "F3a: full-refusal rate of flagged rollouts minus unflagged rollouts to the same question (Mantel-Haenszel)",
+        "F3b: within-question correlation of flag and full refusal (φ, question fixed effects)"))
+    subplot_titles_left(fig)
+    series = [  # (risk-difference key, correlation key, style)
+        ("M4_within_question_pooled", "M4_within_corr_pooled", POOLED_VEA),
+        ("M4_type_evaluation", "M4_within_corr_type_evaluation",
+         {**cfg.AWARENESS_STYLE["evaluation"], "label": "evaluation vs no VEA"}),
+        ("M4_type_user_probing", "M4_within_corr_type_user_probing",
+         {**cfg.AWARENESS_STYLE["user_probing"], "label": "user probing vs no VEA"}),
+        ("M6_placebo_within_question", "M6_placebo_within_corr",
+         {**cfg.AWARENESS_STYLE["manipulation"], "label": "placebo: manipulation vs neither"})]
     underpowered = False
-    for key, style in series:
-        underpowered |= add_series(fig, models, [per_model[m].get(key) for m in models], style["label"], style)
+    n_row1_traces = 0
+    for row, scale in ((1, 100.0), (2, 1.0)):
+        for rd_key, corr_key, style in series:
+            key = rd_key if row == 1 else corr_key
+            underpowered |= add_series(fig, models, [per_model[m].get(key) for m in models], style["label"], style,
+                                       scale=scale, row=row)
+        style_model_axis(fig, models, mark_addons=False, row=row)
+        n_row1_traces = n_row1_traces or len(fig.data)
+    for trace in fig.data[n_row1_traces:]:  # one legend entry per series
+        trace.showlegend = False
     if underpowered:
-        add_underpowered_key(fig)
-    base_layout(fig, "F3: within-question full-refusal difference (Mantel-Haenszel)",
-                "refusal rate of flagged rollouts minus unflagged rollouts to the same question; 95% CI over questions",
-                figure_width(len(models), 4), 580, legend_title="comparison (judge)")
-    fig.update_yaxes(title_text="refusal difference, pp (judge)")
-    style_model_axis(fig, models, mark_addons=False)
+        add_underpowered_key(fig, row=1)
+    base_layout(fig, "F3: within-question association between VEA and full refusal", "95% CI over questions",
+                figure_width(len(models), 4), 900, legend_title="comparison (judge)")
+    fig.update_yaxes(title_text="refusal difference, pp (judge)", row=1, col=1)
+    fig.update_yaxes(title_text="within-question φ (judge)", row=2, col=1)
     save(fig, path)
 
 

@@ -54,7 +54,10 @@ MTP_DECISION_PATH = RESULTS_DIR / "mtp_decision.json"
 
 # --- Judge -------------------------------------------------------------------------------------
 JUDGE_MODEL = base.JUDGE_MODEL  # Qwen3.8-27B bf16 weights; "fp8" = vLLM quantizes them to FP8 at load time
-JUDGE_ENGINES = ("bf16", "fp8")
+# "qwen35_9b": a smaller candidate judge (bf16), smoke-tested against Qwen3.8-27B for speed (added 2026-09-27)
+JUDGE_ENGINE_WEIGHTS = {"bf16": JUDGE_MODEL, "fp8": JUDGE_MODEL,
+                        "qwen35_9b": {k: base.SUBJECTS["Qwen3.5-9B"][k] for k in ("repo", "revision")}}
+JUDGE_ENGINES = tuple(JUDGE_ENGINE_WEIGHTS)
 JUDGE_SAMPLING = base.JUDGE_SAMPLING_NONTHINKING  # exp02's settings, so the smoke test's noise floor applies
 JUDGE_MAX_TOKENS = 384
 JUDGE_LOGPROBS = 20

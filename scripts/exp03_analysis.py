@@ -120,6 +120,7 @@ def exp03_metrics(df: pd.DataFrame, boot: a02.QuestionBootstrap, reference_bins:
     for kind in cfg.VEA_TYPES:
         rd = a02.within_question(all_scored, all_scored.awareness == kind, not_vea, boot)
         out[f"M4_type_{kind}"] = rd["risk_difference"] | {k: rd[k] for k in ("n_informative_questions", "underpowered")}
+        out[f"M4_within_corr_type_{kind}"] = rd["within_corr"] | {k: rd[k] for k in ("n_informative_questions", "underpowered")}
     any_refusal = all_scored.assign(R=all_scored.R_any)
     rd = a02.within_question(any_refusal, is_vea, not_vea, boot)
     out["M4_any_refusal"] = rd["risk_difference"] | {k: rd[k] for k in ("n_informative_questions", "underpowered")}

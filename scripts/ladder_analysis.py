@@ -169,12 +169,21 @@ def within_question(df: pd.DataFrame, treated: pd.Series, control: pd.Series, bo
     dq["Rc"] = dq.R - dq.groupby("item_id").R.transform("mean")
     sxy = (dq.Tc * dq.Rc).groupby(dq.item_id).sum()
     sxx = (dq.Tc ** 2).groupby(dq.item_id).sum()
+    syy = (dq.Rc ** 2).groupby(dq.item_id).sum()
     lpm_point, lpm_draws = boot.ratio(boot.vector(sxy), boot.vector(sxx))
+    # Within-question correlation (phi with question fixed effects): the correlation of question-centered T and R,
+    # sum_q sxy_q / sqrt(sum_q sxx_q * sum_q syy_q). Unlike the risk difference it does not shrink when the model
+    # refuses (or complies with) almost every rollout of a question.
+    vxy, vxx, vyy = boot.vector(sxy), boot.vector(sxx), boot.vector(syy)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        corr_point = vxy.sum() / np.sqrt(vxx.sum() * vyy.sum())
+        corr_draws = (boot.M @ vxy) / np.sqrt((boot.M @ vxx) * (boot.M @ vyy))
     n_informative = int(both.sum())
     return {
         "risk_difference": estimate(rd_point, rd_draws),
         "odds_ratio": estimate(or_point, or_draws),
         "lpm_question_fe": estimate(lpm_point, lpm_draws),
+        "within_corr": estimate(corr_point, corr_draws),
         "n_informative_questions": n_informative,
         "n_treated_rollouts_in_informative": int(n1.sum()),
         "underpowered": n_informative < cfg.MIN_INFORMATIVE_QUESTIONS,
@@ -234,6 +243,8 @@ def model_metrics(df: pd.DataFrame, logit: pd.DataFrame | None, boot: QuestionBo
         k: pooled[k] for k in ("n_informative_questions", "n_treated_rollouts_in_informative", "underpowered")}
     out["M4_odds_ratio"] = pooled["odds_ratio"]
     out["M4_lpm_question_fe"] = pooled["lpm_question_fe"]
+    power = ("n_informative_questions", "n_treated_rollouts_in_informative", "underpowered")
+    out["M4_within_corr_pooled"] = pooled["within_corr"] | {k: pooled[k] for k in power}
     always_refused = all_scored.groupby("item_id").R.transform("min") == 1
     kept = all_scored[~always_refused]
     bloom = within_question(kept, kept.V == 1, kept.V == 0, boot)
@@ -248,11 +259,13 @@ def model_metrics(df: pd.DataFrame, logit: pd.DataFrame | None, boot: QuestionBo
         split = within_question(all_scored, treated, not_vea, boot)
         out[f"M4_framing_{name}"] = split["risk_difference"] | {
             k: split[k] for k in ("n_informative_questions", "n_treated_rollouts_in_informative", "underpowered")}
+        out[f"M4_within_corr_framing_{name}"] = split["within_corr"] | {k: split[k] for k in power}
 
     # M6: placebo specificity.
     placebo = within_question(all_scored, not_vea & (all_scored.P == 1), not_vea & (all_scored.P == 0), boot)
     out["M6_placebo_within_question"] = placebo["risk_difference"] | {
         k: placebo[k] for k in ("n_informative_questions", "n_treated_rollouts_in_informative", "underpowered")}
+    out["M6_placebo_within_corr"] = placebo["within_corr"] | {k: placebo[k] for k in power}
     spec_draws = pooled["risk_difference"]["_draws"] - placebo["risk_difference"]["_draws"]
     out["M6_specificity"] = estimate(pooled["risk_difference"]["value"] - placebo["risk_difference"]["value"], spec_draws)
 

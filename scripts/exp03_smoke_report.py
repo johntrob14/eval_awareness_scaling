@@ -195,6 +195,120 @@ def judge_report() -> None:
     print("\n".join(md))
 
 
+# --- candidate judge: Qwen3.5-9B -------------------------------------------------------------------------------
+
+CANDIDATE_PASSES = {"27b_r1": ("bf16", "reasoning_first", "rep1"), "27b_r2": ("bf16", "reasoning_first", "rep2"),
+                    "9b_r1": ("qwen35_9b", "reasoning_first", "rep1"), "9b_r2": ("qwen35_9b", "reasoning_first", "rep2")}
+
+
+def subject_family(model: str) -> str:
+    return base.SUBJECTS[model]["family"]
+
+
+def candidate_report() -> None:
+    """Qwen3.5-9B vs Qwen3.8-27B (bf16), both reasoning-first, with the FP8 pass rule.
+
+    Pass: 9B is faster than the production judge (FP8 27B; its reasoning-first speed is estimated from the measured
+    bf16 reasoning-first speed times the measured FP8/bf16 label-first speedup), 9B(rep2) vs 27B(rep1) kappa is at
+    least the lower CI bound of 27B(rep2) vs 27B(rep1) on every measure, and 9B's VEA and full-refusal rates on the
+    random items are within tolerance of 27B's.
+    """
+    items = json.loads((cfg.SMOKE_DIR / "judge_items.json").read_text())
+    passes = {name: load_pass(*spec) for name, spec in CANDIDATE_PASSES.items()}
+    missing = [n for n, p in passes.items() if p is None]
+    if missing:
+        sys.exit(f"missing smoke passes: {missing}")
+    timing = {name: load_timing(*spec) for name, spec in CANDIDATE_PASSES.items()}
+    fp8_label = load_timing("fp8", "label_first", "rep2")["calls_per_s"]
+    bf16_label = load_timing("bf16", "label_first", "rep2")["calls_per_s"]
+    bf16_reasoning = (timing["27b_r1"]["calls_per_s"] + timing["27b_r2"]["calls_per_s"]) / 2
+    fp8_reasoning_est = bf16_reasoning * fp8_label / bf16_label
+    speed_9b = (timing["9b_r1"]["calls_per_s"] + timing["9b_r2"]["calls_per_s"]) / 2
+
+    pairs = {"noise floor: 27b_r2 vs 27b_r1": ("27b_r2", "27b_r1"),
+             "9b_r2 vs 27b_r1 (same seed structure as noise floor)": ("9b_r2", "27b_r1"),
+             "9b_r1 vs 27b_r1": ("9b_r1", "27b_r1"),
+             "9b self: 9b_r2 vs 9b_r1": ("9b_r2", "9b_r1")}
+    agreement = {subset: {label: compare(passes[a], passes[b], items, subset) for label, (a, b) in pairs.items()}
+                 for subset in ("all", "random", "validation")}
+
+    # Same-family check: Qwen3.5-9B judging Qwen3.5 rollouts vs the other families.
+    by_family = {}
+    for family in sorted({subject_family(i["model"]) for i in items}):
+        idx = [k for k, item in enumerate(items) if subject_family(item["model"]) == family]
+        sub = [items[i] for i in idx]
+        by_family[family] = {label: compare({k: passes[a][i] for k, i in enumerate(idx)},
+                                            {k: passes[b][i] for k, i in enumerate(idx)}, sub, "all")
+                             for label, (a, b) in list(pairs.items())[:2]}
+
+    r = {n: rates(p, items) for n, p in passes.items()}
+    rate_checks = {}
+    for key in ("A:vea", "B:full_refusal", "B:partial"):
+        ref_mean = (r["27b_r1"][key] + r["27b_r2"][key]) / 2
+        tolerance = max(cfg.SMOKE_RATE_TOLERANCE, abs(r["27b_r2"][key] - r["27b_r1"][key]))
+        cand_mean = (r["9b_r1"][key] + r["9b_r2"][key]) / 2
+        rate_checks[key] = {"9b_mean": cand_mean, "27b_mean": ref_mean, "tolerance": tolerance,
+                            "ok": abs(cand_mean - ref_mean) <= tolerance}
+
+    reference = exp02_thinking_reference()
+    vs_exp02 = {}
+    for n, p in passes.items():
+        vs_exp02[n] = {}
+        for call, field, measure in (("A", "eval_aware", "vea_binary"), ("B", "refusal", "full_refusal_binary")):
+            idx = [i for i, it in enumerate(items) if it["call"] == call and it["source"] == "validation"
+                   and p[i]["parse_ok"] and (it["rollout_key"], call) in reference]
+            vs_exp02[n][measure] = kappa_ci([MEASURES[call][measure](p[i]) for i in idx],
+                                            [bool(reference[(items[i]["rollout_key"], call)][field]) for i in idx])
+
+    floor = agreement["all"]["noise floor: 27b_r2 vs 27b_r1"]
+    cand = agreement["all"]["9b_r2 vs 27b_r1 (same seed structure as noise floor)"]
+    kappa_ok = {m: cand[m]["kappa"] >= floor[m]["lo"] for m in floor}
+    speedup = speed_9b / fp8_reasoning_est
+    decision = {"speedup_vs_fp8_27b_reasoning_first_est": speedup, "kappa_within_noise_floor": kappa_ok,
+                "rate_checks": rate_checks,
+                "pass": speedup > 1.0 and all(kappa_ok.values()) and all(c["ok"] for c in rate_checks.values())}
+    summary = {"timing": timing, "fp8_27b_reasoning_first_calls_per_s_est": fp8_reasoning_est,
+               "parse_failures": {n: sum(not x["parse_ok"] for x in p.values()) for n, p in passes.items()},
+               "truncated": {n: sum(x["finish_reason"] == "length" for x in p.values()) for n, p in passes.items()},
+               "agreement": agreement, "agreement_by_subject_family": by_family, "rates_random_items": r,
+               "vs_exp02_thinking_judge_validation_items": vs_exp02, "decision": decision}
+
+    def fmt(v: dict) -> str:
+        return f"{v['kappa']:.3f} [{v['lo']:.3f}, {v['hi']:.3f}]"
+
+    md = ["# exp03 candidate judge: Qwen3.5-9B vs Qwen3.8-27B (bf16), reasoning-first\n",
+          f"{len(items)} smoke items. Production judge = Qwen3.8-27B FP8, reasoning-first "
+          f"(estimated {fp8_reasoning_est:.2f} calls/s).\n",
+          "## Speed\n", "| pass | calls/s | mean output tokens | parse failures | truncated |", "|---|---|---|---|---|"]
+    for n in CANDIDATE_PASSES:
+        md.append(f"| {n} | {timing[n]['calls_per_s']:.2f} | {timing[n]['mean_output_tokens']:.0f} | "
+                  f"{summary['parse_failures'][n]} | {summary['truncated'][n]} |")
+    md.append(f"\n9B speedup vs FP8 27B (estimated): **{speedup:.2f}x**\n")
+    for subset in ("all", "random", "validation"):
+        md += [f"\n## Agreement (Cohen's kappa [95% CI]), {subset} items\n",
+               "| comparison | " + " | ".join(floor) + " |", "|---|" + "---|" * len(floor)]
+        for label, res in agreement[subset].items():
+            md.append(f"| {label} | " + " | ".join(fmt(v) for v in res.values()) + " |")
+    md += ["\n## Agreement by subject family (all items)\n", "| family | comparison | " + " | ".join(floor) + " |",
+           "|---|---|" + "---|" * len(floor)]
+    for family, res in by_family.items():
+        for label, v in res.items():
+            md.append(f"| {family} | {label} | " + " | ".join(fmt(x) for x in v.values()) + " |")
+    md += ["\n## Label shares on the random items\n", "| pass | " + " | ".join(r["27b_r1"]) + " |",
+           "|---|" + "---|" * len(r["27b_r1"])]
+    for n, v in r.items():
+        md.append(f"| {n} | " + " | ".join(f"{x:.3f}" for x in v.values()) + " |")
+    md += ["\n## Agreement with exp02's thinking-mode judge (validation items, binary)\n",
+           "| pass | VEA kappa | full-refusal kappa |", "|---|---|---|"]
+    for n, v in vs_exp02.items():
+        md.append(f"| {n} | {fmt(v['vea_binary'])} | {fmt(v['full_refusal_binary'])} |")
+    md += ["\n## Decision (FP8 rule)\n", f"- kappa within 27B noise floor: {kappa_ok}",
+           f"- rates: { {k: (round(c['9b_mean'], 3), round(c['27b_mean'], 3), c['ok']) for k, c in rate_checks.items()} }",
+           f"- speedup {speedup:.2f}x -> **{'PASS' if decision['pass'] else 'FAIL'}**"]
+    write_new("judge_candidate_qwen35_9b", summary, "\n".join(md) + "\n")
+    print("\n".join(md))
+
+
 # --- mtp -------------------------------------------------------------------------------------------------------
 
 
@@ -303,11 +417,12 @@ def interventions_report(model: str, n_bases: int) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("section", choices=["judge", "mtp", "interventions"])
+    parser.add_argument("section", choices=["judge", "judge-candidate", "mtp", "interventions"])
     parser.add_argument("--model", default="Qwen3.8-27B")
     parser.add_argument("--n-bases", type=int, default=3)
     args = parser.parse_args()
-    {"judge": judge_report, "mtp": mtp_report}.get(args.section, lambda: interventions_report(args.model, args.n_bases))()
+    {"judge": judge_report, "judge-candidate": candidate_report,
+     "mtp": mtp_report}.get(args.section, lambda: interventions_report(args.model, args.n_bases))()
 
 
 if __name__ == "__main__":
