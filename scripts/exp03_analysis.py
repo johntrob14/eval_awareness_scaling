@@ -24,6 +24,7 @@ import ladder_analysis as a02
 import ladder_config as base
 import numpy as np
 import pandas as pd
+from exp03_smoke_report import kappa as categorical_kappa
 
 LENGTH_BINS = a02.LENGTH_BINS
 EARLY_VEA_FRACTION = 0.5  # quote in the first half of the CoT = "early" VEA
@@ -182,7 +183,8 @@ def judge_checks(model: str) -> dict:
                      if r["variant"] == variant and r["call"] == call and r["parse_ok"] and (r["rollout_key"], call) in main]
             if pairs:
                 x, y = np.array([p[0] for p in pairs], dtype=object), np.array([p[1] for p in pairs], dtype=object)
-                out[f"{variant}_{call}"] = {"kappa": a02.kappa(x, y), "agreement": float(np.mean(x == y)), "n": len(pairs)}
+                out[f"{variant}_{call}"] = {"kappa": categorical_kappa(x, y), "agreement": float(np.mean(x == y)),
+                                            "n": len(pairs)}
     audit = [r["awareness"] for r in rows if r["variant"] == "full_cot_regex_negative" and r["parse_ok"]]
     out["regex_negative_audit"] = {"n": len(audit), "share_not_none": float(np.mean([a != "none" for a in audit])) if audit else None,
                                    "share_vea": float(np.mean([a in cfg.VEA_TYPES for a in audit])) if audit else None}
