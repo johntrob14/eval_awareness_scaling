@@ -298,6 +298,15 @@ def report(summary: dict) -> str:
     for m, e in pm.items():
         md.append(f"| {m} | {fmt(e['M4_length_matched'])} | {fmt(e['M4_any_refusal'])} | {fmt(e['M4_early_vea'])} | "
                   f"{fmt(e['M4_late_vea'])} | {fmt(e['M4_type_evaluation'])} | {fmt(e['M4_type_user_probing'])} |")
+    # With binary flag and refusal, within-question phi = MH difference x sqrt(sum_q w_q / sum_q SS_R,q), one factor
+    # per model; a factor near 1 means the refusal ceiling is not compressing M4.
+    factors = {m: e["M4_within_corr_pooled"]["value"] / e["M4_within_question_pooled"]["value"] for m, e in pm.items()
+               if e["M4_within_question_pooled"]["value"] and np.isfinite(e["M4_within_corr_pooled"]["value"])}
+    if factors:
+        md.append(f"\nScale-free check: within-question φ (question fixed effects) equals the M4 difference times a "
+                  f"per-model factor of {min(factors.values()):.2f}-{max(factors.values()):.2f} "
+                  f"({', '.join(f'{m} {f:.2f}' for m, f in factors.items())}). If the factors vary little across "
+                  "models, M4's cross-model pattern is not driven by refusal rates near 0% or 100%.")
     md += ["\n## Sentence insertion / removal (judge-scored refusal; paired by base rollout)\n",
            "(added) = added after the pre-registration.\n",
            "| model | VEA - none | placebo - none | neutral - none | VEA - placebo | keep - remove |", "|---|---|---|---|---|---|"]
