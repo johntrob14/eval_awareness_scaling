@@ -1,0 +1,211 @@
+{
+ "gemma-4-31B-it": {
+  "first10": {
+   "n_questions": 485,
+   "n_rollouts": 4849,
+   "frac_not_scored": 0.0022633744855966587,
+   "vea_rate": 0.007424211177562384,
+   "questions_with_vea": 19,
+   "refusal_rate": 0.5646525056712725,
+   "within_q_refusal_diff": 0.12195121951219512,
+   "n_informative_questions": 19,
+   "spearman_nvea_refusal": 0.009107489692749231,
+   "n_vea_with_category": 36,
+   "safety_share_of_vea": 0.5277777777777778,
+   "vea_rate_ci": [
+    0.003711340206185567,
+    0.011759851454507943
+   ],
+   "refusal_rate_ci": [
+    0.5238114894557917,
+    0.6033467409240925
+   ],
+   "within_q_refusal_diff_ci": [
+    0.025771952796101703,
+    0.2580645161290322
+   ]
+  },
+  "all": {
+   "n_questions": 486,
+   "n_rollouts": 9699,
+   "frac_not_scored": 0.002160493827160548,
+   "vea_rate": 0.006907928652438396,
+   "questions_with_vea": 28,
+   "refusal_rate": 0.5644911846582122,
+   "within_q_refusal_diff": 0.03913670495797903,
+   "n_informative_questions": 28,
+   "spearman_nvea_refusal": 0.018482716249979964,
+   "n_vea_with_category": 67,
+   "safety_share_of_vea": 0.4925373134328358,
+   "vea_rate_ci": [
+    0.0039169506376063095,
+    0.010436433911267737
+   ],
+   "refusal_rate_ci": [
+    0.5235891738965592,
+    0.6041750637203931
+   ],
+   "within_q_refusal_diff_ci": [
+    -0.060501343087748974,
+    0.14243360376527547
+   ]
+  },
+  "benign_refusal_rate": 0.01728395061728395
+ },
+ "Nemotron-3-Super": {
+  "first10": {
+   "n_questions": 485,
+   "n_rollouts": 4749,
+   "frac_not_scored": 0.022839506172839474,
+   "vea_rate": 0.2503684986312908,
+   "questions_with_vea": 256,
+   "refusal_rate": 0.5114761002316277,
+   "within_q_refusal_diff": 0.0783403246138178,
+   "n_informative_questions": 240,
+   "spearman_nvea_refusal": 0.6538943951796211,
+   "n_vea_with_category": 1189,
+   "safety_share_of_vea": 0.9301934398654331,
+   "vea_rate_ci": [
+    0.22037807420879485,
+    0.27982460363267314
+   ],
+   "refusal_rate_ci": [
+    0.4764742266426592,
+    0.5475269081938186
+   ],
+   "within_q_refusal_diff_ci": [
+    0.04601933053469372,
+    0.11289324207365635
+   ]
+  },
+  "all": {
+   "n_questions": 486,
+   "n_rollouts": 9501,
+   "frac_not_scored": 0.02253086419753081,
+   "vea_rate": 0.2466056204610041,
+   "questions_with_vea": 303,
+   "refusal_rate": 0.5088938006525628,
+   "within_q_refusal_diff": 0.07543261696345441,
+   "n_informative_questions": 295,
+   "spearman_nvea_refusal": 0.6910640346318692,
+   "n_vea_with_category": 2343,
+   "safety_share_of_vea": 0.9304310712761417,
+   "vea_rate_ci": [
+    0.21972083805171871,
+    0.2744793353369504
+   ],
+   "refusal_rate_ci": [
+    0.4747962544762637,
+    0.5437003834750581
+   ],
+   "within_q_refusal_diff_ci": [
+    0.05069926456784244,
+    0.10302630187963809
+   ]
+  }
+ },
+ "Qwen3.5-122B-A10B": {
+  "first10": {
+   "n_questions": 485,
+   "n_rollouts": 4801,
+   "frac_not_scored": 0.01213991769547329,
+   "vea_rate": 0.10331181003957508,
+   "questions_with_vea": 168,
+   "refusal_rate": 0.5819620912309935,
+   "within_q_refusal_diff": 0.029385131903393133,
+   "n_informative_questions": 165,
+   "spearman_nvea_refusal": 0.2795066411916607,
+   "n_vea_with_category": 496,
+   "safety_share_of_vea": 0.7298387096774194,
+   "vea_rate_ci": [
+    0.08616357009835271,
+    0.12157156232363085
+   ],
+   "refusal_rate_ci": [
+    0.54089241760412,
+    0.6179377284833925
+   ],
+   "within_q_refusal_diff_ci": [
+    -0.004492197003500708,
+    0.06558232584475723
+   ]
+  },
+  "all": {
+   "n_questions": 485,
+   "n_rollouts": 9599,
+   "frac_not_scored": 0.012448559670781845,
+   "vea_rate": 0.10157308052922179,
+   "questions_with_vea": 208,
+   "refusal_rate": 0.5827690384415043,
+   "within_q_refusal_diff": 0.03327020583068737,
+   "n_informative_questions": 208,
+   "spearman_nvea_refusal": 0.3448559708261725,
+   "n_vea_with_category": 975,
+   "safety_share_of_vea": 0.7128205128205128,
+   "vea_rate_ci": [
+    0.08567610818743043,
+    0.11854906428386089
+   ],
+   "refusal_rate_ci": [
+    0.542310954020774,
+    0.61783565395687
+   ],
+   "within_q_refusal_diff_ci": [
+    0.011417711466969864,
+    0.05668392054525123
+   ]
+  }
+ },
+ "Qwen3.5-397B-A17B": {
+  "first10": {
+   "n_questions": 486,
+   "n_rollouts": 4814,
+   "frac_not_scored": 0.009465020576131633,
+   "vea_rate": 0.1069796427087661,
+   "questions_with_vea": 160,
+   "refusal_rate": 0.6616119651017864,
+   "within_q_refusal_diff": 0.012798034821905736,
+   "n_informative_questions": 156,
+   "spearman_nvea_refusal": 0.3016237313062179,
+   "n_vea_with_category": 515,
+   "safety_share_of_vea": 0.7766990291262136,
+   "vea_rate_ci": [
+    0.08886366490055865,
+    0.12604851853755147
+   ],
+   "refusal_rate_ci": [
+    0.624026184774137,
+    0.6974708810407535
+   ],
+   "within_q_refusal_diff_ci": [
+    -0.004733560470727273,
+    0.033001136378405106
+   ]
+  },
+  "all": {
+   "n_questions": 486,
+   "n_rollouts": 9625,
+   "frac_not_scored": 0.009773662551440299,
+   "vea_rate": 0.10846753246753246,
+   "questions_with_vea": 200,
+   "refusal_rate": 0.6589090909090909,
+   "within_q_refusal_diff": 0.016761038951252305,
+   "n_informative_questions": 199,
+   "spearman_nvea_refusal": 0.3729534352182699,
+   "n_vea_with_category": 1044,
+   "safety_share_of_vea": 0.7739463601532567,
+   "vea_rate_ci": [
+    0.09177522906699521,
+    0.12632116570070828
+   ],
+   "refusal_rate_ci": [
+    0.6219620329534449,
+    0.6945268752811654
+   ],
+   "within_q_refusal_diff_ci": [
+    0.0009421868430347467,
+    0.03468613316226579
+   ]
+  }
+ }
+}

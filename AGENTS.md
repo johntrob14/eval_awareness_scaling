@@ -141,6 +141,27 @@ without asking.
 - `rubrics.PREFILTER_RE` skips the judge on CoTs with no test/evaluate-like words. It is only used
   with slow local judges; the GPU script passes `--no-prefilter`.
 
+## Unified protocol (merged repos, 2026-09-28)
+
+The collaborator's repo (github.com/zach-perlman/eval-awareness) is merged under `ladder/` with its history
+(`git subtree`, branch `unify`). **Numbers from the two pipelines are comparable only under
+`docs/UNIFIED_PROTOCOL.md`**; don't put raw per-repo numbers side by side. In short: this repo's judges (`vea_cal`
+for VEA; F2 for refusal, on the first 384 answer tokens), an 8,192-token reasoning cap applied after the fact, the
+union of both exclusion lists (14 prompts), rollouts 0-9 as the primary design, the ladder's Mantel-Haenszel
+estimator, and the ladder's exp03 insertion / removal design.
+
+- `src/eval_awareness/unified.py`: harmonizes both rollout formats into `data/unified/` (gitignored) and writes
+  `results/unified/` (`summary.json`, `per_model.csv`, `REPORT.md`).
+- `src/eval_awareness/intervene_unified.py`: the ladder's intervention design, importing its helpers from
+  `ladder/scripts/exp03_generate.py`; `convert-ladder` re-keys the ladder's continuations for this repo's judge.
+- `scripts/run_unified.sh` (judging), `scripts/run_unified_interventions.sh` (my 4 models),
+  `scripts/run_unified_ladder.sh` (the ladder's 12; needs `ladder/cache/` copied from the Vast.ai box).
+- The ladder's scripts resolve paths relative to `ladder/` (cache in `ladder/cache/`) and expect
+  `HF_HOME=/home/jtr2875/.cache/huggingface` for pinned tokenizers (all 12 are downloaded).
+- Judge comparison behind the choice: `results/judge_compare/` (VEA: user-labeled disagreements, 10 vs 3 correct;
+  refusal: the gap comes from how "partial" answers are treated; the 384-token cut barely matters).
+- Retired: my Qwen3 ladder (4,096-token cap, Qwen3-8B judge) and my earlier intervention runs (different design).
+
 ## Status (2026-09-26)
 
 - **Qwen3 laptop pilot (2026-09-23):** 100 Qwen3-0.6B rollouts on q140, on an M3 MacBook with MLX.
