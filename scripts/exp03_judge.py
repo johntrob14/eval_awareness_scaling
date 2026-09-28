@@ -25,6 +25,7 @@ import time
 from pathlib import Path
 
 import exp03_config as cfg
+from exp03_exit import exit_without_teardown
 import exp03_data as data
 import ladder_config as base
 from ladder_judge import cot_windows, parse_json, render
@@ -446,11 +447,7 @@ def main() -> None:
         run_label(args.models, None, judge)
         run_interventions([m for m in args.models if m in cfg.INTERVENTION_MODELS + cfg.INTERVENTION_MODELS_ADDED],
                           None, judge)
-    # vLLM's engine teardown can abort the process after the outputs are written (it did for exp03_logit.py);
-    # every output above is renamed into place when complete, so skip interpreter teardown.
-    sys.stdout.flush()
-    sys.stderr.flush()
-    os._exit(0)
+    exit_without_teardown()
 
 
 if __name__ == "__main__":
