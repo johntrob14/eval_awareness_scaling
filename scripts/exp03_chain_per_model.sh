@@ -1,4 +1,5 @@
 #!/bin/bash
+# Superseded by exp03_chain_logit_last.sh (2026-09-28 00:23 UTC); kept for the record.
 # exp03 main chain, per-model order (replaces exp03_full_chain_resume2.sh, stopped 2026-09-27 ~22:07 UTC): each model
 # is finished end to end (interventions, logit v2, relabel, judged intervention answers) before the next starts, so
 # the live figures (exp03_live.py) gain one complete model at a time. Same work as before; the judge engine is loaded

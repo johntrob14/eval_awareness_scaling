@@ -1,4 +1,5 @@
 #!/bin/bash
+# Superseded by exp03_chain_logit_last.sh (2026-09-28 00:23 UTC); kept for the record.
 # Sentence insertion/removal on Qwen3.5-0.8B/2B/4B and Qwen3-0.6B/1.7B/4B/8B (exp03_config.INTERVENTION_MODELS_ADDED;
 # Qwen3-32B's runs in exp03_qwen3_32b_ladder.sh, after its relabel). Added after the
 # pre-registration). Starts when the main chain has finished successfully; exp03_qwen3_32b_ladder.sh runs the final

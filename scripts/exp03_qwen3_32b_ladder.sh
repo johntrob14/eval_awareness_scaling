@@ -1,4 +1,5 @@
 #!/bin/bash
+# Superseded by exp03_chain_logit_last.sh (2026-09-28 00:23 UTC); kept for the record.
 # Last step of the exp03 run, after the main chain and the insertion extension: Qwen3-32B's stage 1 + stage 2 (exp02's
 # generation code and design; cfg.GENERATED_IN_EXP03), its relabel, its sentence insertion/removal (bases chosen with
 # the relabel), then the final analysis over all models. The main chain wrote a "final" before Qwen3-32B had

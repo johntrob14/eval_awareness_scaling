@@ -1,4 +1,5 @@
 #!/bin/bash
+# Superseded by exp03_chain_logit_last.sh (2026-09-28 00:23 UTC); kept for the record.
 # Attach the followers to a running exp03 main chain, given its PID. Each starts when the previous one exits:
 #   1. exp03_insertion_extension.sh (checks the main chain's "== done"),
 #   2. exp03_qwen3_32b_ladder.sh (Qwen3-32B's rollouts and labels, then the final analysis; also checks "== done"),
