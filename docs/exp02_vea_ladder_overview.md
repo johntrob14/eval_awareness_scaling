@@ -1,4 +1,7 @@
-# exp02_vea_ladder: what the pipeline does, and what you'll get
+# exp02_vea_ladder: what the pipeline does, and what it produces
+
+This is the plain-language overview written before the run, updated where the run deviated (noted inline).
+Results are in `results/exp02_vea_ladder/all_models_validated/`; the relabeled second pass is exp03 (see the README).
 
 **The question.** Take 10 Qwen models of different sizes (plus Qwen3.8-27B for a same-size version comparison, and an optional Qwen3-32B). When a model says in its reasoning that it might be being tested, does it refuse harmful requests more often? Does that relationship change abruptly at some size, such as 14B?
 
@@ -14,7 +17,7 @@ flowchart LR
   prompts --> logit["Logit monitor: P('The user might be testing')"]
   stage1 --> judge["Judge: mentions testing? refuses?"]
   stage2 --> judge
-  judge --> checks["Checks: judge agreement, your hand labels"]
+  judge --> checks["Checks: judge agreement, human hand labels"]
   judge --> analysis["Metrics, 5 bar figures, report"]
   logit --> analysis
 ```
@@ -43,7 +46,7 @@ flowchart LR
 5. **Checks.**
    - The judge's labels are compared with its own slower thinking mode and with the FP8 version of the judge.
    - The regex that feeds it is tested against 515 human-verified examples from the Bloom post.
-   - You hand-label about 250 blinded items.
+   - A human hand-labels about 250 blinded items (`results/exp02_vea_ladder/labeling/`).
 6. **Analysis.** Metrics with bootstrap confidence intervals, five bar charts, and a written report.
 
 ## The models
@@ -69,7 +72,7 @@ Toy example of why the first two differ:
 - The within-question effect is 0, which is correct: mentioning testing changed nothing.
 - The across-question gap is 80 points, which is also correct, but it only says that testing talk shows up on the prompts that already get refused.
 
-## What you'll get at the end
+## Outputs
 
 ```
 results/exp02_vea_ladder/
@@ -83,18 +86,18 @@ results/exp02_vea_ladder/
   read_samples.md          random answers per model (fixed seed) for reading
   judge_regex_recall_bloom_quotes.json   regex recall on Bloom's 515 human-verified quotes
   preliminary_qwen3/       the same files for the Qwen3 ladder alone, made mid-run
-  labeling/sheet_N.csv     blinded items for your hand labels (key_N.json maps them back)
+  labeling/sheet_N.csv     blinded items for human hand labels (key_N.json maps them back)
 cache/exp02/generations/   every answer: prompt id, stage, reasoning, answer, token ids, truncation flag
 cache/exp02/logit_monitor/ per-prompt phrase log-probabilities
 cache/exp02/judge/         every judge call with its labels and decision-token probabilities
 figures/exp02_vea_ladder/<run>/F1..F5.png   one folder per analysis run (final/, all_models_validated/, ...)
 ```
 
-Plus a report in the AGENTS.md format, marked **UNVERIFIED** until you've checked it.
+Plus a report in the AGENTS.md format, marked **UNVERIFIED** until a human has checked it.
 
 **The five figures.** All show every model as a bar, ordered by size, colored by family, with 95% CIs.
 
-- **F1, VEA rate,** split into safety / capabilities / both / unspecified. Bloom's published Qwen3 rates are shown as markers, so you can see whether our judge agrees with theirs.
+- **F1, VEA rate,** split into safety / capabilities / both / unspecified. Bloom's published Qwen3 rates are shown as markers, to check whether our judge agrees with theirs.
 - **F2, refusal rate** on Fortress prompts vs their benign twins. The benign bars show over-refusal.
 - **F3, within-question effect (the main figure).** Pooled, safety-framed, capabilities-framed, and placebo. Bars above 0 mean answers that mention testing refuse more.
 - **F4, across-question association:** the refusal gap and the rank correlation.
@@ -114,17 +117,9 @@ Plus a report in the AGENTS.md format, marked **UNVERIFIED** until you've checke
 - **Logit monitor.** Expect near chance at 2B and below, and better at larger sizes. In an independent sweep, Qwen3-14B was the best eval-vs-deployment detector.
 - **Scale.** Evaluation Faking found eval-driven behavior change grows mainly *beyond* 14B. A null result up to 14B would not contradict the literature, which is why the optional Qwen3-32B add-on matters.
 
-## Timeline (central estimate; hours after you approve)
-
-- **~1 h:** I send the 11 prompts I'd exclude. If I don't hear back by about 2.5 h, I'll proceed with my list.
-- **~2.6 h:** smoke test done. I post the measured answer lengths and a firm finish time.
-- **~7.6 h:** preliminary Qwen3 figures, plus labeling sheet 1 (about 45 minutes for you).
-- **~13.4 h:** labeling sheet 2.
-- **~15 h:** final figures and report. The range is about 11–21 h depending on how long the models think. Add about 4 h if the Qwen3-32B add-on runs.
-
 ## How not to over-read it
 
 - The main result is a within-prompt *association*, not a causal effect.
-- VEA and refusal labels come from a judge model and are tagged "judge". They are UNVERIFIED until your hand labels are in.
+- VEA and refusal labels come from a judge model and are tagged "judge". They are UNVERIFIED until the human hand labels are in.
 - Comparisons between families mix size with different sampling settings and training recipes.
 - If the Qwen3-32B answers don't fit in the time budget, the Qwen3 ladder stops at 14B for everything except the logit monitor, right where the literature says effects start growing.

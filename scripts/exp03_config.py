@@ -3,7 +3,8 @@
 
 What changes relative to exp02 (see results/exp03_vea_ladder_v2/manifest.json for the pre-registration):
 - relabeling of every exp02 rollout: mutually exclusive 4-way awareness label (+ one mention flag per type),
-  graded refusal (full / partial / comply), label-first JSON; judge Qwen3.8-27B, bf16 or FP8 quantized at load time
+  graded refusal (full / partial / comply); judge Qwen3.8-27B, bf16 or FP8 quantized at load time, label-first or
+  reasoning-first JSON (both chosen by the judge smoke test, see judge_engine_decision.json)
 - more stage-2 rollouts for Qwen3.8-27B (exp02's Qwen3 extra 40 are all used)
 - a causal test: sentences inserted into / removed from reasoning, then the reasoning is resampled
 - logit monitor v2 on matched prompt pairs
@@ -135,15 +136,14 @@ CALL_B_CUT_NOTE = base.CALL_B_CUT_NOTE
 # --- Judge smoke test (FP8 vs bf16; label-first vs reasoning-first) ------------------------------
 SMOKE_RANDOM_ITEMS = {"A": 500, "B": 500}  # random exp02 main calls, stratified over the 11 models
 SMOKE_SEED = 20260928
-# Pass rule agreed with the user: FP8 is used if it is faster than bf16 AND agrees with bf16 as well as
+# Pass rule, fixed before the smoke test: FP8 is used if it is faster than bf16 AND agrees with bf16 as well as
 # bf16 agrees with itself (kappa within the bootstrap CI of bf16-vs-bf16, or higher) AND its VEA and
 # full-refusal rates on the random items are within 1 point of bf16's. Same rule for label-first.
 SMOKE_RATE_TOLERANCE = 0.01
 
 # --- Causal test: sentence insertion and removal -----------------------------------------------------
 INTERVENTION_MODELS = ["Qwen3-14B", "Qwen3.5-9B", "Qwen3.5-27B", "Qwen3.8-27B"]  # pre-registered (manifest.json)
-# Added by the user after the pre-registration (2026-09-27; exp03_insertion_extension.sh, and exp03_qwen3_32b_ladder.sh
-# for Qwen3-32B); reported separately.
+# Added after the pre-registration (2026-09-27); reported separately, marked "(added)".
 INTERVENTION_MODELS_ADDED = ["Qwen3.5-0.8B", "Qwen3.5-2B", "Qwen3.5-4B",
                              "Qwen3-0.6B", "Qwen3-1.7B", "Qwen3-4B", "Qwen3-8B", "Qwen3-32B"]
 INTERVENTION_SEED = 20260928

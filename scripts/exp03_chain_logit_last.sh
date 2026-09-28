@@ -1,6 +1,6 @@
 #!/bin/bash
-# exp03 remaining run, F1-F5 for every model first and the logit monitor (F6) last (replaces exp03_chain_per_model.sh,
-# exp03_insertion_extension.sh and exp03_qwen3_32b_ladder.sh, stopped 2026-09-28 ~00:25 UTC). One model at a time:
+# exp03, second part of the run (after exp03_full_chain.sh and the Qwen3.8-27B relabel; see README.md): the inputs of
+# F1-F5 for every model first, the logit monitor (F6) last. One model at a time:
 #   1. Qwen3.5-27B, Qwen3.5-9B, Qwen3-14B: interventions, then the judge (relabel + intervention answers)
 #   2. the 7 small models: download, interventions, delete weights, judge
 #   3. Qwen3-32B: stage 1 + stage 2 (exp02's code and design), relabel, interventions (bases from the relabel), judge
@@ -22,7 +22,7 @@ judge_model() { step "$1 judge: relabel + intervention answers"; $VLLM exp03_jud
 logit_v2() { step "$1 logit v2"; $VLLM exp03_logit.py run --model $1 --kinds format disguise >> $LOG/logit_v2_$1.log 2>&1; }
 
 step "chain start, logit monitor last"
-# One GPU job at a time: wait for a vLLM job left running by the previous chain (Qwen3.5-27B interventions).
+# One GPU job at a time: wait for any vLLM job that is still running.
 while pgrep -f "^/workspace/.venv-vllm/bin/python|^VLLM::EngineCore" > /dev/null; do sleep 30; done
 
 for m in Qwen3.5-27B Qwen3.5-9B Qwen3-14B; do

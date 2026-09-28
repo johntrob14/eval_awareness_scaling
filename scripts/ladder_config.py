@@ -56,7 +56,7 @@ SUBJECTS = {
     "Qwen3.5-4B": {"repo": "Qwen/Qwen3.5-4B", "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a", "family": "qwen3.5", "params_b": 4.0},
     "Qwen3.5-9B": {"repo": "Qwen/Qwen3.5-9B", "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a", "family": "qwen3.5", "params_b": 9.0},
     "Qwen3.5-27B": {"repo": "Qwen/Qwen3.5-27B", "revision": "fc05daec18b0a78c049392ed2e771dde82bdf654", "family": "qwen3.5", "params_b": 27.0},
-    # Version comparison at fixed size (added 2026-09-26 at the user's request): same
+    # Version comparison at fixed size (added 2026-09-26): same
     # architecture as Qwen3.5-27B, a later release. Qwen3.8-27B is also the judge.
     "Qwen3.8-27B": {"repo": "Qwen/Qwen3.8-27B", "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0", "family": "qwen3.8", "params_b": 27.0},
 }

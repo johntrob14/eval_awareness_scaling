@@ -139,7 +139,7 @@ def judge_report() -> None:
                                        [bool(reference[(items[i]["rollout_key"], call)][field]) for i in idx])
     summary["vs_exp02_thinking_judge_validation_items"] = ref
 
-    # decision rules agreed with the user (see exp03_config.SMOKE_RATE_TOLERANCE)
+    # decision rules fixed before the smoke test (see exp03_config.SMOKE_RATE_TOLERANCE)
     floor = summary["agreement"]["all"]["noise_floor: bf16_r2 vs bf16_r1"]
     fp8 = summary["agreement"]["all"]["fp8_r2 vs bf16_r1 (same seed structure as noise floor)"]
     r = summary["rates_random_items"]
