@@ -1,0 +1,8 @@
+[18:00:47] start h100_4b_bf16_base-workload
+[18:11:30] done  h100_4b_bf16_base-workload
+[18:11:30] start h100_4b_fp8_base-workload
+[18:21:43] done  h100_4b_fp8_base-workload
+[18:21:43] start h100_4b_bf16_organism-workload
+[18:22:42] done  h100_4b_bf16_organism-workload
+[18:22:42] start h100_4b_fp8_organism-workload
+[18:24:00] done  h100_4b_fp8_organism-workload

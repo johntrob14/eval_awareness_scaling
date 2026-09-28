@@ -1,0 +1,256 @@
+{
+  "assumptions": {
+    "workload": "exp01 4B-base requests and recorded output lengths, both arms (50 tasks x 2 conditions)",
+    "gpu_memory_utilization": 0.85,
+    "kv_cache_dtype": "bf16",
+    "fp8_on_a100": "weight-only FP8 (vLLM Marlin kernels); not measured",
+    "prefill_mfu": 0.4
+  },
+  "fitted": {
+    "A100-80GB": {
+      "bandwidth_efficiency": 0.9999999999999998,
+      "overhead_ms_per_step": 11.0,
+      "at_grid_edge": true
+    },
+    "H100-NVL": {
+      "bandwidth_efficiency": 0.44999999999999996,
+      "overhead_ms_per_step": 1.0,
+      "at_grid_edge": false
+    }
+  },
+  "model_checks": {
+    "A100-80GB bf16 (fitted)": {
+      "organism/A_card_decoding": {
+        "measured_s": 9.0,
+        "model_s": 9.340151443397747
+      },
+      "organism/B_qwen_official": {
+        "measured_s": 77.0,
+        "model_s": 69.24441835466014
+      },
+      "base/A_card_decoding": {
+        "measured_s": 9.0,
+        "model_s": 9.383990704400198
+      },
+      "base/B_qwen_official": {
+        "measured_s": 854.0,
+        "model_s": 905.5125757192661
+      }
+    },
+    "H100-NVL bf16 (fitted)": {
+      "organism/A_card_decoding": {
+        "measured_s": 5.153600692749023,
+        "model_s": 4.820216976118518
+      },
+      "organism/B_qwen_official": {
+        "measured_s": 28.649978399276733,
+        "model_s": 31.421185769317386
+      },
+      "base/A_card_decoding": {
+        "measured_s": 5.156685829162598,
+        "model_s": 4.87115045371624
+      },
+      "base/B_qwen_official": {
+        "measured_s": 611.5137212276459,
+        "model_s": 666.0367577729825
+      }
+    },
+    "H100-NVL fp8 (held out)": {
+      "organism/A_card_decoding": {
+        "measured_s": 4.678576946258545,
+        "model_s": 3.7789780207225077
+      },
+      "organism/B_qwen_official": {
+        "measured_s": 25.69111680984497,
+        "model_s": 22.957051917055292
+      },
+      "base/A_card_decoding": {
+        "measured_s": 4.730013370513916,
+        "model_s": 3.8299114983202283
+      },
+      "base/B_qwen_official": {
+        "measured_s": 560.9240837097168,
+        "model_s": 599.3974646276376
+      }
+    }
+  },
+  "model_shapes": {
+    "0.8B": {
+      "name": "0.8B",
+      "n_params": 752393024,
+      "quantizable_bytes_bf16": 995229696,
+      "other_bytes": 509561536,
+      "lm_head_bytes": 508559360,
+      "kv_bytes_per_token": 12288,
+      "state_bytes_per_seq": 9437184
+    },
+    "2B": {
+      "name": "2B",
+      "n_params": 1881825088,
+      "quantizable_bytes_bf16": 2745434112,
+      "other_bytes": 1018221248,
+      "lm_head_bytes": 1017118720,
+      "kv_bytes_per_token": 12288,
+      "state_bytes_per_seq": 9437184
+    },
+    "4B": {
+      "name": "4B",
+      "n_params": 4205751296,
+      "quantizable_bytes_bf16": 7138181120,
+      "other_bytes": 1273329152,
+      "lm_head_bytes": 1271398400,
+      "kv_bytes_per_token": 32768,
+      "state_bytes_per_seq": 25165824
+    },
+    "9B": {
+      "name": "9B",
+      "n_params": 8953803264,
+      "quantizable_bytes_bf16": 13837008896,
+      "other_bytes": 4070605312,
+      "lm_head_bytes": 2034237440,
+      "kv_bytes_per_token": 32768,
+      "state_bytes_per_seq": 25165824
+    },
+    "27B": {
+      "name": "27B",
+      "n_params": 26895998464,
+      "quantizable_bytes_bf16": 48701112320,
+      "other_bytes": 5090901504,
+      "lm_head_bytes": 2542796800,
+      "kv_bytes_per_token": 65536,
+      "state_bytes_per_seq": 75497472
+    }
+  },
+  "projected_minutes_per_model": {
+    "0.8B": {
+      "A100-80GB bf16": {
+        "fits": true,
+        "cache_budget_gib": 63.96105395555496,
+        "full_length_requests_that_fit": 148.51727721199157,
+        "minutes": 9.082642917081705
+      },
+      "A100-80GB fp8": {
+        "fits": true,
+        "cache_budget_gib": 64.42449389696121,
+        "full_length_requests_that_fit": 149.59338265416844,
+        "minutes": 8.947277360914956
+      },
+      "H100-NVL bf16": {
+        "fits": true,
+        "cache_budget_gib": 75.73355395555495,
+        "full_length_requests_that_fit": 175.85296882196886,
+        "minutes": 4.01842178989341
+      },
+      "H100-NVL fp8": {
+        "fits": true,
+        "cache_budget_gib": 76.1969938969612,
+        "full_length_requests_that_fit": 176.92907426414575,
+        "minutes": 3.861150924352668
+      }
+    },
+    "2B": {
+      "A100-80GB bf16": {
+        "fits": true,
+        "cache_budget_gib": 61.85732280015945,
+        "full_length_requests_that_fit": 143.63242300989407,
+        "minutes": 9.69709165392395
+      },
+      "A100-80GB fp8": {
+        "fits": true,
+        "cache_budget_gib": 63.13576518297195,
+        "full_length_requests_that_fit": 146.60096042486003,
+        "minutes": 9.323673118500704
+      },
+      "H100-NVL bf16": {
+        "fits": true,
+        "cache_budget_gib": 73.62982280015945,
+        "full_length_requests_that_fit": 170.96811461987136,
+        "minutes": 4.732302686999584
+      },
+      "H100-NVL fp8": {
+        "fits": true,
+        "cache_budget_gib": 74.90826518297195,
+        "full_length_requests_that_fit": 173.93665203483735,
+        "minutes": 4.2984563088069905
+      }
+    },
+    "4B": {
+      "A100-80GB bf16": {
+        "fits": true,
+        "cache_budget_gib": 57.52867059707641,
+        "full_length_requests_that_fit": 50.09299208452912,
+        "minutes": 15.248276107061105
+      },
+      "A100-80GB fp8": {
+        "fits": true,
+        "cache_budget_gib": 60.85264520645141,
+        "full_length_requests_that_fit": 52.98733732262436,
+        "minutes": 14.277380783889628
+      },
+      "H100-NVL bf16": {
+        "fits": true,
+        "cache_budget_gib": 69.3011705970764,
+        "full_length_requests_that_fit": 60.34387643827061,
+        "minutes": 11.18179847044498
+      },
+      "H100-NVL fp8": {
+        "fits": true,
+        "cache_budget_gib": 72.6251452064514,
+        "full_length_requests_that_fit": 63.23822167636585,
+        "minutes": 10.053789602099299
+      }
+    },
+    "9B": {
+      "A100-80GB bf16": {
+        "fits": true,
+        "cache_budget_gib": 48.684734630584714,
+        "full_length_requests_that_fit": 42.392149882413904,
+        "minutes": 17.27806417013515
+      },
+      "A100-80GB fp8": {
+        "fits": true,
+        "cache_budget_gib": 55.128094005584714,
+        "full_length_requests_that_fit": 48.002694100100975,
+        "minutes": 15.396031899173584
+      },
+      "H100-NVL bf16": {
+        "fits": true,
+        "cache_budget_gib": 60.45723463058471,
+        "full_length_requests_that_fit": 52.643034236155394,
+        "minutes": 13.540053661674609
+      },
+      "H100-NVL fp8": {
+        "fits": true,
+        "cache_budget_gib": 66.90059400558471,
+        "full_length_requests_that_fit": 58.253578453842465,
+        "minutes": 11.353464601565966
+      }
+    },
+    "27B": {
+      "A100-80GB bf16": {
+        "fits": true,
+        "cache_budget_gib": 15.264783191680905,
+        "full_length_requests_that_fit": 6.57876177957965,
+        "minutes": 87.93392168444832
+      },
+      "A100-80GB fp8": {
+        "fits": true,
+        "cache_budget_gib": 37.943005847930905,
+        "full_length_requests_that_fit": 16.35254124085911,
+        "minutes": 38.70788015337239
+      },
+      "H100-NVL bf16": {
+        "fits": true,
+        "cache_budget_gib": 27.0372831916809,
+        "full_length_requests_that_fit": 11.652431813249681,
+        "minutes": 55.44426364545989
+      },
+      "H100-NVL fp8": {
+        "fits": true,
+        "cache_budget_gib": 49.7155058479309,
+        "full_length_requests_that_fit": 21.42621127452914,
+        "minutes": 30.178026895656384
+      }
+    }
+  }
+}

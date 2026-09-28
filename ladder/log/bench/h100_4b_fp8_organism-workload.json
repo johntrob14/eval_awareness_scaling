@@ -1,0 +1,24 @@
+{
+  "model": "/workspace/models/organism-merged",
+  "quantization": "fp8",
+  "workload_variant": "organism",
+  "gpu_memory_utilization": 0.85,
+  "engine_startup_s": 41.258890867233276,
+  "arms": {
+    "A_card_decoding": {
+      "n_requests": 100,
+      "n_generated_tokens": 49852,
+      "max_request_tokens": 512,
+      "wall_s": 4.678576946258545,
+      "tokens_per_s": 10655.376746526872
+    },
+    "B_qwen_official": {
+      "n_requests": 200,
+      "n_generated_tokens": 169907,
+      "max_request_tokens": 4162,
+      "wall_s": 25.69111680984497,
+      "tokens_per_s": 6613.45325147137
+    }
+  },
+  "total_generation_wall_s": 30.369693756103516
+}

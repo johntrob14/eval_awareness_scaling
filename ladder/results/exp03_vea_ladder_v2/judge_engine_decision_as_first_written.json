@@ -1,0 +1,5 @@
+{
+ "engine": "fp8",
+ "answer_format": "label_first",
+ "source": "/workspace/eval-awareness/results/exp03_vea_ladder_v2/smoke/judge.json"
+}

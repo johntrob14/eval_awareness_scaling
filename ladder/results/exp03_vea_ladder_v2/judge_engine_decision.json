@@ -1,0 +1,6 @@
+{
+ "engine": "fp8",
+ "answer_format": "reasoning_first",
+ "source": "/workspace/eval-awareness/results/exp03_vea_ladder_v2/smoke/judge.json",
+ "format_note": "label-first failed the smoke rule: reasoning-first vs label-first kappa below the bf16 noise floor on refusal_3way (0.765 vs lower bound 0.810) and full_refusal (0.857 vs 0.858), lower agreement with exp02's thinking-mode judge on full refusal (0.554 vs 0.681), and only 1.10x faster"
+}

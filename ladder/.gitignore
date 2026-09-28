@@ -1,0 +1,12 @@
+cache/
+models/
+*.safetensors
+.env
+__pycache__/
+.ruff_cache/
+# live previews redrawn while a chain runs; the committed figures are the named runs (final/, ...)
+figures/*/live/
+results/*/live/
+# per-step run logs (tens of MB of vLLM progress output); the committed logs are setup, gates and benchmarks
+log/exp02/*.log
+log/exp03/

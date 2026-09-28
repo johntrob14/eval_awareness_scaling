@@ -1,0 +1,24 @@
+{
+  "model": "/workspace/models/base-text",
+  "quantization": "fp8",
+  "workload_variant": "base",
+  "gpu_memory_utilization": 0.85,
+  "engine_startup_s": 41.51446747779846,
+  "arms": {
+    "A_card_decoding": {
+      "n_requests": 100,
+      "n_generated_tokens": 51102,
+      "max_request_tokens": 512,
+      "wall_s": 4.730013370513916,
+      "tokens_per_s": 10803.774957288919
+    },
+    "B_qwen_official": {
+      "n_requests": 200,
+      "n_generated_tokens": 1769627,
+      "max_request_tokens": 32768,
+      "wall_s": 560.9240837097168,
+      "tokens_per_s": 3154.842252977317
+    }
+  },
+  "total_generation_wall_s": 565.6540970802307
+}

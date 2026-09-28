@@ -1,0 +1,27 @@
+{
+  "recorded_at_utc": "2026-09-27T02:40Z",
+  "t0_utc": "2026-09-26T20:30Z",
+  "elapsed_h": 6.2,
+  "trigger": {
+    "judge_throughput": "Qwen3.8-27B FP8 judge, 400 real calls (mean ~870 input, ~75 output tokens): 4.95 calls/s, ~4.3k input tok/s (log/bench/exp02_judge_settings.log). The first production run (Call A first) ran at ~2.5 calls/s. JSON schema and top-20 logprobs cost nothing measurable (4.95 / 4.93 / 4.46 calls/s with both / schema only / logprobs only).",
+    "judge_workload": "11.9M (Qwen3-0.6B) and 15.2M (Qwen3-8B) judge input tokens per model with 40 stage-2 rollouts; 75% of them Call B (refusal), which every analysed rollout needs (scripts/judge_call_budget.py). Prefix caching can reuse at most 10-13% (784-token cache blocks on the hybrid judge).",
+    "generation": "Qwen3.5-0.8B stage 1 took 1034 s (mean CoT 2908 tokens); in the Qwen3 ladder stage 2 took about as long as stage 1.",
+    "projection_without_fallback": "about 11 h of remaining generation plus about 10 h of judging from T+5.6: past T+24"
+  },
+  "applied": [
+    "Step 1 of the pre-agreed order: stage-2 extra rollouts 40 -> 20 for all models (ladder_config.STAGE2_EXTRA_USED). The Qwen3 ladder was already generated with 40; rollout seeds depend only on (prompt set, item, rollout index), so its rollouts 10-29 are the ones a 20-extra run draws, and only those are judged and analysed. Qwen3.5-0.8B keeps its stage 1 and selection (its 40-extra stage 2 was stopped unfinished); its stage 2 runs with 20.",
+    "Judge engine (not a pre-agreed step; a deviation): the bf16 Qwen3.8-27B weights are the main judge and the FP8 checkpoint re-judges the 500 validation items (the pre-registered bf16-vs-FP8 check with the roles swapped). Prefix caching off. Same prompts, schemas, sampling and seeds."
+  ],
+  "judge_engine_timing": {
+    "source": "log/bench/exp02_judge_engines.log (scripts/bench_judge_engines.sh): the same 1127 production calls (40 Qwen3-8B questions, production order), one engine per variant",
+    "calls_per_s": {"fp8": 3.15, "fp8_triton_gdn": 3.23, "fp8_no_prefix_cache": 3.43,
+                    "bf16": 6.42, "bf16_no_prefix_cache": 6.65, "bf16_triton_gdn": 6.25},
+    "reading": "FP8 runs at half the bf16 speed because DeepGEMM is off (needs nvcc >= 12.9) and vLLM's CUTLASS block-FP8 fallback is slow here; the GDN prefill kernel choice does not matter; prefix caching does not help."
+  },
+  "not_applied": [
+    "Step 2 (Qwen3.8-27B stage 1 only): not needed; with 20 extra rollouts and the bf16 judge the projection is about T+18 before the Qwen3-32B add-on.",
+    "Step 3 (Qwen3-32B stage 1): decided by the existing rule in scripts/ladder_tail.sh (only if projected to end by T+20)."
+  ],
+  "projection_after": "generation ~6 h (Qwen3.5 ladder + Qwen3.8), judging ~5.5 h at ~6.6 calls/s, validation ~0.5 h: about T+18",
+  "subject_precision": "unchanged (bf16 for every subject)"
+}

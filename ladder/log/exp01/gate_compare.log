@@ -1,0 +1,3 @@
+organism: mean |dlogprob| = 0.0098 nats over 512 tokens; prefill diagnostic 1.00
+base: mean |dlogprob| = 0.0076 nats over 512 tokens; prefill diagnostic 1.00
+threshold 0.0500 -> PASS

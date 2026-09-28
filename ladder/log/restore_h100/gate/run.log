@@ -1,0 +1,5 @@
+[17:58:35] start gate_compare
+organism: mean |dlogprob| = 0.0094 nats over 512 tokens; prefill diagnostic 1.00
+base: mean |dlogprob| = 0.0067 nats over 512 tokens; prefill diagnostic 1.00
+threshold 0.0500 -> PASS
+[17:58:35] gate done
