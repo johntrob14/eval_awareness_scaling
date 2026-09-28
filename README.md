@@ -5,8 +5,9 @@ awareness", VEA), does that change what it does? This repo studies that on Qwen3
 and Qwen3.8-27B, using refusal on the [FORTRESS](https://huggingface.co/datasets/ScaleAI/fortress_public)
 adversarial prompts as the behavior.
 
-All results are drafts. None has been verified by a human yet (see `AGENTS.md` for the evidence norms). Numbers
-labeled "judge" come from an LLM judge (Qwen3.8-27B) and are weaker evidence than the judge-free ones.
+Results are drafts unless listed in `VERIFIED.md` (see `AGENTS.md` for the evidence norms); the human checks are
+in `results/exp03_vea_ladder_v2/verification/`. Numbers labeled "judge" come from an LLM judge (Qwen3.8-27B) and
+are weaker evidence than the judge-free ones.
 
 ## Experiments
 
