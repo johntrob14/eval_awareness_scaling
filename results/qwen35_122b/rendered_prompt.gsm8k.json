@@ -1,0 +1,13 @@
+{
+  "qid": 0,
+  "rendered": "<|im_start|>user\nJanet\u2019s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?<|im_end|>\n<|im_start|>assistant\n<think>\n",
+  "first_tokens": [
+    "<|im_start|>",
+    "user",
+    "\u010a",
+    "Jan",
+    "et",
+    "\u00e2\u0122\u013bs"
+  ],
+  "think_token_present": false
+}

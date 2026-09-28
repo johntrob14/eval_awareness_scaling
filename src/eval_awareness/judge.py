@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 from eval_awareness import rubrics
 from eval_awareness.backends import add_vllm_args, load_vllm
-from eval_awareness.data import load_fortress
+from eval_awareness.data import CAPABILITY, load_capability, load_fortress
 from eval_awareness.io import append_jsonl, read_jsonl
 
 DEFAULT_JUDGE = {"openai": "gpt-5-mini", "mlx": "mlx-community/Qwen3-8B-4bit", "vllm": "Qwen/Qwen3-8B"}
@@ -82,9 +82,12 @@ class MLXJudge:
 
 class VLLMJudge:
     def __init__(self, model: str, args, max_tokens: int = 400):
+        self.thinking = args.judge_thinking
         from vllm import SamplingParams
 
         extra = {"limit_mm_per_prompt": {"image": 0, "video": 0}} if args.text_only else {}
+        if args.max_num_seqs:
+            extra["max_num_seqs"] = args.max_num_seqs
         self.llm = load_vllm(model, args.tensor_parallel_size, args.gpu_memory_utilization, args.max_model_len,
                          pipeline_parallel_size=args.pipeline_parallel_size,
                              **extra)
@@ -94,10 +97,15 @@ class VLLMJudge:
     def __call__(self, prompts: list[str]) -> list[str]:
         texts = [
             self.tok.apply_chat_template([{"role": "user", "content": p}], add_generation_prompt=True,
-                                         enable_thinking=False, tokenize=False)
+                                         tokenize=False, **self.template_kwargs())
             for p in prompts
         ]
         return [o.outputs[0].text for o in self.llm.generate(texts, self.params)]
+
+    def template_kwargs(self) -> dict:
+        if self.thinking == "off":
+            return {"enable_thinking": False}
+        return {"enable_thinking": True, "reasoning_effort": self.thinking}
 
 
 def build_items(task: str, rollouts: list[dict], prompts: dict[int, str], args) -> list[tuple[dict, str | None]]:
@@ -110,13 +118,14 @@ def build_items(task: str, rollouts: list[dict], prompts: dict[int, str], args) 
                 items.append(({**stub, "vea": None, "quote": None}, None))
             else:
                 items.append((stub, rubrics.VEA_RESPONSE_RUBRIC.format(cot=r["response"][: args.max_vea_chars])))
-    elif task == "vea":
+    elif task in ("vea", "vea_cal"):
+        rubric = rubrics.VEA_RUBRIC if task == "vea" else rubrics.VEA_CAL_RUBRIC
         for r in rollouts:
             stub = {"qid": r["qid"], "sample_idx": r["sample_idx"]}
             if args.prefilter and not rubrics.PREFILTER_RE.search(r["cot"]):
                 items.append(({**stub, "vea": False, "quote": None, "prefiltered": True}, None))
             else:
-                items.append((stub, rubrics.VEA_RUBRIC.format(cot=r["cot"])))
+                items.append((stub, rubric.format(cot=r["cot"])))
     elif task == "refusal":
         for r in rollouts:
             stub = {"qid": r["qid"], "sample_idx": r["sample_idx"]}
@@ -125,7 +134,7 @@ def build_items(task: str, rollouts: list[dict], prompts: dict[int, str], args) 
             else:
                 resp = r["response"][: args.max_response_chars]
                 items.append((stub, rubrics.REFUSAL_RUBRIC + rubrics.REFUSAL_INPUTS.format(
-                    prompt=prompts[r["qid"]], response=resp)))
+                    prompt=prompts[r.get("prompt_qid", r["qid"])], response=resp)))
     elif task in ("category", "safety"):
         for path in args.vea_judgments:
             src = {"source": "response"} if ".vea_response." in Path(path).name else {}
@@ -133,13 +142,14 @@ def build_items(task: str, rollouts: list[dict], prompts: dict[int, str], args) 
                 if not j.get("vea"):
                     continue
                 stub = {"qid": j["qid"], "sample_idx": j["sample_idx"], "quote": j["quote"]} | src
-                items.append((stub, rubrics.CATEGORY_RUBRIC.format(prompt=prompts[j["qid"]][:1500], quote=j["quote"])
+                items.append((stub, rubrics.CATEGORY_RUBRIC.format(prompt=prompts[j.get("prompt_qid", j["qid"])][:1500], quote=j["quote"])
                               if task == "category" else rubrics.SAFETY_RUBRIC.format(quote=j["quote"])))
     return items
 
 
 def parse(task: str, raw: str) -> dict:
-    if task in ("vea", "vea_response"):
+    raw = raw.split("</think>")[-1]  # a thinking judge's verdict follows its reasoning
+    if task in ("vea", "vea_response", "vea_cal"):
         vea, quote = rubrics.parse_vea(raw)
         return {"vea": vea, "quote": quote}
     if task == "refusal":
@@ -153,7 +163,7 @@ def parse(task: str, raw: str) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("rollouts", type=Path)
-    ap.add_argument("--task", choices=["vea", "vea_response", "refusal", "category", "safety"], required=True)
+    ap.add_argument("--task", choices=["vea", "vea_response", "vea_cal", "refusal", "category", "safety"], required=True)
     ap.add_argument("--backend", choices=["openai", "mlx", "vllm"], default="openai")
     ap.add_argument("--judge-model")
     ap.add_argument("--no-prefilter", dest="prefilter", action="store_false",
@@ -163,8 +173,10 @@ def main():
     ap.add_argument("--vea-judgments", type=Path, nargs="+",
                     help="for --task category/safety (default: this judge's CoT VEA judgments)")
     ap.add_argument("--chunk", type=int, help="judgments per call/write (default depends on backend)")
-    ap.add_argument("--split", choices=["adversarial", "benign"], default="adversarial",
+    ap.add_argument("--split", choices=["adversarial", "benign", "gsm8k", "math500"], default="adversarial",
                     help="Fortress prompt the rollouts answered (refusal/category inputs)")
+    ap.add_argument("--judge-thinking", choices=["off", "low", "medium", "xhigh"], default="off",
+                    help="vllm: judge reasoning (Qwen3.8 reasoning_effort); off = thinking disabled")
     ap.add_argument("--out-dir", type=Path, default=Path("data/judgments"))
     ap.add_argument("--judge-max-tokens", type=int, default=400, help="vllm/mlx: judge output limit")
     ap.add_argument("--text-only", action="store_true", help="vllm: disable image/video inputs of a multimodal judge")
@@ -178,8 +190,13 @@ def main():
     out = judgment_path(args.rollouts, args.task, judge_model, args.out_dir)
     done = {key(j) for j in read_jsonl(out)}
 
-    col = "adversarial_prompt" if args.split == "adversarial" else "benign_prompt"
-    prompts = dict(zip(*load_fortress(exclude_explicit_eval=False)[["qid", col]].T.values))
+    prompts = {}
+    if args.task in ("refusal", "category"):  # the only tasks whose judge prompt includes the user request
+        if args.split in CAPABILITY:
+            prompts = dict(zip(*load_capability(args.split)[["qid", "prompt"]].T.values))
+        else:
+            col = f"{args.split}_prompt"
+            prompts = dict(zip(*load_fortress(exclude_explicit_eval=False)[["qid", col]].T.values))
     # keep the last row per rollout (generate --retry-truncated appends replacements)
     rollouts = list({(r["qid"], r["sample_idx"]): r for r in read_jsonl(args.rollouts)}.values())
     items = [it for it in build_items(args.task, rollouts, prompts, args) if key(it[0]) not in done]
@@ -197,10 +214,10 @@ def main():
         import vllm
 
         example = judge.tok.apply_chat_template([{"role": "user", "content": todo[0][1]}], add_generation_prompt=True,
-                                                enable_thinking=False, tokenize=False)
+                                                tokenize=False, **judge.template_kwargs())
         append_jsonl(out.with_suffix(".config.jsonl"), [{
             "started": time.strftime("%Y-%m-%dT%H:%M:%S"), "task": args.task, "judge_model": judge_model,
-            "vllm": vllm.__version__, "sampling": repr(judge.params), "enable_thinking": False,
+            "vllm": vllm.__version__, "sampling": repr(judge.params), "judge_thinking": args.judge_thinking,
             "tensor_parallel_size": args.tensor_parallel_size, "max_model_len": args.max_model_len,
             "n_to_judge": len(todo), "example_rendered_prompt": example,
         }])
@@ -208,7 +225,7 @@ def main():
         chunk = todo[i: i + args.chunk]
         raws = judge([p for _, p in chunk])
         append_jsonl(out, [stub | parse(args.task, raw) | {"judge": judge_model, "raw": raw}
-                           | ({"parse_ok": "QUOTE:" in raw} if args.task in ("vea", "vea_response") else {})
+                           | ({"parse_ok": "QUOTE:" in raw.split("</think>")[-1]} if args.task.startswith("vea") else {})
                            for (stub, _), raw in zip(chunk, raws)])
 
 

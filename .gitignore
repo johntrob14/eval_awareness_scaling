@@ -10,3 +10,15 @@ logs/
 results/gemma4_pilot/rollouts/
 results/gemma4_pilot/judgments/
 results/gemma4_pilot/*.csv
+# Gemma follow-up: judgments and the calibration set contain harmful-content CoTs
+results/gemma4_followup/judgments/
+results/gemma4_followup/calibration/
+results/gemma4_followup/snap/
+results/nemotron3_super/rollouts/
+results/nemotron3_super/judgments/
+results/nemotron3_super/intervention/*.jsonl
+results/nemotron3_super/intervention/judgments/
+results/qwen35_*/rollouts/
+results/qwen35_*/judgments/
+results/qwen35_*/intervention/*.jsonl
+results/qwen35_*/intervention/judgments/

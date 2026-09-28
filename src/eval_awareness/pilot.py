@@ -21,7 +21,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from eval_awareness.analyze import lpm_effect, within_question_diff
 from eval_awareness.io import read_jsonl
 
 BOOT_SEED, N_BOOT = 20260926, 2000
@@ -86,7 +85,8 @@ def load_split(d: Path, split: str, judge: str) -> pd.DataFrame:
 
 def _norm(s: str) -> str:
     s = unicodedata.normalize("NFKC", s)
-    s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
+    # all quote marks alike: a judge re-quoting 'x' for "x" is not a hallucination
+    s = s.replace("’", "'").replace("‘", "'").replace("“", "'").replace("”", "'").replace('"', "'")
     s = s.replace("*", "").replace("`", "")
     return re.sub(r"\s+", " ", s).strip().lower()
 
@@ -164,21 +164,6 @@ def within_parts(r: pd.DataFrame, vcol: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def fe_lpm(r: pd.DataFrame, vcol: str) -> dict | None:
-    """OLS refusal ~ vea + prompt fixed effects, SE clustered by prompt."""
-    import statsmodels.formula.api as smf
-
-    d = r.assign(y=r.refusal.astype(float), x=r[vcol].astype(float))
-    # only prompts with variation in x identify the effect; dropping the rest leaves beta unchanged
-    d = d[d.groupby("qid").x.transform("std") > 0]
-    if d.qid.nunique() < 2:
-        return None
-    fit = smf.ols("y ~ x + C(qid)", d).fit(cov_type="cluster", cov_kwds={"groups": d.qid})
-    b, se = float(fit.params["x"]), float(fit.bse["x"])
-    return {"beta": b, "se_cluster": se, "ci95": [b - 1.96 * se, b + 1.96 * se], "n_prompts": int(d.qid.nunique()),
-            "n_rollouts": len(d)}
-
-
 def within_effect(r: pd.DataFrame, vcol: str) -> dict:
     parts = within_parts(r, vcol)
     out = {"n_prompts_with_variation": len(parts)}
@@ -188,14 +173,8 @@ def within_effect(r: pd.DataFrame, vcol: str) -> dict:
     idx = _rng().integers(0, len(parts), (N_BOOT, len(parts)))
     bs = (d[idx] * w[idx]).sum(1) / w[idx].sum(1)
     c = ci(bs)
-    out |= {"weighted_diff": within_question_diff(r.assign(vea=r[vcol])), "ci95": c,
-            "ci_width": c[1] - c[0] if c else None, "unweighted_mean_diff": float(d.mean()),
-            "fe_lpm": fe_lpm(r, vcol)}
-    try:
-        b = lpm_effect(r.assign(vea=r[vcol]))
-        out["re_lpm"] = b and {"beta": b[0], "se": b[1], "ci95": [b[0] - 1.96 * b[1], b[0] + 1.96 * b[1]]}
-    except Exception as e:  # mixedlm can fail to converge on tiny samples
-        out["re_lpm"] = {"error": repr(e)}
+    out |= {"weighted_diff": float((d * w).sum() / w.sum()), "ci95": c, "ci_width": c[1] - c[0] if c else None,
+            "unweighted_mean_diff": float(d.mean())}
     return out
 
 
@@ -295,6 +274,9 @@ def analyze(d: Path, judge: str) -> dict:
         "any_vea": within_effect(ra, "vea"),
         "cot_vea_only": within_effect(ra, "vea_cot"),
         "safety_vea_vs_no_vea": within_effect(rs, "vea_safety"),
+        # Prompts outside the refusal band contribute a difference of exactly 0, which pulls the pooled
+        # estimates toward 0; this restricts the primary estimate to the usable prompts.
+        "any_vea_usable_only": within_effect(ra[ra.qid.isin(usable.index)], "vea"),
     }
 
     # 5. across-question comparison (descriptive)
@@ -369,17 +351,28 @@ def analyze(d: Path, judge: str) -> dict:
         p = r.n_vea / r.N
         budget.append({"qid": int(r.name), "pilot_vea_rate": round(float(p), 3), "N": int(min(500, math.ceil(10 / p)))})
     tot = sum(x["N"] for x in budget)
+
+    def n_gpus(run):  # GPUs one engine used, from the logged args
+        a_ = run["args"]
+        return a_.get("tensor_parallel_size", 1) * a_.get("pipeline_parallel_size", 1)
+
+    def gpu_hours(run):
+        return tot * mean_tok / run["output_tok_per_s"] / 3600 * n_gpus(run) if run else None
+
     res["8_stage4_budget"] = {
         "rule": "N = min(500, ceil(10 / pilot VEA rate)) per usable prompt",
         "per_prompt": budget, "total_rollouts": tot,
         "new_rollouts_beyond_pilot": int(sum(max(0, x["N"] - 20) for x in budget)),
         "mean_output_tokens_per_rollout": mean_tok,
         "stage0_output_tok_per_s": tput0,
-        "gpu_hours_stage0_rate": tot * mean_tok / tput0 / 3600 * 4 if tput0 else None,
+        "stage0_gpus": n_gpus(runs[0]) if runs else None,
+        "gpu_hours_stage0_rate": gpu_hours(runs[0]) if runs else None,
         "stage1_output_tok_per_s": big and big["output_tok_per_s"],
-        "gpu_hours_stage1_rate": tot * mean_tok / big["output_tok_per_s"] / 3600 * 4 if big else None,
-        "note": "GPU hours = rollouts x mean output tokens / aggregate tok/s / 3600 x 4 GPUs (TP=4); generation only, "
-                "judging excluded",
+        "stage1_gpus": n_gpus(big) if big else None,
+        "gpu_hours_stage1_rate": gpu_hours(big),
+        "wall_hours_stage1_rate": gpu_hours(big) / n_gpus(big) if big else None,
+        "note": "GPU hours = rollouts x mean output tokens / aggregate tok/s / 3600 x GPUs per engine (tp x pp); "
+                "generation only, judging excluded",
     }
     return res, a, b, rq
 

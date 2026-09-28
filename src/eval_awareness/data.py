@@ -27,3 +27,21 @@ def load_fortress(exclude_explicit_eval: bool = True) -> pd.DataFrame:
     if exclude_explicit_eval:
         df = df[~df.qid.isin(EXPLICIT_EVAL_QIDS)]
     return df
+
+
+# Capability benchmarks for measuring VEA outside safety prompts. The model sees the raw problem text,
+# with no "put your answer in \\boxed{}" suffix. qid = row position; GSM8K keeps its first 500 test
+# rows so rollout seeds stay unique (qid < 1000).
+CAPABILITY = {
+    "gsm8k": ("openai/gsm8k", "main/test-00000-of-00001.parquet", "question", 500),
+    "math500": ("HuggingFaceH4/MATH-500", "test.jsonl", "problem", 500),
+}
+
+
+def load_capability(name: str) -> pd.DataFrame:
+    repo, fname, col, n = CAPABILITY[name]
+    path = hf_hub_download(repo, fname, repo_type="dataset")
+    df = pd.read_parquet(path) if fname.endswith(".parquet") else pd.read_json(path, lines=True)
+    df = df.head(n).reset_index(drop=True)
+    df.insert(0, "qid", df.index)
+    return df.rename(columns={col: "prompt"})

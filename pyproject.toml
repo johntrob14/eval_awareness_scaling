@@ -20,20 +20,6 @@ dependencies = [
     "vllm==0.30.0; sys_platform == 'linux'",
 ]
 
-# PyPI's torch/vLLM wheels are built for CUDA 13 (driver >= 580). The GPU box has driver 550
-# (CUDA 12.4), so use the CUDA 12.9 builds, which run on it via CUDA 12 minor-version compat.
-[tool.uv.sources]
-vllm = { url = "https://github.com/vllm-project/vllm/releases/download/v0.30.0/vllm-0.30.0+cu129-cp38-abi3-manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" }
-torch = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
-torchaudio = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
-torchcodec = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
-torchvision = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
-
-[[tool.uv.index]]
-name = "pytorch-cu129"
-url = "https://download.pytorch.org/whl/cu129"
-explicit = true
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

@@ -24,3 +24,5 @@ def add_vllm_args(ap) -> None:
                     help="vLLM: pipeline stages (cheaper than TP when GPUs lack NVLink)")
     ap.add_argument("--gpu-memory-utilization", type=float, default=0.9, help="vLLM")
     ap.add_argument("--max-model-len", type=int, help="vLLM: context length (default: model's)")
+    ap.add_argument("--max-num-seqs", type=int,
+                    help="vLLM: max concurrent sequences (hybrid Mamba judges on one GPU need <= ~512)")

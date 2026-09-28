@@ -1,0 +1,19 @@
+{
+  "n_prompts": 70,
+  "n_items": 790,
+  "items_by_cond": {
+    "none": 139,
+    "neutral": 139,
+    "boundary": 139,
+    "eval": 139,
+    "keep": 117,
+    "drop": 117
+  },
+  "n_continuations": 3950,
+  "k": 5,
+  "refusal_band": [
+    0.1,
+    0.9
+  ],
+  "seed": 20260927
+}

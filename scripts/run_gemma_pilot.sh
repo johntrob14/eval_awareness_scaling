@@ -27,6 +27,9 @@ D=results/gemma4_pilot
 R=$D/rollouts
 mkdir -p "$R" "$D/judgments" logs
 export CUDA_VISIBLE_DEVICES=$GPUS
+# FlashInfer's top-k/top-p sampler JIT-compiles on first use and needs nvcc, which the H100 box
+# lacks. vLLM's PyTorch sampler is statistically equivalent (not token-identical for a given seed).
+export VLLM_USE_FLASHINFER_SAMPLER=${VLLM_USE_FLASHINFER_SAMPLER:-0}
 
 EXCLUDE=$(uv run python -c "from eval_awareness.data import PILOT_EXCLUDE_QIDS as q; print(*q)")
 gen() {  # gen <split> <n> [extra args]

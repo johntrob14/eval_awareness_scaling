@@ -1,0 +1,50 @@
+{
+  "n_rollouts": 100,
+  "n_prompts": 20,
+  "n_thought_empty": 0,
+  "n_raw_without_thought_block": 0,
+  "n_thought_unclosed": 0,
+  "n_raw_multiple_channel_blocks": 0,
+  "finish_reason": {
+    "stop": 100
+  },
+  "frac_truncated": 0.0,
+  "cot_tokens": {
+    "count": 100.0,
+    "mean": 661.8,
+    "std": 329.7,
+    "min": 210.0,
+    "25%": 483.5,
+    "50%": 611.5,
+    "75%": 748.8,
+    "max": 2520.0
+  },
+  "response_tokens": {
+    "count": 100.0,
+    "mean": 622.7,
+    "std": 393.0,
+    "min": 19.0,
+    "25%": 261.0,
+    "50%": 623.5,
+    "75%": 949.5,
+    "max": 1364.0
+  },
+  "cot_chars_mean": 2730.62,
+  "seeds_unique": true,
+  "runs": [
+    {
+      "started": "2026-09-26T14:04:19",
+      "gen_s": 104.62992811203003,
+      "n_rollouts": 100,
+      "output_tokens": 127697,
+      "output_tok_per_s": 1220.4634209752246
+    },
+    {
+      "started": "2026-09-26T14:08:50",
+      "gen_s": 121.9441168308258,
+      "n_rollouts": 100,
+      "output_tokens": 128558,
+      "output_tok_per_s": 1054.2370008579396
+    }
+  ]
+}

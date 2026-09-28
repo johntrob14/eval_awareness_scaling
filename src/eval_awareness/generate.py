@@ -16,20 +16,21 @@ The thought delimiters are special tokens, so decoding keeps special tokens.
 
 import argparse
 import json
+import os
 import re
 import time
 from collections import defaultdict
 from pathlib import Path
 
 from eval_awareness.backends import add_vllm_args, default_backend, load_vllm
-from eval_awareness.data import load_fortress
+from eval_awareness.data import CAPABILITY, load_capability, load_fortress
 from eval_awareness.io import append_jsonl, read_jsonl
 
 THINK_RE = re.compile(r"^\s*(?:<think>)?(.*?)</think>(.*)$", re.S)
 GEMMA_OPEN, GEMMA_CLOSE = "<|channel>thought", "<channel|>"
 # token that ends the chain of thought, used to count CoT vs response tokens
 THINK_END_TOKEN = {"qwen": "</think>", "gemma": GEMMA_CLOSE}
-SPLIT_CODE = {"adversarial": 0, "benign": 1}
+SPLIT_CODE = {"adversarial": 0, "benign": 1, "gsm8k": 2, "math500": 3}
 
 
 def model_slug(model: str) -> str:
@@ -123,6 +124,8 @@ def sample_vllm(args, jobs, texts, emit):
     extra = {"seed": args.seed} if args.seed is not None else {}
     if args.text_only:
         extra["limit_mm_per_prompt"] = {"image": 0, "video": 0}
+    if args.max_num_seqs:
+        extra["max_num_seqs"] = args.max_num_seqs
     llm = load_vllm(args.model, args.tensor_parallel_size, args.gpu_memory_utilization, args.max_model_len,
                          pipeline_parallel_size=args.pipeline_parallel_size, **extra)
     args.gen_started = time.time()  # throughput excludes engine start-up
@@ -146,7 +149,7 @@ def sample_vllm(args, jobs, texts, emit):
         }, indent=2))
 
     sp = dict(temperature=args.temp, top_p=args.top_p, top_k=args.top_k, max_tokens=args.max_tokens,
-              skip_special_tokens=not gemma)
+              presence_penalty=args.presence_penalty, skip_special_tokens=not gemma)
     by_q = defaultdict(list)
     for qid, idx in jobs:
         by_q[qid].append(idx)
@@ -178,11 +181,12 @@ def main():
     ap.add_argument("--temp", type=float, default=0.6)
     ap.add_argument("--top-p", type=float, default=0.95)
     ap.add_argument("--top-k", type=int, default=20)
+    ap.add_argument("--presence-penalty", type=float, default=0.0, help="vLLM (e.g. 1.5 per the Qwen3.5 card)")
     ap.add_argument("--out", type=Path, help="default: data/rollouts/<model>.jsonl")
     ap.add_argument("--batch-size", type=int, default=16, help="MLX: concurrent sequences")
     ap.add_argument("--questions-per-chunk", type=int, default=50, help="vLLM: questions per generate call")
-    ap.add_argument("--split", choices=["adversarial", "benign"], default="adversarial",
-                    help="which Fortress prompt to sample from")
+    ap.add_argument("--split", choices=list(SPLIT_CODE), default="adversarial",
+                    help="which Fortress prompt to sample from, or a capability benchmark (gsm8k, math500)")
     ap.add_argument("--exclude-qids", type=int, nargs="*",
                     help="questions to drop (default: data.EXPLICIT_EVAL_QIDS)")
     ap.add_argument("--thinking", choices=["qwen", "gemma"], help="CoT format (default: from model name)")
@@ -201,10 +205,14 @@ def main():
         from transformers import GenerationConfig
 
         gc = GenerationConfig.from_pretrained(args.model)
-        args.temp, args.top_p, args.top_k = gc.temperature, gc.top_p, gc.top_k
+        # top_k absent from the file (e.g. Nemotron 3: temperature 1.0, top_p 0.95 only) means no top-k: 0 in vLLM
+        args.temp, args.top_p, args.top_k = gc.temperature, gc.top_p, gc.top_k or 0
 
     out = args.out or Path("data/rollouts") / f"{model_slug(args.model)}.jsonl"
-    df = load_fortress(exclude_explicit_eval=args.exclude_qids is None)
+    if args.split in CAPABILITY:
+        df = load_capability(args.split)
+    else:
+        df = load_fortress(exclude_explicit_eval=args.exclude_qids is None)
     if args.exclude_qids is not None:
         df = df[~df.qid.isin(args.exclude_qids)]
     if args.qids:
@@ -220,7 +228,8 @@ def main():
                 done[qid].discard(idx)
     jobs = [(qid, i) for qid in df.qid for i in range(args.n_rollouts) if i not in done[qid]]
     print(f"{out}: {sum(map(len, done.values()))} rollouts kept, {len(jobs)} to generate "
-          f"({args.backend}, {args.split}, T={args.temp} top_p={args.top_p} top_k={args.top_k})", flush=True)
+          f"({args.backend}, {args.split}, T={args.temp} top_p={args.top_p} top_k={args.top_k} "
+          f"presence_penalty={args.presence_penalty})", flush=True)
     if not jobs:
         return
 
@@ -236,6 +245,7 @@ def main():
                 "model": args.model, "qid": int(qid), "sample_idx": idx,
                 "cot": cot, "response": response, "finish_reason": reason,
                 "n_tokens": n, "temp": args.temp, "top_p": args.top_p, "top_k": args.top_k,
+                "presence_penalty": args.presence_penalty,
             }
             if args.thinking == "gemma" or args.seed is not None:
                 row |= {"prompt_id": int(qid), "split": args.split, "rollout_idx": idx, "seed": seed,
@@ -251,7 +261,7 @@ def main():
             print(f"{n_done}/{len(jobs)} done, {n_tok / el:.0f} tok/s, "
                   f"eta {el / n_done * (len(jobs) - n_done) / 60:.0f} min", flush=True)
 
-    col = "adversarial_prompt" if args.split == "adversarial" else "benign_prompt"
+    col = "prompt" if args.split in CAPABILITY else f"{args.split}_prompt"
     texts = dict(zip(df.qid, df[col]))
     t_start = time.time()
     (sample_mlx if args.backend == "mlx" else sample_vllm)(args, jobs, texts, emit)
@@ -261,6 +271,7 @@ def main():
         "started": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(t_start)), "wall_s": time.time() - t_start,
         "gen_s": el, "n_rollouts": n_done, "output_tokens": n_tok, "output_tok_per_s": n_tok / el,
         "args": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
+        "env": {k: os.environ.get(k) for k in ["CUDA_VISIBLE_DEVICES", "VLLM_USE_FLASHINFER_SAMPLER"]},
     }])
 
 

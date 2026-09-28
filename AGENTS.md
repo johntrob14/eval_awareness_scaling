@@ -41,8 +41,13 @@ From the post (Qwen3 family, Fortress, 100 rollouts per question, GPT-5-mini jud
 - `analyze.py`: VEA rate, pass@k, category shares, within-question refusal difference (weights
   n(N−n)), mixed-effects linear probability model, Fig. 5 split, Spearman. Writes `results/`.
 - `pilot.py`: the Gemma pilot's own Stage 0/2/3 (`smoke`, `analyze`): quote verification against the
-  source text, hand-labeling CSV, prompt-clustered bootstrap CIs, usable-prompt counts, FE/RE linear
-  probability models, VEA-position stats and the Stage 4 budget. Writes `analysis.json` + plots.
+  source text, hand-labeling CSV, prompt-clustered bootstrap CIs, usable-prompt counts, the
+  within-question weighted refusal difference (no regression models), VEA-position stats and the Stage 4 budget. Writes `analysis.json` + plots.
+- `followup.py` + `scripts/run_gemma_followup.sh`: the Gemma follow-up (`results/gemma4_followup/`):
+  top-up of the VEA prompts to 200 rollouts, GSM8K/MATH-500 rollouts (`data.load_capability`,
+  `generate.py --split gsm8k|math500`), the calibrated VEA judge (`judge.py --task vea_cal
+  --judge-thinking low`), and `followup calib|analyze|smoke` (`--slug/--dir/--rollouts` for other models).
+  VEA types: `judge.py --task category --vea-judgments <vea_cal file>`.
 - `scripts/run_scaling.sh`: the full GPU pipeline for all sizes. `scripts/run_gemma_pilot.sh`: the
   Gemma 4 pilot (`STAGES="0 1 2 3"`). `scripts/mlx_generate_with_retry.sh` is for laptops only.
 - `data/pilot/q140_Qwen3-0.6B.jsonl`: 100 Qwen3-0.6B rollouts on q140, generated with MLX on an M3.
@@ -149,11 +154,45 @@ without asking.
   pilot. Resume with `MODELS=Qwen3-8B CUDA_VISIBLE_DEVICES=0 scripts/run_scaling.sh` (it skips
   straight to judging), then rerun `analyze.py`. Qwen3-32B is deferred by the user, so claim 4 is
   still untested.
-- **Gemma 4 31B pilot:** Stage 0 passed on 4×A6000 — 100/100 rollouts with a non-empty thought
-  block, no truncation, mean 629 CoT + 608 response tokens, parsing verified against raw text.
-  Stage 1 was started on that box but is comms-bound there (see Gotchas); it is being moved to a
-  2×H100 box. Stages 2 and 3 have not been run against real data yet — `pilot.analyze` has only
-  been exercised on synthetic rollouts with a known injected effect.
+- **Gemma 4 31B pilot: Stages 0–3 done**; see `results/gemma4_pilot/REPORT.md`. Stage 4 (CoT
+  injection) was dropped by the user in favour of the follow-up below.
+- **Gemma 4 follow-up (2026-09-26): done**; see `results/gemma4_followup/REPORT.md`. The 32
+  prompts with pilot VEA (q285 excluded: its "VEA" only echoes the user's red-teaming premise) were
+  taken to 200 rollouts each. Within-prompt refusal is +6.9 pp higher in VEA rollouts (CI −0.3 to
+  +16.3). VEA on GSM8K is 0.24% and on MATH-500 0/2,500. The calibrated judge (`vea_cal` = F1 +
+  appended notes, low-effort thinking) scores P 1.00 / R 0.93 on 146 CoTs labeled by Claude (not the
+  user), with ~94–100% precision on unseen rollouts. `labeling.csv` is still unlabeled.
+  On this box `/ssd1` (default `HF_HOME`) was nearly full; models live under
+  `HF_HUB_CACHE=/home/jtr2875/.cache/huggingface/hub`, which the follow-up script exports.
+
+- **Nemotron 3 Super 120B-A12B rerun (2026-09-27): done**; see `results/nemotron3_super/REPORT.md` and
+  `scripts/run_nemotron.sh` (bf16, TP=4 on GPUs 0–3; same judges as the Gemma follow-up). VEA 24.4% of
+  adversarial rollouts (Gemma 0.69%). Within-prompt refusal +7.1 pp in VEA rollouts [+4.6, +9.9], ρ = 0.57
+  across prompts. VEA is treated as one construct; types come from the post's category judge (Nemotron
+  69% BOUNDARIES, 92% safety-relevant). GSM8K/MATH-500 VEA ≈ 0. The top-up to 200 rollouts was not run
+  (VEA is common at 20). 72% of its VEA is one inherited phrase, "the user might be testing boundaries",
+  most likely distilled from teacher-model reasoning in `Nemotron-SFT-Instruction-Following-Chat-v2`
+  rather than an NVIDIA template (see the report's note; the specific teacher was not traced). The training
+  prompts behind it are short trolling / toxicity-bait / jailbreak-persona chats (LMSYS-style), ~1% CBRN;
+  no Fortress contamination. Read it as a learned reaction to jailbreak-shaped input, not as a belief
+  about being evaluated. A CoT removal/injection test (`intervene.py`) checks whether it changes refusal.
+- **Nemotron self-recognition probe (2026-09-27): done**; see `results/selfrec/REPORT.md`. Nemotron claims
+  Gemma-authored assistant turns ~99% of the time. In a forced choice between its own CoT and Gemma's (40×40,
+  refusal-stratified) it is 35% accurate [26, 45]. It picks the refusing trace 69% of the time, and with refusal
+  matched it still prefers Gemma's CoT.
+
+- **Nemotron CoT intervention (2026-09-27, `intervene.py`)**: 149 prompts (refusal 10–90%), 7,060
+  continuations. Removing the model's own VEA sentence: +2.2 pp refusal [−0.2, +4.7]. Injection vs the
+  resampled `none` (43.0%): "testing boundaries" +6.6 pp; explicit-eval sentence +21 pp. A "think carefully"
+  sentence also gives +21 pp, but it is a caution cue, not a placebo, so it cannot show VEA is
+  non-causal. Removal (post's rejection filter, primary): +4.3 pp. See the Nemotron report, section 4.
+- **Qwen3.5 122B-A10B and 397B-A17B (2026-09-28): done** via `scripts/overnight_qwen35.sh` → `run_qwen35.sh`
+  (official FP8 on /ssd1, symlinked into the /home HF cache; `VLLM_USE_DEEP_GEMM=0`; card sampling T=1.0 /
+  top-p 0.95 / top-k 20 / presence penalty 1.5). **Cross-model summary: `results/CROSS_MODEL_REPORT.md`**
+  (+ `results/cross_model_summary.csv`). VEA 10.3% / 11.0%; within-prompt refusal gap +5.3 / +2.7 pp;
+  CoT interventions: VEA causally raises refusal for Nemotron (inject +21 pp vs none; remove own VEA +4.3 pp,
+  filtered), nothing detectable for Qwen3.5. The "think carefully" control is a caution cue; content-matched
+  controls (filler, caution-only, helpfulness-eval, deployment) are the proposed next step.
 
 ## Gotchas
 
@@ -182,9 +221,18 @@ without asking.
   every pair (PCIe via host), so TP=4 makes 60 layers × 2 all-reduces per token cross PCIe. Measured
   Gemma 4 31B: ~600 output tok/s aggregate, ~20% of the 768 GB/s bandwidth roofline, with all GPUs
   at 100% "utilization" but only ~215 W of a 300 W cap — the signature of stalling in collectives,
-  not computing. On NVLinked GPUs (H100 SXM) TP is cheap and this does not apply; on a non-NVLink
-  box prefer `--pp` (pipeline parallel, added for this reason: ~3 stage-boundary transfers per token
-  instead of ~120 all-reduces) or run independent per-GPU copies. 31B bf16 = 62 GB of weights, so
-  2×80 GB fits comfortably at TP=2 with room for KV cache.
+  not computing. That is a 4-way, cross-socket, 300 W-card result; don't generalize it to "no NVLink
+  ⇒ use PP". On the H100 NVL box (PCIe only, no NVLink bridges; GPUs 0,1 are `NODE`, same socket),
+  Stage 0 (100 rollouts, identical workload) measured **TP=2: 1,220 tok/s** (~94% util, ~318 W of
+  400 W) vs **PP=2: 1,054 tok/s** (`results/gemma4_pilot/smoke.{tp2,pp2}.json`), so TP=2 won and
+  was used for Stage 1. Measure both on any new box (`STAGES=0`, delete the adversarial rollouts
+  file between runs). 31B bf16 = 62 GB of weights, so 2×80 GB fits at TP=2 with room for KV cache;
+  a single 94 GB H100 NVL also holds it, making independent per-GPU copies an untested third option.
+- **Don't edit a bash script while it's running**: bash reads scripts incrementally, so an in-place
+  edit makes the running copy misparse (two follow-up runs exited 2 after finishing their work).
+  Write the new version to a temp file and `mv` it over the original.
+- `VLLM_USE_FLASHINFER_SAMPLER=0` is needed for the **judge** too on boxes without `nvcc`: even greedy
+  decoding runs the sampler at warmup. Qwen3.8-27B is a hybrid Mamba model; at TP=1 pass
+  `--max-num-seqs 256` (default 1024 exceeds its ~536 Mamba cache blocks on one H100).
 - vLLM's worker errors show up only in the log (`logs/gen_*.log`). The final traceback just says
   "WorkerProc initialization failed", so grep the log for `ERROR` to find the cause.
