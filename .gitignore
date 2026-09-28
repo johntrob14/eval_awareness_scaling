@@ -22,3 +22,9 @@ results/qwen35_*/rollouts/
 results/qwen35_*/judgments/
 results/qwen35_*/intervention/*.jsonl
 results/qwen35_*/intervention/judgments/
+# judge comparison: sets, judge outputs and disagreement sheets contain harmful-content CoTs / answers
+results/judge_compare/**/*.jsonl
+results/judge_compare/**/disagreements.md
+results/judge_compare/calibration_errors.json
+# unified pipeline: harmonized rollouts and judgments
+data/unified/
