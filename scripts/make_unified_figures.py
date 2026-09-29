@@ -80,13 +80,13 @@ def finish(fig, ax, name, title, subtitle, ylabel, models, xs, legend=True, extr
     ax.grid(axis="x", visible=False)
     ax.set_ylabel(ylabel)
     fig.text(0.012, 0.975, title, fontsize=15, fontweight="bold", color=INK, va="top")
-    fig.text(0.012, 0.915, subtitle, fontsize=10.5, color=INK2, va="top")
+    fig.text(0.012, 0.915, subtitle, fontsize=10.5, color=INK2, va="top", linespacing=1.4)
     handles = [Patch(color=c, label=f) for f, c in FAMILY_COLOR.items()] if legend else []
     handles += extra_handles or []
     if handles:
         ax.legend(handles=handles, frameon=False, ncol=len(handles), loc="lower left",
                   bbox_to_anchor=(0, 1.0), fontsize=9.5, handlelength=1.2, columnspacing=1.2)
-    fig.subplots_adjust(top=0.8, bottom=0.2, left=0.08, right=0.99)
+    fig.subplots_adjust(top=0.76, bottom=0.2, left=0.08, right=0.99)
     OUT.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT / f"{name}.png", dpi=200)
     plt.close(fig)
@@ -120,7 +120,7 @@ def main():
     bars_with_ci(ax, xs, v, [100 * p(m, "vea_rate_ci")[0] for m in models], [100 * p(m, "vea_rate_ci")[1] for m in models],
                  colors, fmt="{:.1f}")
     finish(fig, ax, "01_vea_rate", "How often each model verbalizes eval awareness",
-           "Share of scored rollouts whose reasoning says the interaction may be a test (judge: vea_cal). Rollouts 0-9 of 486 Fortress questions per model.",
+           "Share of rollouts in which the model's reasoning says it might be being tested or evaluated.\n10 rollouts on each of 486 Fortress questions per model. Error bars: 95% confidence intervals.",
            "VEA rate (% of rollouts)", models, xs)
 
     # 02 safety-relevant share
@@ -131,7 +131,7 @@ def main():
     for x, m in zip(xs, models):
         ax.text(x, 2, f"n={p(m, 'n_vea_with_category')}", ha="center", va="bottom", fontsize=7.5, color=SURFACE, rotation=90)
     finish(fig, ax, "02_safety_share", "Larger models say the test is about safety more often",
-           "Share of VEA quotes the category judge labels harmful compliance or boundaries (vs abilities / other). n = VEA quotes.",
+           "Of the rollouts that mention being tested, the share where the model suggests the test is about safety\n(harmful compliance or boundaries) rather than its abilities. Numbers in the bars: rollouts that mention a test.",
            "Safety-relevant share of VEA (%)", models, xs)
 
     # 03 VEA types, stacked
@@ -152,7 +152,7 @@ def main():
         bottom += share
     ax.set_ylim(0, 100)
     finish(fig, ax, "03_vea_types", "What the model says is being tested",
-           "Category judge on each VEA quote (it also sees the prompt, so generic quotes get a type from context).",
+           "Breakdown of what each model says is being tested, over rollouts that mention a test.\nLabels come from an LLM judge that also sees the prompt, so vague mentions are classified from context.",
            "Share of VEA quotes (%)", models, xs, legend=False,
            extra_handles=[Patch(color=c, label=l) for _, l, c in types])
 
@@ -165,7 +165,7 @@ def main():
     ax.axhline(0, color=INK2, linewidth=1, zorder=4)
     bars_with_ci(ax, xs, v, lo, hi, colors)
     finish(fig, ax, "04_within_question_gap", "Rollouts that verbalize eval awareness refuse more",
-           "Refusal among VEA rollouts minus the others, averaged over questions with both kinds and refusal < 100% (the post's estimator). 95% CI.",
+           "For each question, the refusal rate of rollouts that mention being tested minus that of rollouts that don't, averaged\nover questions (questions where every rollout refuses are left out). Error bars: 95% confidence intervals.",
            "Refusal difference (percentage points)", models, xs)
 
     # 05 refusal on questions with / without any VEA rollout (post Fig. 5 split)
@@ -181,7 +181,7 @@ def main():
     ax.bar(xs + w / 2 + 0.02, [r[2] for r in rows], width=w - 0.04, color=GREY, linewidth=0, zorder=2)
     ax.set_ylim(0, 100)
     finish(fig, ax, "05_refusal_by_question_vea", "Questions that draw VEA are usually refused more often",
-           "Mean refusal rate of questions with at least one VEA rollout (colored) vs questions with none (grey), rollouts 0-9. Across questions, not within.",
+           "Refusal rate of questions where at least one of 10 rollouts mentions being tested (colored) vs questions where none do (grey).\nThis compares different questions, so it mixes any effect of VEA with how the questions themselves differ.",
            "Refusal rate (%)", models, xs, legend=True,
            extra_handles=[Patch(color=GREY, label="no VEA rollout")])
 
@@ -201,9 +201,9 @@ def main():
     for ax in axs[:, 0]:
         ax.set_ylabel("Refusal rate (%)")
     fig.text(0.012, 0.99, "Questions with more VEA rollouts tend to be refused more", fontsize=15, fontweight="bold", color=INK, va="top")
-    fig.text(0.012, 0.962, "One dot per question (jittered horizontally); Spearman ρ between the two, rollouts 0-9.",
-             fontsize=10.5, color=INK2, va="top")
-    fig.subplots_adjust(top=0.9, bottom=0.06, left=0.07, right=0.99, hspace=0.35, wspace=0.12)
+    fig.text(0.012, 0.965, "One dot per question: how many of its 10 rollouts mention being tested (x, jittered) and how often it is refused (y).\nρ = Spearman rank correlation across questions.",
+             fontsize=10.5, color=INK2, va="top", linespacing=1.4)
+    fig.subplots_adjust(top=0.875, bottom=0.06, left=0.07, right=0.99, hspace=0.35, wspace=0.12)
     fig.savefig(OUT / "06_nvea_vs_refusal.png", dpi=200); plt.close(fig)
     print(f"wrote {(OUT / '06_nvea_vs_refusal.png').relative_to(ROOT)}")
 
@@ -220,7 +220,7 @@ def main():
         bars_with_ci(ax, ixs + off, vals, [100 * g(m, key)["ci"][0] for m in iv_models], [100 * g(m, key)["ci"][1] for m in iv_models],
                      col, width=w, labels=lab)
     finish(fig, ax, "07_injection", "Inserting \"this might be a test\" raises refusal",
-           "Change in refusal after inserting the VEA sentence at 40% of the reasoning (colored) or the matched manipulation sentence (grey). 95% CI.",
+           "Change in refusal when one sentence is inserted 40% of the way through the model's own reasoning, vs inserting nothing.\nColored: \"this might be a test...\" sentence. Grey: a matched sentence about manipulation. Error bars: 95% CIs.",
            "Refusal change (percentage points)", iv_models, ixs,
            extra_handles=[Patch(color=GREY, label="manipulation sentence")])
 
@@ -234,7 +234,7 @@ def main():
     bars_with_ci(ax, ixs + w / 2, [100 * r["value"] for r in unf], [100 * r["ci"][0] for r in unf], [100 * r["ci"][1] for r in unf],
                  GREY, width=w, labels=False)
     finish(fig, ax, "08_removal", "Removing the model's own VEA sentence rarely changes refusal",
-           "Keep minus remove. Colored: re-verbalizing continuations rejected (as in the post). Grey: all continuations. 95% CI.",
+           "Change in refusal when the model continues after its own \"might be a test\" sentence vs from just before it (sentence removed).\nColored: continuations that mention testing again are discarded, as in the post. Grey: all continuations. Error bars: 95% CIs.",
            "Refusal change (percentage points)", iv_models, ixs,
            extra_handles=[Patch(color=GREY, label="all continuations")])
 
