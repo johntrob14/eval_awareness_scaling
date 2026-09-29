@@ -1,0 +1,3152 @@
+{
+ "Nemotron-3-Super": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 1200,
+    "scored": 1189,
+    "judged": 1189,
+    "reverbalized": 0.0975,
+    "n_verbal_judged": 1200
+   },
+   "none": {
+    "assigned": 1200,
+    "scored": 1186,
+    "judged": 1186,
+    "reverbalized": 0.0625,
+    "n_verbal_judged": 1200
+   },
+   "placebo": {
+    "assigned": 1200,
+    "scored": 1196,
+    "judged": 1196,
+    "reverbalized": 0.2808333333333333,
+    "n_verbal_judged": 1200
+   },
+   "vea": {
+    "assigned": 1200,
+    "scored": 1192,
+    "judged": 1192,
+    "reverbalized": 0.21083333333333334,
+    "n_verbal_judged": 1200
+   }
+  },
+  "insert_n_bases": 150,
+  "insert_n_questions": 150,
+  "insert_condition_refusal": {
+   "neutral": 0.4876190476190476,
+   "none": 0.4625,
+   "vea": 0.7433333333333333,
+   "placebo": 0.838047619047619
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": 0.2808333333333333,
+    "ci": [
+     0.22583333333333333,
+     0.34085416666666657
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "lower": {
+    "value": 0.26916666666666667,
+    "ci": [
+     0.21083333333333334,
+     0.32916666666666666
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "upper": {
+    "value": 0.2875,
+    "ci": [
+     0.2308125,
+     0.3458541666666666
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": 0.375547619047619,
+    "ci": [
+     0.3148303571428572,
+     0.4358398809523809
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "lower": {
+    "value": 0.3625,
+    "ci": [
+     0.30083333333333334,
+     0.4216666666666667
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "upper": {
+    "value": 0.3775,
+    "ci": [
+     0.315,
+     0.44085416666666655
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": 0.025119047619047617,
+    "ci": [
+     0.0008214285714285721,
+     0.049410714285714245
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "lower": {
+    "value": 0.014166666666666666,
+    "ci": [
+     -0.015,
+     0.041687499999999884
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "upper": {
+    "value": 0.035,
+    "ci": [
+     0.0075,
+     0.06166666666666667
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": -0.09471428571428571,
+    "ci": [
+     -0.12860357142857143,
+     -0.06168988095238096
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "lower": {
+    "value": -0.09666666666666666,
+    "ci": [
+     -0.13166666666666665,
+     -0.06583333333333333
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   },
+   "upper": {
+    "value": -0.08666666666666667,
+    "ci": [
+     -0.1191875,
+     -0.05331250000000012
+    ],
+    "n_bases": 150,
+    "n_questions": 150
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 1200,
+    "scored": 1200,
+    "judged": 1200,
+    "reverbalized": 0.09666666666666666,
+    "n_verbal_judged": 1200
+   },
+   "remove": {
+    "assigned": 1200,
+    "scored": 1197,
+    "judged": 1197,
+    "reverbalized": 0.7591666666666667,
+    "n_verbal_judged": 1200
+   }
+  },
+  "remove_n_bases": 150,
+  "remove_n_questions": 107,
+  "remove_condition_refusal": {
+   "keep": 0.8908333333333334,
+   "remove": 0.87
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": 0.020833333333333332,
+    "ci": [
+     0.003246753246753247,
+     0.039966836734693874
+    ],
+    "n_bases": 150,
+    "n_questions": 107
+   },
+   "lower": {
+    "value": 0.018333333333333333,
+    "ci": [
+     0.0,
+     0.03921868572603865
+    ],
+    "n_bases": 150,
+    "n_questions": 107
+   },
+   "upper": {
+    "value": 0.020833333333333332,
+    "ci": [
+     0.003647046642853445,
+     0.04049524419242728
+    ],
+    "n_bases": 150,
+    "n_questions": 107
+   }
+  },
+  "n_assigned": 7200,
+  "n_scored": 7160,
+  "n_scored_unjudged": 0
+ },
+ "Qwen3-0.6B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 1176,
+    "scored": 1168,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 1176,
+    "scored": 1170,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 1176,
+    "scored": 1170,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 1176,
+    "scored": 1171,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 147,
+  "insert_n_questions": 147,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 147,
+    "n_questions": 147
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 152,
+    "scored": 152,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 152,
+    "scored": 150,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 19,
+  "remove_n_questions": 11,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 19,
+    "n_questions": 11
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 19,
+    "n_questions": 11
+   }
+  },
+  "n_assigned": 5008,
+  "n_scored": 4981,
+  "n_scored_unjudged": 4981
+ },
+ "Qwen3-1.7B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 728,
+    "scored": 720,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 728,
+    "scored": 710,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 728,
+    "scored": 719,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 728,
+    "scored": 719,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 91,
+  "insert_n_questions": 91,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 91,
+    "n_questions": 91
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 392,
+    "scored": 384,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 392,
+    "scored": 389,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 49,
+  "remove_n_questions": 30,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 49,
+    "n_questions": 30
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 49,
+    "n_questions": 30
+   }
+  },
+  "n_assigned": 3696,
+  "n_scored": 3641,
+  "n_scored_unjudged": 3641
+ },
+ "Qwen3-14B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 624,
+    "scored": 616,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 624,
+    "scored": 618,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 624,
+    "scored": 622,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 624,
+    "scored": 623,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 78,
+  "insert_n_questions": 78,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 78,
+    "n_questions": 78
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 952,
+    "scored": 950,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 952,
+    "scored": 950,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 119,
+  "remove_n_questions": 64,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 119,
+    "n_questions": 64
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 119,
+    "n_questions": 64
+   }
+  },
+  "n_assigned": 4400,
+  "n_scored": 4379,
+  "n_scored_unjudged": 4379
+ },
+ "Qwen3-32B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 528,
+    "scored": 527,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 528,
+    "scored": 522,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 528,
+    "scored": 526,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 528,
+    "scored": 523,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 66,
+  "insert_n_questions": 66,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 896,
+    "scored": 892,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 896,
+    "scored": 895,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 112,
+  "remove_n_questions": 55,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 112,
+    "n_questions": 55
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 112,
+    "n_questions": 55
+   }
+  },
+  "n_assigned": 3904,
+  "n_scored": 3885,
+  "n_scored_unjudged": 3885
+ },
+ "Qwen3-4B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 648,
+    "scored": 640,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 648,
+    "scored": 645,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 648,
+    "scored": 643,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 648,
+    "scored": 641,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 81,
+  "insert_n_questions": 81,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 81
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 864,
+    "scored": 856,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 864,
+    "scored": 851,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 108,
+  "remove_n_questions": 55,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 108,
+    "n_questions": 55
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 108,
+    "n_questions": 55
+   }
+  },
+  "n_assigned": 4320,
+  "n_scored": 4276,
+  "n_scored_unjudged": 4276
+ },
+ "Qwen3-8B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 632,
+    "scored": 617,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 632,
+    "scored": 618,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 632,
+    "scored": 626,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 632,
+    "scored": 626,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 79,
+  "insert_n_questions": 79,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 936,
+    "scored": 926,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 936,
+    "scored": 922,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 117,
+  "remove_n_questions": 61,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 117,
+    "n_questions": 61
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 117,
+    "n_questions": 61
+   }
+  },
+  "n_assigned": 4400,
+  "n_scored": 4335,
+  "n_scored_unjudged": 4335
+ },
+ "Qwen3.5-0.8B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 1192,
+    "scored": 1176,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 1192,
+    "scored": 1176,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 1192,
+    "scored": 1179,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 1192,
+    "scored": 1176,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 149,
+  "insert_n_questions": 149,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 149,
+    "n_questions": 149
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 600,
+    "scored": 583,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 600,
+    "scored": 579,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 75,
+  "remove_n_questions": 68,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 68
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 68
+   }
+  },
+  "n_assigned": 5968,
+  "n_scored": 5869,
+  "n_scored_unjudged": 5869
+ },
+ "Qwen3.5-122B-A10B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 672,
+    "scored": 672,
+    "judged": 672,
+    "reverbalized": 0.03125,
+    "n_verbal_judged": 672
+   },
+   "none": {
+    "assigned": 672,
+    "scored": 671,
+    "judged": 671,
+    "reverbalized": 0.017857142857142856,
+    "n_verbal_judged": 672
+   },
+   "placebo": {
+    "assigned": 672,
+    "scored": 672,
+    "judged": 672,
+    "reverbalized": 0.08779761904761904,
+    "n_verbal_judged": 672
+   },
+   "vea": {
+    "assigned": 672,
+    "scored": 672,
+    "judged": 672,
+    "reverbalized": 0.07600596125186289,
+    "n_verbal_judged": 671
+   }
+  },
+  "insert_n_bases": 84,
+  "insert_n_questions": 84,
+  "insert_condition_refusal": {
+   "neutral": 0.47767857142857145,
+   "none": 0.4836309523809524,
+   "vea": 0.5163690476190477,
+   "placebo": 0.5357142857142857
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": 0.03273809523809524,
+    "ci": [
+     0.0014508928571428591,
+     0.06696428571428571
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "lower": {
+    "value": 0.03273809523809524,
+    "ci": [
+     0.0,
+     0.06547619047619048
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "upper": {
+    "value": 0.03422619047619048,
+    "ci": [
+     0.001488095238095238,
+     0.06848958333333313
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": 0.052083333333333336,
+    "ci": [
+     0.017857142857142856,
+     0.08630952380952381
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "lower": {
+    "value": 0.052083333333333336,
+    "ci": [
+     0.020833333333333332,
+     0.08630952380952381
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "upper": {
+    "value": 0.05357142857142857,
+    "ci": [
+     0.022321428571428572,
+     0.08928571428571429
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": -0.005952380952380952,
+    "ci": [
+     -0.04017857142857143,
+     0.026785714285714284
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "lower": {
+    "value": -0.005952380952380952,
+    "ci": [
+     -0.04017857142857143,
+     0.028273809523809524
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "upper": {
+    "value": -0.004464285714285714,
+    "ci": [
+     -0.03720238095238095,
+     0.026785714285714284
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": -0.019345238095238096,
+    "ci": [
+     -0.049107142857142856,
+     0.011904761904761904
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "lower": {
+    "value": -0.019345238095238096,
+    "ci": [
+     -0.049107142857142856,
+     0.011904761904761904
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   },
+   "upper": {
+    "value": -0.019345238095238096,
+    "ci": [
+     -0.050595238095238096,
+     0.010416666666666666
+    ],
+    "n_bases": 84,
+    "n_questions": 84
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 1200,
+    "scored": 1195,
+    "judged": 1195,
+    "reverbalized": 0.22935779816513763,
+    "n_verbal_judged": 1199
+   },
+   "remove": {
+    "assigned": 1200,
+    "scored": 1193,
+    "judged": 1193,
+    "reverbalized": 0.38198498748957466,
+    "n_verbal_judged": 1199
+   }
+  },
+  "remove_n_bases": 150,
+  "remove_n_questions": 103,
+  "remove_condition_refusal": {
+   "keep": 0.7833333333333333,
+   "remove": 0.7941666666666667
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": -0.010833333333333334,
+    "ci": [
+     -0.02483986801242236,
+     0.001786035457348405
+    ],
+    "n_bases": 150,
+    "n_questions": 103
+   },
+   "lower": {
+    "value": -0.0175,
+    "ci": [
+     -0.03328057359307359,
+     -0.0024834437086092716
+    ],
+    "n_bases": 150,
+    "n_questions": 103
+   },
+   "upper": {
+    "value": -0.0075,
+    "ci": [
+     -0.022727272727272728,
+     0.0071663210832607765
+    ],
+    "n_bases": 150,
+    "n_questions": 103
+   }
+  },
+  "n_assigned": 5088,
+  "n_scored": 5075,
+  "n_scored_unjudged": 0
+ },
+ "Qwen3.5-27B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 600,
+    "scored": 590,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 600,
+    "scored": 591,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 600,
+    "scored": 596,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 600,
+    "scored": 597,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 75,
+  "insert_n_questions": 75,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 744,
+    "scored": 741,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 744,
+    "scored": 739,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 93,
+  "remove_n_questions": 70,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 93,
+    "n_questions": 70
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 93,
+    "n_questions": 70
+   }
+  },
+  "n_assigned": 3888,
+  "n_scored": 3854,
+  "n_scored_unjudged": 3854
+ },
+ "Qwen3.5-2B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 632,
+    "scored": 629,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 632,
+    "scored": 627,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 632,
+    "scored": 632,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 632,
+    "scored": 628,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 79,
+  "insert_n_questions": 79,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 79,
+    "n_questions": 79
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 640,
+    "scored": 629,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 640,
+    "scored": 635,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 80,
+  "remove_n_questions": 71,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 80,
+    "n_questions": 71
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 80,
+    "n_questions": 71
+   }
+  },
+  "n_assigned": 3808,
+  "n_scored": 3780,
+  "n_scored_unjudged": 3780
+ },
+ "Qwen3.5-4B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 528,
+    "scored": 528,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 528,
+    "scored": 528,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 528,
+    "scored": 528,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 528,
+    "scored": 528,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 66,
+  "insert_n_questions": 66,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 66,
+    "n_questions": 66
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 648,
+    "scored": 636,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 648,
+    "scored": 634,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 81,
+  "remove_n_questions": 64,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 64
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 64
+   }
+  },
+  "n_assigned": 3408,
+  "n_scored": 3382,
+  "n_scored_unjudged": 3382
+ },
+ "Qwen3.5-9B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 592,
+    "scored": 591,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 592,
+    "scored": 592,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 592,
+    "scored": 592,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 592,
+    "scored": 592,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 74,
+  "insert_n_questions": 74,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 74,
+    "n_questions": 74
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 648,
+    "scored": 631,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 648,
+    "scored": 626,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 81,
+  "remove_n_questions": 63,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 63
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 81,
+    "n_questions": 63
+   }
+  },
+  "n_assigned": 3664,
+  "n_scored": 3624,
+  "n_scored_unjudged": 3624
+ },
+ "Qwen3.8-27B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 848,
+    "scored": 836,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 848,
+    "scored": 842,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 848,
+    "scored": 845,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 848,
+    "scored": 842,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 106,
+  "insert_n_questions": 106,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "none": NaN,
+   "vea": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 384,
+    "scored": 378,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "remove": {
+    "assigned": 384,
+    "scored": 380,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "remove_n_bases": 48,
+  "remove_n_questions": 26,
+  "remove_condition_refusal": {
+   "keep": NaN,
+   "remove": NaN
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 48,
+    "n_questions": 26
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 48,
+    "n_questions": 26
+   }
+  },
+  "n_assigned": 4160,
+  "n_scored": 4123,
+  "n_scored_unjudged": 4123
+ },
+ "gemma-4-31B-it": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 848,
+    "scored": 848,
+    "judged": 848,
+    "reverbalized": 0.009433962264150943,
+    "n_verbal_judged": 848
+   },
+   "none": {
+    "assigned": 848,
+    "scored": 848,
+    "judged": 848,
+    "reverbalized": 0.008254716981132075,
+    "n_verbal_judged": 848
+   },
+   "placebo": {
+    "assigned": 848,
+    "scored": 848,
+    "judged": 848,
+    "reverbalized": 0.01650943396226415,
+    "n_verbal_judged": 848
+   },
+   "vea": {
+    "assigned": 848,
+    "scored": 848,
+    "judged": 848,
+    "reverbalized": 0.014150943396226415,
+    "n_verbal_judged": 848
+   }
+  },
+  "insert_n_bases": 106,
+  "insert_n_questions": 106,
+  "insert_condition_refusal": {
+   "neutral": 0.6179245283018868,
+   "none": 0.5790094339622641,
+   "vea": 0.6238207547169812,
+   "placebo": 0.6497641509433962
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": 0.04481132075471698,
+    "ci": [
+     0.002329009433962266,
+     0.08962264150943396
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "lower": {
+    "value": 0.04481132075471698,
+    "ci": [
+     0.0011792452830188679,
+     0.08962264150943396
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 0.04481132075471698,
+    "ci": [
+     0.0011792452830188679,
+     0.08844339622641509
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": 0.07075471698113207,
+    "ci": [
+     0.0294811320754717,
+     0.11910377358490566
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "lower": {
+    "value": 0.07075471698113207,
+    "ci": [
+     0.024764150943396228,
+     0.12028301886792453
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 0.07075471698113207,
+    "ci": [
+     0.025913915094339626,
+     0.1179245283018868
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": 0.03891509433962264,
+    "ci": [
+     0.0047169811320754715,
+     0.07432193396226398
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "lower": {
+    "value": 0.03891509433962264,
+    "ci": [
+     0.00589622641509434,
+     0.07311320754716981
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": 0.03891509433962264,
+    "ci": [
+     0.007075471698113208,
+     0.07193396226415094
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": -0.025943396226415096,
+    "ci": [
+     -0.0589622641509434,
+     0.004746462264150783
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "lower": {
+    "value": -0.025943396226415096,
+    "ci": [
+     -0.05660377358490566,
+     0.0047169811320754715
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   },
+   "upper": {
+    "value": -0.025943396226415096,
+    "ci": [
+     -0.05660377358490566,
+     0.003537735849056604
+    ],
+    "n_bases": 106,
+    "n_questions": 106
+   }
+  },
+  "remove_diagnostics": {
+   "keep": {
+    "assigned": 384,
+    "scored": 381,
+    "judged": 381,
+    "reverbalized": 0.11458333333333333,
+    "n_verbal_judged": 384
+   },
+   "remove": {
+    "assigned": 384,
+    "scored": 382,
+    "judged": 382,
+    "reverbalized": 0.28125,
+    "n_verbal_judged": 384
+   }
+  },
+  "remove_n_bases": 48,
+  "remove_n_questions": 27,
+  "remove_condition_refusal": {
+   "keep": 0.7005208333333334,
+   "remove": 0.6927083333333334
+  },
+  "remove_keep_minus_remove": {
+   "primary": {
+    "value": 0.0078125,
+    "ci": [
+     -0.0204187925170068,
+     0.031862745098039214
+    ],
+    "n_bases": 48,
+    "n_questions": 27
+   },
+   "lower": {
+    "value": 0.0026041666666666665,
+    "ci": [
+     -0.026785714285714284,
+     0.028072413175796573
+    ],
+    "n_bases": 48,
+    "n_questions": 27
+   },
+   "upper": {
+    "value": 0.015625,
+    "ci": [
+     -0.012506377551020409,
+     0.04656862745098039
+    ],
+    "n_bases": 48,
+    "n_questions": 27
+   }
+  },
+  "n_assigned": 4160,
+  "n_scored": 4155,
+  "n_scored_unjudged": 0
+ }
+}

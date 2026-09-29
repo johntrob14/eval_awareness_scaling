@@ -420,7 +420,8 @@ def analyze(models: list[str] | None, fast: bool, final: bool = False) -> None:
         raise SystemExit("not final: incomplete labels for " + ", ".join(
             f"{m} (coverage {x['label_coverage']:.4f}, category {x['n_vea_with_category']}/{x['n_vea']})"
             for m, x in incomplete.items()))
-    summary["_meta"] = {"version": VERSION, "final": final and not incomplete, "incomplete_models": sorted(incomplete),
+    summary["_meta"] = {"version": VERSION, "final": final and not incomplete, "labels_complete": not incomplete,
+                        "incomplete_models": sorted(incomplete),
                         "created": pd.Timestamp.now().isoformat(timespec="seconds"), "code": code_revision()}
     RESULTS.mkdir(parents=True, exist_ok=True)
     (RESULTS / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
@@ -437,10 +438,15 @@ def report() -> None:
     iv = json.loads(iv_path.read_text()) if iv_path.exists() else {}
     pct = lambda v: "-" if v is None or v != v else f"{100 * v:.1f}"  # noqa: E731
     ci = lambda m, k: f"{pct(m.get(k))} [{pct(m[k + '_ci'][0])}, {pct(m[k + '_ci'][1])}]" if k + "_ci" in m else pct(m.get(k))  # noqa: E731
-    status = ("FINAL" if meta.get("final") else
-              "PARTIAL: incomplete labels for " + (", ".join(meta.get("incomplete_models", [])) or "none")
-              + " (not run with --final)")
-    md = [f"# Unified results ({meta.get('version', VERSION)}, {status})\n",
+    rollout_status = ("complete: every scored primary rollout has valid labels" if meta.get("labels_complete")
+                      else "INCOMPLETE labels for " + ", ".join(meta.get("incomplete_models", [])))
+    iv_done = sorted(m for m, v in iv.items() if v.get("n_scored_unjudged") == 0)
+    iv_status = (f"{len(iv_done)} of {len(summary)} models fully judged"
+                 + (f"; pending: {', '.join(sorted(set(summary) - set(iv_done)))}" if len(iv_done) < len(summary) else ""))
+    md = [f"# Unified results ({meta.get('version', VERSION)})\n",
+          f"- Rollout tables: {rollout_status}",
+          f"- Interventions: {iv_status}",
+          f"- Status: {'FINAL (--final passed for both)' if meta.get('final') and len(iv_done) == len(summary) else 'not final: re-run with --final once every part is complete'}\n",
           "Every model under docs/UNIFIED_PROTOCOL.md: this repo's judges (vea_cal; F2 refusal on the first 384 answer "
           "tokens), reasoning cap 8,192 tokens, 14 prompts excluded. Percent, 95% CIs from 2,000 bootstrap draws over "
           "questions. Judge-scored (Qwen3.8-27B), not human-verified.\n"]
