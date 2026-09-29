@@ -346,6 +346,19 @@ def mh_from(q) -> float:
     return float((w * (r1[ok] / n1[ok] - r0[ok] / n0[ok])).sum() / w.sum())
 
 
+def post_diff_from(q) -> float:
+    """The post's within-question refusal difference (its Fig. 5 / "within-question average"): the unweighted mean
+    over questions of refusal(VEA rollouts) - refusal(non-VEA rollouts), over questions that have both kinds of
+    rollout and a refusal rate below 100%. q: a per_question() frame, or its columns n, n1, n0, r1, r0 as arrays."""
+    if isinstance(q, pd.DataFrame):
+        q = [q[c].to_numpy(float) for c in ("n", "n1", "n0", "r1", "r0")]
+    n, n1, n0, r1, r0 = q
+    ok = (n1 > 0) & (n0 > 0) & ((r1 + r0) < n)
+    if not ok.any():
+        return np.nan
+    return float((r1[ok] / n1[ok] - r0[ok] / n0[ok]).mean())
+
+
 def boot_ci(stats: np.ndarray, fn, iters: int = BOOT_ITERS) -> list[float]:
     """Percentile CI of fn(columns of stats), resampling questions (rows) as clusters."""
     rng = np.random.default_rng(BOOT_SEED)
@@ -374,8 +387,10 @@ def metrics(df: pd.DataFrame, fast: bool = False) -> dict:
     out["refusal_rate"] = float(r.r.mean()) if len(r) else np.nan
     both = s[s.vea.notna() & s.refusal.notna()].assign(v=lambda x: x.vea.astype(float), r=lambda x: x.refusal.astype(float))
     q = per_question(both) if len(both) else None
-    out["within_q_refusal_diff"] = mh_from(q) if q is not None else np.nan
-    out["n_informative_questions"] = int(((q.n1 > 0) & (q.n0 > 0)).sum()) if q is not None else 0
+    # reported: the post's estimator; the Mantel-Haenszel version (the ladder's) is kept in summary.json only
+    out["within_q_refusal_diff"] = post_diff_from(q) if q is not None else np.nan
+    out["within_q_refusal_diff_mh"] = mh_from(q) if q is not None else np.nan
+    out["n_informative_questions"] = int(((q.n1 > 0) & (q.n0 > 0) & ((q.r1 + q.r0) < q.n)).sum()) if q is not None else 0
     if q is not None:
         out["spearman_nvea_refusal"] = float(q.n1.corr((q.r1 + q.r0) / q.n, method="spearman"))
     pos = s[s.vea == True]  # noqa: E712
@@ -390,7 +405,11 @@ def metrics(df: pd.DataFrame, fast: bool = False) -> dict:
         if len(r):
             out["refusal_rate_ci"] = boot_ci(r.groupby("qid").r.agg(["size", "sum"]).to_numpy(float), ratio)
         if out["n_informative_questions"]:
-            out["within_q_refusal_diff_ci"] = boot_ci(q[["n", "n1", "n0", "r1", "r0"]].to_numpy(float), mh_from)
+            arr = q[["n", "n1", "n0", "r1", "r0"]].to_numpy(float)
+            out["within_q_refusal_diff_ci"] = boot_ci(arr, post_diff_from)
+            vals = q[(q.n1 > 0) & (q.n0 > 0) & ((q.r1 + q.r0) < q.n)]
+            d = (vals.r1 / vals.n1 - vals.r0 / vals.n0)
+            out["within_q_refusal_diff_se"] = float(d.std(ddof=1) / np.sqrt(len(d))) if len(d) > 1 else np.nan
     return out
 
 
@@ -449,11 +468,13 @@ def report() -> None:
           f"- Status: {'FINAL (--final passed for both)' if meta.get('final') and len(iv_done) == len(summary) else 'not final: re-run with --final once every part is complete'}\n",
           "Every model under docs/UNIFIED_PROTOCOL.md: this repo's judges (vea_cal; F2 refusal on the first 384 answer "
           "tokens), reasoning cap 8,192 tokens, 14 prompts excluded. Percent, 95% CIs from 2,000 bootstrap draws over "
-          "questions. Judge-scored (Qwen3.8-27B), not human-verified.\n"]
+          "questions. Judge-scored (Qwen3.8-27B), not human-verified. Within-question refusal difference = the post's "
+          "estimator: the unweighted mean over questions of refusal among VEA rollouts minus refusal among the others, over "
+          "questions with both kinds of rollout and refusal below 100%.\n"]
     for d, title in (("first10", "Primary design: rollouts 0-9 of every question"),
                      ("all", "Secondary: all non-selected rollouts (ladder stage 2 over-weights high-VEA questions)")):
-        md += [f"## {title}\n", "| model | source | scored / assigned | VEA rate | refusal | within-question refusal diff (VEA - not) "
-               "| informative Q | Spearman(#VEA, refusal) | safety share of VEA |", "|---|---|---|---|---|---|---|---|---|"]
+        md += [f"## {title}\n", "| model | source | scored / assigned | VEA rate | refusal | within-question refusal diff (VEA - not; the post's estimator) "
+               "| questions used | Spearman(#VEA, refusal) | safety share of VEA |", "|---|---|---|---|---|---|---|---|---|"]
         for m, v in summary.items():
             x = v[d]
             md.append(f"| {m} | {'mine' if m in MINE else 'ladder'} | {x['n_rollouts']} / {x['n_assigned']} | {ci(x, 'vea_rate')} | "

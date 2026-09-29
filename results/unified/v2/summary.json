@@ -14,7 +14,8 @@
    "vea_rate": 0.002902155887230514,
    "questions_with_vea": 12,
    "refusal_rate": 0.02943615257048093,
-   "within_q_refusal_diff": -0.03615012664057103,
+   "within_q_refusal_diff": -0.02959656084656084,
+   "within_q_refusal_diff_mh": -0.03615012664057103,
    "n_informative_questions": 12,
    "spearman_nvea_refusal": 0.1732365627645208,
    "quote_check": {
@@ -32,9 +33,10 @@
     0.03783811733139551
    ],
    "within_q_refusal_diff_ci": [
-    -0.15128213236494203,
-    0.12956015683748018
-   ]
+    -0.1616355866355866,
+    0.15082070707070694
+   ],
+   "within_q_refusal_diff_se": 0.0779643781179643
   },
   "all": {
    "n_assigned": 8740,
@@ -50,7 +52,8 @@
    "vea_rate": 0.006256517205422315,
    "questions_with_vea": 13,
    "refusal_rate": 0.03209361603522187,
-   "within_q_refusal_diff": -0.06394263879705786,
+   "within_q_refusal_diff": -0.059232917073933994,
+   "within_q_refusal_diff_mh": -0.06394263879705786,
    "n_informative_questions": 13,
    "spearman_nvea_refusal": 0.24158480677426947,
    "quote_check": {
@@ -68,9 +71,10 @@
     0.04412674543205144
    ],
    "within_q_refusal_diff_ci": [
-    -0.1728896636257231,
-    0.02918994057541931
-   ]
+    -0.17256981019991358,
+    0.02558883657334149
+   ],
+   "within_q_refusal_diff_se": 0.05094215124884601
   },
   "benign_refusal_rate": 0.008247422680412371
  },
@@ -89,7 +93,8 @@
    "vea_rate": 0.008174386920980926,
    "questions_with_vea": 25,
    "refusal_rate": 0.015719974848040243,
-   "within_q_refusal_diff": 0.017537449762513705,
+   "within_q_refusal_diff": 0.026841269841269843,
+   "within_q_refusal_diff_mh": 0.017537449762513705,
    "n_informative_questions": 25,
    "spearman_nvea_refusal": 0.23432009082508107,
    "quote_check": {
@@ -107,9 +112,10 @@
     0.02488615844404995
    ],
    "within_q_refusal_diff_ci": [
-    -0.048129870961824334,
-    0.11426084195343524
-   ]
+    -0.0429652707042413,
+    0.13828703703703696
+   ],
+   "within_q_refusal_diff_se": 0.045786961355651516
   },
   "all": {
    "n_assigned": 8700,
@@ -125,7 +131,8 @@
    "vea_rate": 0.018483635507417,
    "questions_with_vea": 32,
    "refusal_rate": 0.01730633388274076,
-   "within_q_refusal_diff": 0.004799780036724169,
+   "within_q_refusal_diff": 0.02009816812976814,
+   "within_q_refusal_diff_mh": 0.004799780036724169,
    "n_informative_questions": 32,
    "spearman_nvea_refusal": 0.37736267581892385,
    "quote_check": {
@@ -144,9 +151,10 @@
     0.02631054883172248
    ],
    "within_q_refusal_diff_ci": [
-    -0.05259381502020047,
-    0.058600748917128645
-   ]
+    -0.04351502737774896,
+    0.1068599974373216
+   ],
+   "within_q_refusal_diff_se": 0.03835607925978877
   },
   "benign_refusal_rate": 0.002066115702479339
  },
@@ -165,8 +173,9 @@
    "vea_rate": 0.04033437826541275,
    "questions_with_vea": 61,
    "refusal_rate": 0.030929989550679205,
-   "within_q_refusal_diff": 0.04077703739969629,
-   "n_informative_questions": 61,
+   "within_q_refusal_diff": 0.03514258810868981,
+   "within_q_refusal_diff_mh": 0.04077703739969629,
+   "n_informative_questions": 59,
    "spearman_nvea_refusal": 0.4413444410063937,
    "quote_check": {
     "exact": 188,
@@ -185,9 +194,10 @@
     0.04379756867246153
    ],
    "within_q_refusal_diff_ci": [
-    -0.016789394650187882,
-    0.10097439915332379
-   ]
+    -0.023270835252218233,
+    0.09902728320067028
+   ],
+   "within_q_refusal_diff_se": 0.031583632385169806
   },
   "all": {
    "n_assigned": 8700,
@@ -203,8 +213,9 @@
    "vea_rate": 0.09678953626634959,
    "questions_with_vea": 69,
    "refusal_rate": 0.05612366230677764,
-   "within_q_refusal_diff": 0.06991042730750349,
-   "n_informative_questions": 69,
+   "within_q_refusal_diff": 0.052071868662055015,
+   "within_q_refusal_diff_mh": 0.06991042730750349,
+   "n_informative_questions": 68,
    "spearman_nvea_refusal": 0.5979932986961568,
    "quote_check": {
     "exact": 796,
@@ -223,9 +234,10 @@
     0.08215056635641299
    ],
    "within_q_refusal_diff_ci": [
-    0.026043602031562932,
-    0.12006977127496325
-   ]
+    0.006965077743281483,
+    0.10097158230107792
+   ],
+   "within_q_refusal_diff_se": 0.023947309024440276
   },
   "benign_refusal_rate": 0.004132231404958678
  },
@@ -244,8 +256,9 @@
    "vea_rate": 0.04891418933164664,
    "questions_with_vea": 73,
    "refusal_rate": 0.042799915665190806,
-   "within_q_refusal_diff": 0.08641298878464962,
-   "n_informative_questions": 69,
+   "within_q_refusal_diff": 0.07747113997113997,
+   "within_q_refusal_diff_mh": 0.08641298878464962,
+   "n_informative_questions": 66,
    "spearman_nvea_refusal": 0.4488299587465236,
    "quote_check": {
     "exact": 230,
@@ -263,9 +276,10 @@
     0.05767056347253729
    ],
    "within_q_refusal_diff_ci": [
-    0.026020666475556994,
-    0.15372419003483348
-   ]
+    0.017934806681001513,
+    0.1459347607202084
+   ],
+   "within_q_refusal_diff_se": 0.03361080941470386
   },
   "all": {
    "n_assigned": 8700,
@@ -281,8 +295,9 @@
    "vea_rate": 0.10055730554882482,
    "questions_with_vea": 82,
    "refusal_rate": 0.06760358614005331,
-   "within_q_refusal_diff": 0.05342881769277237,
-   "n_informative_questions": 81,
+   "within_q_refusal_diff": 0.0459962451421577,
+   "within_q_refusal_diff_mh": 0.05342881769277237,
+   "n_informative_questions": 79,
    "spearman_nvea_refusal": 0.5343539848968787,
    "quote_check": {
     "exact": 816,
@@ -300,9 +315,10 @@
     0.09612968919377912
    ],
    "within_q_refusal_diff_ci": [
-    0.02001912139909617,
-    0.09550887999614611
-   ]
+    0.006427836995406915,
+    0.09268003494136941
+   ],
+   "within_q_refusal_diff_se": 0.02122872036918023
   },
   "benign_refusal_rate": 0.0010330578512396695
  },
@@ -321,8 +337,9 @@
    "vea_rate": 0.05028973509933775,
    "questions_with_vea": 77,
    "refusal_rate": 0.07450331125827815,
-   "within_q_refusal_diff": 0.1312010695599635,
-   "n_informative_questions": 76,
+   "within_q_refusal_diff": 0.14586433531746032,
+   "within_q_refusal_diff_mh": 0.1312010695599635,
+   "n_informative_questions": 64,
    "spearman_nvea_refusal": 0.5887850369998342,
    "quote_check": {
     "exact": 241,
@@ -340,9 +357,10 @@
     0.09453113879744456
    ],
    "within_q_refusal_diff_ci": [
-    0.06673018505064794,
-    0.20043703055067397
-   ]
+    0.06912824005642022,
+    0.22916838809262735
+   ],
+   "within_q_refusal_diff_se": 0.040430370572710025
   },
   "all": {
    "n_assigned": 8700,
@@ -358,8 +376,9 @@
    "vea_rate": 0.09419953596287703,
    "questions_with_vea": 87,
    "refusal_rate": 0.12157772621809745,
-   "within_q_refusal_diff": 0.1071593631703675,
-   "n_informative_questions": 87,
+   "within_q_refusal_diff": 0.12392644122491538,
+   "within_q_refusal_diff_mh": 0.1071593631703675,
+   "n_informative_questions": 82,
    "spearman_nvea_refusal": 0.6114496501493153,
    "quote_check": {
     "exact": 800,
@@ -378,9 +397,10 @@
     0.1603220132810768
    ],
    "within_q_refusal_diff_ci": [
-    0.060435846093437016,
-    0.1600222147094199
-   ]
+    0.06177284246944081,
+    0.18964705375703386
+   ],
+   "within_q_refusal_diff_se": 0.03238318447636197
   },
   "benign_refusal_rate": 0.005159958720330237
  },
@@ -400,8 +420,9 @@
    "vea_rate": 0.32564595344864405,
    "questions_with_vea": 382,
    "refusal_rate": 0.27888105915011746,
-   "within_q_refusal_diff": 0.0966484192561609,
-   "n_informative_questions": 367,
+   "within_q_refusal_diff": 0.10116727002691915,
+   "within_q_refusal_diff_mh": 0.0966484192561609,
+   "n_informative_questions": 342,
    "spearman_nvea_refusal": 0.35067007090014596,
    "quote_check": {
     "exact": 1493,
@@ -421,9 +442,10 @@
     0.3087445934886775
    ],
    "within_q_refusal_diff_ci": [
-    0.06404386859242968,
-    0.12843731233330777
-   ]
+    0.06638050296548599,
+    0.13651111127659293
+   ],
+   "within_q_refusal_diff_se": 0.017938128342192782
   },
   "all": {
    "n_assigned": 6780,
@@ -440,8 +462,9 @@
    "vea_rate": 0.42382991740593456,
    "questions_with_vea": 382,
    "refusal_rate": 0.3306821657999388,
-   "within_q_refusal_diff": 0.08646533653205389,
-   "n_informative_questions": 377,
+   "within_q_refusal_diff": 0.10820858215043086,
+   "within_q_refusal_diff_mh": 0.08646533653205389,
+   "n_informative_questions": 355,
    "spearman_nvea_refusal": 0.3643895161350396,
    "quote_check": {
     "exact": 2701,
@@ -461,9 +484,10 @@
     0.36845538964486146
    ],
    "within_q_refusal_diff_ci": [
-    0.06040854981158824,
-    0.11309471422335457
-   ]
+    0.07683329202054782,
+    0.13977881488784408
+   ],
+   "within_q_refusal_diff_se": 0.01608457249519917
   },
   "benign_refusal_rate": 0.09375
  },
@@ -482,8 +506,9 @@
    "vea_rate": 0.2813487881981033,
    "questions_with_vea": 326,
    "refusal_rate": 0.3690200210748156,
-   "within_q_refusal_diff": 0.05732605727792714,
-   "n_informative_questions": 304,
+   "within_q_refusal_diff": 0.05696325944170772,
+   "within_q_refusal_diff_mh": 0.05732605727792714,
+   "n_informative_questions": 232,
    "spearman_nvea_refusal": 0.4376675284265816,
    "quote_check": {
     "exact": 1296,
@@ -502,9 +527,10 @@
     0.404163411900557
    ],
    "within_q_refusal_diff_ci": [
-    0.029839044593978226,
-    0.0877361098603022
-   ]
+    0.017925242196075532,
+    0.09813407972273315
+   ],
+   "within_q_refusal_diff_se": 0.02117118892040173
   },
   "all": {
    "n_assigned": 6780,
@@ -520,8 +546,9 @@
    "vea_rate": 0.38764903699174563,
    "questions_with_vea": 326,
    "refusal_rate": 0.4130235402017732,
-   "within_q_refusal_diff": 0.05981303852955869,
-   "n_informative_questions": 320,
+   "within_q_refusal_diff": 0.064997159797245,
+   "within_q_refusal_diff_mh": 0.05981303852955869,
+   "n_informative_questions": 253,
    "spearman_nvea_refusal": 0.4539503034720645,
    "quote_check": {
     "exact": 2447,
@@ -540,9 +567,10 @@
     0.4525758716491347
    ],
    "within_q_refusal_diff_ci": [
-    0.03783323600153411,
-    0.08418513323428692
-   ]
+    0.030366781718529,
+    0.10075248373533204
+   ],
+   "within_q_refusal_diff_se": 0.018776533675208172
   },
   "benign_refusal_rate": 0.052083333333333336
  },
@@ -561,8 +589,9 @@
    "vea_rate": 0.15293118096856415,
    "questions_with_vea": 225,
    "refusal_rate": 0.48534409515717924,
-   "within_q_refusal_diff": 0.03158506630800882,
-   "n_informative_questions": 218,
+   "within_q_refusal_diff": 0.062359742747673794,
+   "within_q_refusal_diff_mh": 0.03158506630800882,
+   "n_informative_questions": 116,
    "spearman_nvea_refusal": 0.3544144675299751,
    "quote_check": {
     "exact": 704,
@@ -581,9 +610,10 @@
     0.5247307935849629
    ],
    "within_q_refusal_diff_ci": [
-    0.005061225090170032,
-    0.05892071276813691
-   ]
+    0.01259137567562945,
+    0.11145454182630905
+   ],
+   "within_q_refusal_diff_se": 0.02519991207015846
   },
   "all": {
    "n_assigned": 6780,
@@ -599,8 +629,9 @@
    "vea_rate": 0.23423142812646006,
    "questions_with_vea": 230,
    "refusal_rate": 0.5153402896745055,
-   "within_q_refusal_diff": 0.027746622487567527,
-   "n_informative_questions": 225,
+   "within_q_refusal_diff": 0.061673634880356355,
+   "within_q_refusal_diff_mh": 0.027746622487567527,
+   "n_informative_questions": 125,
    "spearman_nvea_refusal": 0.3506168216714466,
    "quote_check": {
     "exact": 1457,
@@ -619,9 +650,10 @@
     0.560462836185819
    ],
    "within_q_refusal_diff_ci": [
-    0.008519074106158198,
-    0.04794248814709804
-   ]
+    0.01999583388956025,
+    0.10653012214479764
+   ],
+   "within_q_refusal_diff_se": 0.0214571642923905
   },
   "benign_refusal_rate": 0.03626943005181347
  },
@@ -640,8 +672,9 @@
    "vea_rate": 0.13232195533080487,
    "questions_with_vea": 202,
    "refusal_rate": 0.5143278550358197,
-   "within_q_refusal_diff": 0.03016198100912307,
-   "n_informative_questions": 196,
+   "within_q_refusal_diff": 0.03961451247165533,
+   "within_q_refusal_diff_mh": 0.03016198100912307,
+   "n_informative_questions": 105,
    "spearman_nvea_refusal": 0.2594648460424726,
    "quote_check": {
     "exact": 608,
@@ -660,9 +693,10 @@
     0.5539701276459051
    ],
    "within_q_refusal_diff_ci": [
-    0.00478205948839705,
-    0.05568679070074213
-   ]
+    -0.008846192050761485,
+    0.08610008453947847
+   ],
+   "within_q_refusal_diff_se": 0.024386896188202035
   },
   "all": {
    "n_assigned": 6820,
@@ -679,8 +713,9 @@
    "vea_rate": 0.19515169995426132,
    "questions_with_vea": 205,
    "refusal_rate": 0.5436804390913249,
-   "within_q_refusal_diff": 0.026599325668021253,
-   "n_informative_questions": 203,
+   "within_q_refusal_diff": 0.03783868034272591,
+   "within_q_refusal_diff_mh": 0.026599325668021253,
+   "n_informative_questions": 114,
    "spearman_nvea_refusal": 0.2761085930654224,
    "quote_check": {
     "exact": 1239,
@@ -699,9 +734,10 @@
     0.586175537341138
    ],
    "within_q_refusal_diff_ci": [
-    0.005522647820949443,
-    0.04892090314185288
-   ]
+    -0.005619807867888049,
+    0.08333429400366424
+   ],
+   "within_q_refusal_diff_se": 0.02254180918981229
   },
   "benign_refusal_rate": 0.03205791106514995
  },
@@ -720,8 +756,9 @@
    "vea_rate": 0.09977183157021365,
    "questions_with_vea": 170,
    "refusal_rate": 0.6044389130885708,
-   "within_q_refusal_diff": 0.02176740552088996,
-   "n_informative_questions": 168,
+   "within_q_refusal_diff": 0.06905313051146385,
+   "within_q_refusal_diff_mh": 0.02176740552088996,
+   "n_informative_questions": 72,
    "spearman_nvea_refusal": 0.25029146787224754,
    "quote_check": {
     "exact": 464,
@@ -740,9 +777,10 @@
     0.6410531183607175
    ],
    "within_q_refusal_diff_ci": [
-    -0.012205165929673424,
-    0.05564924118034078
-   ]
+    -0.013630959587224715,
+    0.14800128549072203
+   ],
+   "within_q_refusal_diff_se": 0.04074076757702591
   },
   "all": {
    "n_assigned": 6820,
@@ -758,8 +796,9 @@
    "vea_rate": 0.13832165747503353,
    "questions_with_vea": 174,
    "refusal_rate": 0.6227455656580713,
-   "within_q_refusal_diff": 0.045084626848221565,
-   "n_informative_questions": 174,
+   "within_q_refusal_diff": 0.0898094365227295,
+   "within_q_refusal_diff_mh": 0.045084626848221565,
+   "n_informative_questions": 78,
    "spearman_nvea_refusal": 0.2535651822826056,
    "quote_check": {
     "exact": 899,
@@ -778,9 +817,10 @@
     0.6616847679974219
    ],
    "within_q_refusal_diff_ci": [
-    0.018632330238937466,
-    0.07331247799786471
-   ]
+    0.023194287181481824,
+    0.15357604829491095
+   ],
+   "within_q_refusal_diff_se": 0.03392259665382836
   },
   "benign_refusal_rate": 0.04540763673890609
  },
@@ -800,8 +840,9 @@
    "vea_rate": 0.010035542546518922,
    "questions_with_vea": 30,
    "refusal_rate": 0.6263851139452227,
-   "within_q_refusal_diff": -0.031068086064387473,
-   "n_informative_questions": 30,
+   "within_q_refusal_diff": -0.0909297052154195,
+   "within_q_refusal_diff_mh": -0.031068086064387473,
+   "n_informative_questions": 21,
    "spearman_nvea_refusal": -0.04706947610495457,
    "quote_check": {
     "exact": 48
@@ -818,9 +859,10 @@
     0.664094468346523
    ],
    "within_q_refusal_diff_ci": [
-    -0.14435552486891767,
-    0.09411324857811969
-   ]
+    -0.2722852474323063,
+    0.08879381613756583
+   ],
+   "within_q_refusal_diff_se": 0.09278400856992228
   },
   "all": {
    "n_assigned": 8740,
@@ -837,8 +879,9 @@
    "vea_rate": 0.018488181605429442,
    "questions_with_vea": 35,
    "refusal_rate": 0.6151415867072314,
-   "within_q_refusal_diff": -0.02511468081091421,
-   "n_informative_questions": 35,
+   "within_q_refusal_diff": -0.07018915860040198,
+   "within_q_refusal_diff_mh": -0.02511468081091421,
+   "n_informative_questions": 27,
    "spearman_nvea_refusal": -0.022028860335314142,
    "quote_check": {
     "exact": 156,
@@ -856,9 +899,10 @@
     0.6651874636687484
    ],
    "within_q_refusal_diff_ci": [
-    -0.10237938108324664,
-    0.05096359013606236
-   ]
+    -0.18549029036853487,
+    0.038975062661782515
+   ],
+   "within_q_refusal_diff_se": 0.05855855874905545
   },
   "benign_refusal_rate": 0.03505154639175258
  },
@@ -877,8 +921,9 @@
    "vea_rate": 0.04443066749328373,
    "questions_with_vea": 62,
    "refusal_rate": 0.07046910518702211,
-   "within_q_refusal_diff": 0.1169617785616486,
-   "n_informative_questions": 62,
+   "within_q_refusal_diff": 0.13004037872458926,
+   "within_q_refusal_diff_mh": 0.1169617785616486,
+   "n_informative_questions": 57,
    "spearman_nvea_refusal": 0.5665042534958513,
    "quote_check": {
     "exact": 213,
@@ -897,9 +942,10 @@
     0.08844848350025
    ],
    "within_q_refusal_diff_ci": [
-    0.030366995219461304,
-    0.20708442414501996
-   ]
+    0.04745287698412698,
+    0.21609903352963516
+   ],
+   "within_q_refusal_diff_se": 0.043547878780910536
   },
   "all": {
    "n_assigned": 8740,
@@ -915,8 +961,9 @@
    "vea_rate": 0.09905224225612576,
    "questions_with_vea": 70,
    "refusal_rate": 0.12725381414701803,
-   "within_q_refusal_diff": 0.17069082284889583,
-   "n_informative_questions": 70,
+   "within_q_refusal_diff": 0.1550900485415412,
+   "within_q_refusal_diff_mh": 0.17069082284889583,
+   "n_informative_questions": 68,
    "spearman_nvea_refusal": 0.5936758272997247,
    "quote_check": {
     "exact": 851,
@@ -935,9 +982,10 @@
     0.16102447001974857
    ],
    "within_q_refusal_diff_ci": [
-    0.1193869457537878,
-    0.22013268209378944
-   ]
+    0.10118388778332112,
+    0.20933977484124133
+   ],
+   "within_q_refusal_diff_se": 0.027763794431367245
   },
   "benign_refusal_rate": 0.0030864197530864196
  },
@@ -956,8 +1004,9 @@
    "vea_rate": 0.007424211177562384,
    "questions_with_vea": 19,
    "refusal_rate": 0.5646525056712725,
-   "within_q_refusal_diff": 0.12195121951219512,
-   "n_informative_questions": 19,
+   "within_q_refusal_diff": 0.24746642246642248,
+   "within_q_refusal_diff_mh": 0.12195121951219512,
+   "n_informative_questions": 13,
    "spearman_nvea_refusal": 0.009107489692749231,
    "quote_check": {
     "exact": 36
@@ -974,9 +1023,10 @@
     0.6033467409240925
    ],
    "within_q_refusal_diff_ci": [
-    0.025771952796101703,
-    0.2580645161290322
-   ]
+    0.06631911375661377,
+    0.4564586777998234
+   ],
+   "within_q_refusal_diff_se": 0.10129954477825423
   },
   "all": {
    "n_assigned": 9720,
@@ -992,8 +1042,9 @@
    "vea_rate": 0.006907928652438396,
    "questions_with_vea": 28,
    "refusal_rate": 0.5644911846582122,
-   "within_q_refusal_diff": 0.03913670495797903,
-   "n_informative_questions": 28,
+   "within_q_refusal_diff": 0.12786851582738362,
+   "within_q_refusal_diff_mh": 0.03913670495797903,
+   "n_informative_questions": 21,
    "spearman_nvea_refusal": 0.018482716249979964,
    "quote_check": {
     "exact": 66,
@@ -1011,9 +1062,10 @@
     0.6041750637203931
    ],
    "within_q_refusal_diff_ci": [
-    -0.060501343087748974,
-    0.14243360376527547
-   ]
+    -0.040386980879308226,
+    0.29960335464402743
+   ],
+   "within_q_refusal_diff_se": 0.08515834861325802
   },
   "benign_refusal_rate": 0.01728395061728395
  },
@@ -1033,8 +1085,9 @@
    "vea_rate": 0.25,
    "questions_with_vea": 254,
    "refusal_rate": 0.5133136094674556,
-   "within_q_refusal_diff": 0.07930977507345494,
-   "n_informative_questions": 238,
+   "within_q_refusal_diff": 0.15084175084175083,
+   "within_q_refusal_diff_mh": 0.07930977507345494,
+   "n_informative_questions": 132,
    "spearman_nvea_refusal": 0.6600934357355315,
    "quote_check": {
     "exact": 1181,
@@ -1053,9 +1106,10 @@
     0.5496320120374288
    ],
    "within_q_refusal_diff_ci": [
-    0.04704909313365392,
-    0.1128503628611896
-   ]
+    0.08785261765524924,
+    0.2086701526675485
+   ],
+   "within_q_refusal_diff_se": 0.03111155815581753
   },
   "all": {
    "n_assigned": 9720,
@@ -1072,8 +1126,9 @@
    "vea_rate": 0.24659270998415214,
    "questions_with_vea": 300,
    "refusal_rate": 0.5101954569466456,
-   "within_q_refusal_diff": 0.0756303294773917,
-   "n_informative_questions": 292,
+   "within_q_refusal_diff": 0.1546131407044306,
+   "within_q_refusal_diff_mh": 0.0756303294773917,
+   "n_informative_questions": 187,
    "spearman_nvea_refusal": 0.697311590464589,
    "quote_check": {
     "exact": 2330,
@@ -1092,9 +1147,10 @@
     0.5452336355974379
    ],
    "within_q_refusal_diff_ci": [
-    0.05091944050503436,
-    0.10343025495992816
-   ]
+    0.11045882502092606,
+    0.19984764381026365
+   ],
+   "within_q_refusal_diff_se": 0.02320772365882113
   }
  },
  "Qwen3.5-122B-A10B": {
@@ -1113,8 +1169,9 @@
    "vea_rate": 0.10421008753647353,
    "questions_with_vea": 168,
    "refusal_rate": 0.5819091288036682,
-   "within_q_refusal_diff": 0.031187356578251526,
-   "n_informative_questions": 164,
+   "within_q_refusal_diff": 0.07041997354497354,
+   "within_q_refusal_diff_mh": 0.031187356578251526,
+   "n_informative_questions": 72,
    "spearman_nvea_refusal": 0.2789997063309472,
    "quote_check": {
     "exact": 487,
@@ -1133,9 +1190,10 @@
     0.6180175073986087
    ],
    "within_q_refusal_diff_ci": [
-    -0.0028147618559210812,
-    0.06679220040134928
-   ]
+    -0.012889295664864502,
+    0.15426269861392822
+   ],
+   "within_q_refusal_diff_se": 0.042477866027171594
   },
   "all": {
    "n_assigned": 9720,
@@ -1152,8 +1210,9 @@
    "vea_rate": 0.1019705974350954,
    "questions_with_vea": 208,
    "refusal_rate": 0.582629548535085,
-   "within_q_refusal_diff": 0.034958420029007856,
-   "n_informative_questions": 208,
+   "within_q_refusal_diff": 0.07030936290074158,
+   "within_q_refusal_diff_mh": 0.034958420029007856,
+   "n_informative_questions": 98,
    "spearman_nvea_refusal": 0.3447288398733193,
    "quote_check": {
     "exact": 953,
@@ -1172,9 +1231,10 @@
     0.6177203717855508
    ],
    "within_q_refusal_diff_ci": [
-    0.012777544211144921,
-    0.058595012983150604
-   ]
+    0.015104366096636741,
+    0.1306264025901043
+   ],
+   "within_q_refusal_diff_se": 0.028151651181492574
   }
  },
  "Qwen3.5-397B-A17B": {
@@ -1193,8 +1253,9 @@
    "vea_rate": 0.10513089005235603,
    "questions_with_vea": 161,
    "refusal_rate": 0.6598952879581151,
-   "within_q_refusal_diff": 0.013351897127236946,
-   "n_informative_questions": 156,
+   "within_q_refusal_diff": 0.06308578987150415,
+   "within_q_refusal_diff_mh": 0.013351897127236946,
+   "n_informative_questions": 42,
    "spearman_nvea_refusal": 0.30423670836244415,
    "quote_check": {
     "exact": 489,
@@ -1214,9 +1275,10 @@
     0.6957518063948458
    ],
    "within_q_refusal_diff_ci": [
-    -0.004899601957746554,
-    0.034394779764645306
-   ]
+    -0.03254251700680272,
+    0.16528311965811965
+   ],
+   "within_q_refusal_diff_se": 0.05000849003920124
   },
   "all": {
    "n_assigned": 9720,
@@ -1233,8 +1295,9 @@
    "vea_rate": 0.10709056682702364,
    "questions_with_vea": 200,
    "refusal_rate": 0.657393850658858,
-   "within_q_refusal_diff": 0.014908245753121543,
-   "n_informative_questions": 199,
+   "within_q_refusal_diff": 0.052377677140485496,
+   "within_q_refusal_diff_mh": 0.014908245753121543,
+   "n_informative_questions": 62,
    "spearman_nvea_refusal": 0.37465343877184876,
    "quote_check": {
     "exact": 1002,
@@ -1254,9 +1317,10 @@
     0.6931826021435804
    ],
    "within_q_refusal_diff_ci": [
-    -0.0008355053037471961,
-    0.03199716205404527
-   ]
+    -0.019204208579518173,
+    0.12428887132342757
+   ],
+   "within_q_refusal_diff_se": 0.03735239961412785
   }
  },
  "_meta": {
@@ -1264,10 +1328,10 @@
   "final": true,
   "labels_complete": true,
   "incomplete_models": [],
-  "created": "2026-09-29T13:14:50",
+  "created": "2026-09-29T14:30:19",
   "code": {
-   "git_head": "7fd18dde8c4deceaf68c910cf0a24a3d785a7221",
-   "uncommitted_changes_in_src": false
+   "git_head": "363b596ba5bc79143f1b119e04f82cc8bd73414c",
+   "uncommitted_changes_in_src": true
   }
  }
 }
