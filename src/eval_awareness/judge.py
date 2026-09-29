@@ -15,6 +15,7 @@ tag per VEA quote) were added for the Gemma pilot; the other tasks' defaults are
 """
 
 import argparse
+import json
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -40,17 +41,49 @@ def key(j: dict) -> tuple:
     return (j["qid"], j["sample_idx"]) + ((j["source"],) if "source" in j else ())
 
 
+def load_dotenv(path: Path = Path(__file__).resolve().parents[2] / ".env") -> None:
+    """KEY=value lines from the repo's .env (gitignored) into os.environ, without overriding what is set."""
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+PROVIDERS = {"openai": (None, "OPENAI_API_KEY"), "openrouter": ("https://openrouter.ai/api/v1", "OPENROUTER_API_KEY")}
+
+
 class OpenAIJudge:
-    def __init__(self, model: str, workers: int = 16):
+    """OpenAI-compatible chat API. --provider openrouter routes through OpenRouter (key in .env). Sampling is
+    greedy (temperature 0) unless the provider ignores it; `extra_body` passes provider options (e.g. OpenRouter's
+    reasoning switch and data-retention routing)."""
+
+    def __init__(self, model: str, workers: int = 16, provider: str = "openai", max_tokens: int | None = None,
+                 extra_body: dict | None = None):
         from openai import OpenAI
 
-        self.client, self.model, self.workers = OpenAI(), model, workers
+        load_dotenv()
+        base_url, key_var = PROVIDERS[provider]
+        if not os.environ.get(key_var):
+            raise SystemExit(f"{key_var} is not set (add it to .env)")
+        self.client = OpenAI(api_key=os.environ[key_var], **({"base_url": base_url} if base_url else {}))
+        self.model, self.workers, self.max_tokens, self.extra_body = model, workers, max_tokens, extra_body or {}
 
     def _one(self, prompt: str) -> str:
-        r = self.client.chat.completions.create(
-            model=self.model, messages=[{"role": "user", "content": prompt}]
-        )
-        return r.choices[0].message.content or ""
+        for attempt in range(4):
+            try:
+                r = self.client.chat.completions.create(
+                    model=self.model, messages=[{"role": "user", "content": prompt}], temperature=0,
+                    **({"max_tokens": self.max_tokens} if self.max_tokens else {}),
+                    **({"extra_body": self.extra_body} if self.extra_body else {}))
+                msg = r.choices[0].message
+                reasoning = getattr(msg, "reasoning", None) or (msg.model_extra or {}).get("reasoning")
+                # keep the model's reasoning in the raw text, closed by </think> as for the local thinking judge
+                return (f"{reasoning}</think>" if reasoning else "") + (msg.content or "")
+            except Exception as e:  # noqa: BLE001  (rate limits, provider errors): back off and retry
+                if attempt == 3:
+                    return f"<api error: {type(e).__name__}: {e}>"
+                time.sleep(5 * 2 ** attempt)
 
     def __call__(self, prompts: list[str]) -> list[str]:
         with ThreadPoolExecutor(self.workers) as ex:
@@ -194,6 +227,9 @@ def main():
     ap.add_argument("--task", choices=["vea", "vea_response", "vea_cal", "refusal", "category", "safety"], required=True)
     ap.add_argument("--backend", choices=["openai", "mlx", "vllm"], default="openai")
     ap.add_argument("--judge-model")
+    ap.add_argument("--provider", choices=["openai", "openrouter"], default="openai",
+                    help="--backend openai: which OpenAI-compatible API (openrouter reads OPENROUTER_API_KEY from .env)")
+    ap.add_argument("--extra-body", help='--backend openai: JSON of provider options, e.g. \'{"reasoning": {"enabled": false}}\'')
     ap.add_argument("--no-prefilter", dest="prefilter", action="store_false",
                     help="send every CoT to the VEA judge instead of only regex hits")
     ap.add_argument("--max-response-chars", type=int, default=6000)
@@ -243,9 +279,16 @@ def main():
     if not todo:
         return
 
-    judge = {"openai": lambda: OpenAIJudge(judge_model),
+    extra_body = json.loads(args.extra_body) if args.extra_body else None
+    judge = {"openai": lambda: OpenAIJudge(judge_model, provider=args.provider, max_tokens=args.judge_max_tokens,
+                                           extra_body=extra_body),
              "mlx": lambda: MLXJudge(judge_model, args.judge_max_tokens),
              "vllm": lambda: VLLMJudge(judge_model, args, args.judge_max_tokens)}[args.backend]()
+    if args.backend == "openai":  # record the API judge's config next to its outputs
+        append_jsonl(out.with_suffix(".config.jsonl"), [{
+            "started": time.strftime("%Y-%m-%dT%H:%M:%S"), "task": args.task, "judge_model": judge_model,
+            "provider": args.provider, "extra_body": extra_body, "temperature": 0, "max_tokens": args.judge_max_tokens,
+            "n_to_judge": len(todo), "example_prompt": todo[0][1][:4000]}])
     if args.backend == "vllm":  # record the exact judge config next to its outputs
         import vllm
 
