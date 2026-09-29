@@ -79,16 +79,16 @@ Change in refusal, percentage points, 95% CI over questions. **Injection** = VEA
 | Qwen3-0.6B | +4.4 [+2.0, +7.1] | -2.8 [-18.7, +9.5] | 77% | 147 / 19 of 19 |
 | Qwen3-1.7B | +4.1 [+1.4, +7.4] | -0.9 [-3.4, +1.2] | 59% | 91 / 46 of 49 |
 | Qwen3-14B | +23.9 [+17.3, +31.1] | +3.7 [-0.1, +7.4] | 43% | 78 / 100 of 119 |
-| Qwen3-32B | +22.5 [+16.5, +28.6] | pending | - | 66 / - of - |
+| Qwen3-32B | +22.5 [+16.5, +28.6] | +7.2 [+3.3, +11.3] | 44% | 66 / 95 of 112 |
 | Qwen3-4B | +8.6 [+5.0, +12.7] | +0.4 [-2.6, +3.4] | 42% | 81 / 86 of 108 |
 | Qwen3-8B | +20.3 [+13.4, +27.7] | -0.2 [-3.9, +2.9] | 46% | 79 / 95 of 117 |
-| Qwen3.5-0.8B | +2.2 [+0.3, +4.2] | -0.1 [-4.7, +4.2] | 54% | 149 / 66 of 75 |
+| Qwen3.5-0.8B | +2.2 [+0.3, +4.2] | -0.3 [-4.8, +4.1] | 54% | 149 / 66 of 75 |
 | Qwen3.5-122B-A10B | +3.3 [+0.1, +6.7] | -1.4 [-3.1, +0.3] | 62% | 84 / 142 of 150 |
-| Qwen3.5-27B | +4.1 [+0.3, +8.2] | pending | - | 75 / - of - |
+| Qwen3.5-27B | +4.1 [+0.3, +8.2] | +0.7 [-1.7, +3.4] | 60% | 75 / 89 of 93 |
 | Qwen3.5-2B | +1.9 [-0.5, +4.3] | pending | - | 79 / - of - |
 | Qwen3.5-397B-A17B | +6.3 [+2.7, +10.1] | pending | - | 79 / - of - |
-| Qwen3.5-4B | +4.4 [+1.5, +7.4] | pending | - | 66 / - of - |
-| Qwen3.5-9B | +0.8 [-2.7, +4.4] | pending | - | 74 / - of - |
+| Qwen3.5-4B | +4.4 [+1.5, +7.4] | +0.6 [-0.5, +1.9] | 58% | 66 / 70 of 81 |
+| Qwen3.5-9B | +0.8 [-2.7, +4.4] | -1.9 [-4.1, -0.0] | 58% | 74 / 71 of 81 |
 | Qwen3.8-27B | +6.8 [+2.5, +11.3] | pending | - | 106 / - of - |
 | gemma-4-31B-it | +4.5 [+0.2, +9.0] | -1.4 [-3.6, +0.4] | 72% | 106 / 47 of 48 |
 
@@ -180,12 +180,12 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3-14B | insert | vea | 623 | 623 | 624 | 42.8% |
 | Qwen3-14B | remove | keep | 950 | 950 | 952 | 8.8% |
 | Qwen3-14B | remove | remove | 950 | 950 | 952 | 57.4% |
-| Qwen3-32B | insert | neutral | 527 | 527 | 528 | - |
-| Qwen3-32B | insert | none | 522 | 522 | 528 | - |
-| Qwen3-32B | insert | placebo | 526 | 526 | 528 | - |
-| Qwen3-32B | insert | vea | 523 | 523 | 528 | - |
-| Qwen3-32B | remove | keep | 892 | 892 | 896 | - |
-| Qwen3-32B | remove | remove | 895 | 895 | 896 | - |
+| Qwen3-32B | insert | neutral | 527 | 527 | 528 | 22.7% |
+| Qwen3-32B | insert | none | 522 | 522 | 528 | 16.3% |
+| Qwen3-32B | insert | placebo | 526 | 526 | 528 | 47.9% |
+| Qwen3-32B | insert | vea | 523 | 523 | 528 | 42.4% |
+| Qwen3-32B | remove | keep | 892 | 892 | 896 | 8.6% |
+| Qwen3-32B | remove | remove | 895 | 895 | 896 | 55.7% |
 | Qwen3-4B | insert | neutral | 640 | 640 | 648 | 10.8% |
 | Qwen3-4B | insert | none | 645 | 645 | 648 | 5.6% |
 | Qwen3-4B | insert | placebo | 643 | 643 | 648 | 25.6% |
@@ -200,46 +200,46 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3-8B | remove | remove | 922 | 922 | 936 | 54.1% |
 | Qwen3.5-0.8B | insert | neutral | 1176 | 1176 | 1192 | 12.6% |
 | Qwen3.5-0.8B | insert | none | 1176 | 1176 | 1192 | 8.9% |
-| Qwen3.5-0.8B | insert | placebo | 1179 | 1179 | 1192 | 15.5% |
+| Qwen3.5-0.8B | insert | placebo | 1179 | 1179 | 1192 | 15.4% |
 | Qwen3.5-0.8B | insert | vea | 1176 | 1176 | 1192 | 16.4% |
 | Qwen3.5-0.8B | remove | keep | 583 | 583 | 600 | 51.3% |
-| Qwen3.5-0.8B | remove | remove | 579 | 579 | 600 | 46.6% |
+| Qwen3.5-0.8B | remove | remove | 579 | 579 | 600 | 46.3% |
 | Qwen3.5-122B-A10B | insert | neutral | 672 | 672 | 672 | 3.1% |
 | Qwen3.5-122B-A10B | insert | none | 671 | 671 | 672 | 1.8% |
 | Qwen3.5-122B-A10B | insert | placebo | 672 | 672 | 672 | 8.8% |
 | Qwen3.5-122B-A10B | insert | vea | 672 | 672 | 672 | 7.6% |
 | Qwen3.5-122B-A10B | remove | keep | 1195 | 1195 | 1200 | 22.9% |
 | Qwen3.5-122B-A10B | remove | remove | 1193 | 1193 | 1200 | 38.2% |
-| Qwen3.5-27B | insert | neutral | 590 | 590 | 600 | - |
-| Qwen3.5-27B | insert | none | 591 | 591 | 600 | - |
-| Qwen3.5-27B | insert | placebo | 596 | 596 | 600 | - |
-| Qwen3.5-27B | insert | vea | 597 | 597 | 600 | - |
-| Qwen3.5-27B | remove | keep | 741 | 741 | 744 | - |
-| Qwen3.5-27B | remove | remove | 739 | 739 | 744 | - |
-| Qwen3.5-2B | insert | neutral | 629 | 629 | 632 | - |
-| Qwen3.5-2B | insert | none | 627 | 627 | 632 | - |
-| Qwen3.5-2B | insert | placebo | 632 | 632 | 632 | - |
-| Qwen3.5-2B | insert | vea | 628 | 628 | 632 | - |
-| Qwen3.5-2B | remove | keep | 629 | 629 | 640 | - |
-| Qwen3.5-2B | remove | remove | 635 | 635 | 640 | - |
+| Qwen3.5-27B | insert | neutral | 590 | 590 | 600 | 3.5% |
+| Qwen3.5-27B | insert | none | 591 | 591 | 600 | 2.7% |
+| Qwen3.5-27B | insert | placebo | 596 | 596 | 600 | 8.2% |
+| Qwen3.5-27B | insert | vea | 597 | 597 | 600 | 9.2% |
+| Qwen3.5-27B | remove | keep | 741 | 741 | 744 | 27.4% |
+| Qwen3.5-27B | remove | remove | 739 | 739 | 744 | 40.6% |
+| Qwen3.5-2B | insert | neutral | 629 | 629 | 632 | 10.3% |
+| Qwen3.5-2B | insert | none | 627 | 627 | 632 | 9.2% |
+| Qwen3.5-2B | insert | placebo | 632 | 632 | 632 | 12.5% |
+| Qwen3.5-2B | insert | vea | 628 | 628 | 632 | 16.2% |
+| Qwen3.5-2B | remove | keep | 629 | 629 | 640 | 48.1% |
+| Qwen3.5-2B | remove | remove | 635 | 635 | 640 | 51.5% |
 | Qwen3.5-397B-A17B | insert | neutral | 629 | 629 | 632 | - |
 | Qwen3.5-397B-A17B | insert | none | 629 | 629 | 632 | - |
 | Qwen3.5-397B-A17B | insert | placebo | 631 | 631 | 632 | - |
 | Qwen3.5-397B-A17B | insert | vea | 629 | 629 | 632 | - |
 | Qwen3.5-397B-A17B | remove | keep | 1156 | 1156 | 1200 | - |
 | Qwen3.5-397B-A17B | remove | remove | 1173 | 1173 | 1200 | - |
-| Qwen3.5-4B | insert | neutral | 528 | 528 | 528 | - |
-| Qwen3.5-4B | insert | none | 528 | 528 | 528 | - |
-| Qwen3.5-4B | insert | placebo | 528 | 528 | 528 | - |
-| Qwen3.5-4B | insert | vea | 528 | 528 | 528 | - |
-| Qwen3.5-4B | remove | keep | 636 | 636 | 648 | - |
-| Qwen3.5-4B | remove | remove | 634 | 634 | 648 | - |
-| Qwen3.5-9B | insert | neutral | 591 | 591 | 592 | - |
-| Qwen3.5-9B | insert | none | 592 | 592 | 592 | - |
-| Qwen3.5-9B | insert | placebo | 592 | 592 | 592 | - |
-| Qwen3.5-9B | insert | vea | 592 | 592 | 592 | - |
-| Qwen3.5-9B | remove | keep | 631 | 631 | 648 | - |
-| Qwen3.5-9B | remove | remove | 626 | 626 | 648 | - |
+| Qwen3.5-4B | insert | neutral | 528 | 528 | 528 | 3.2% |
+| Qwen3.5-4B | insert | none | 528 | 528 | 528 | 1.7% |
+| Qwen3.5-4B | insert | placebo | 528 | 528 | 528 | 7.8% |
+| Qwen3.5-4B | insert | vea | 528 | 528 | 528 | 6.4% |
+| Qwen3.5-4B | remove | keep | 636 | 636 | 648 | 37.5% |
+| Qwen3.5-4B | remove | remove | 634 | 634 | 648 | 42.4% |
+| Qwen3.5-9B | insert | neutral | 591 | 591 | 592 | 3.0% |
+| Qwen3.5-9B | insert | none | 592 | 592 | 592 | 2.9% |
+| Qwen3.5-9B | insert | placebo | 592 | 592 | 592 | 5.9% |
+| Qwen3.5-9B | insert | vea | 592 | 592 | 592 | 6.9% |
+| Qwen3.5-9B | remove | keep | 631 | 631 | 648 | 30.7% |
+| Qwen3.5-9B | remove | remove | 626 | 626 | 648 | 42.1% |
 | Qwen3.8-27B | insert | neutral | 836 | 836 | 848 | - |
 | Qwen3.8-27B | insert | none | 842 | 842 | 848 | - |
 | Qwen3.8-27B | insert | placebo | 845 | 845 | 848 | - |
