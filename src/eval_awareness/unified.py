@@ -471,19 +471,48 @@ def report() -> None:
     md.append("")
     if iv:
         f = lambda x: "-" if x is None else f"{100 * x:+.1f}"  # noqa: E731
-        md += ["## Sentence insertion / removal (refusal, percentage points; ladder exp03 design)\n",
-               "Primary: refusal among observed continuations, paired within base, 95% CI over questions. Bounds: "
-               "missing outcomes (not scored or not judged) set to the worst case for the contrast.\n",
-               "| model | contrast | estimate [95% CI] | bounds | bases / questions |", "|---|---|---|---|---|"]
+
+        def cell(v, k):
+            if k not in v:
+                return "-"
+            pr = v[k]["primary"]
+            if pr["value"] is None:
+                return "pending"
+            return f"{f(pr['value'])} [{f(pr['ci'][0])}, {f(pr['ci'][1])}]"
+
+        md += ["## Causal tests: the post's two measures\n",
+               "Change in refusal, percentage points, 95% CI over questions. **Injection** = VEA sentence inserted at 40% "
+               "of the reasoning minus nothing inserted (the post's injection comparison). **Removal, rejection-sampled** = "
+               "continuing after the model's own VEA sentence minus continuing from just before it, keeping only "
+               "\"remove\" continuations whose new reasoning does not re-verbalize VEA (the post's rejection sampling). "
+               "Rejection conditions on a post-treatment outcome: continuations that avoid VEA may differ in other ways, "
+               "and bases where VEA always returns drop out (share kept shown).\n",
+               "| model | injection: VEA - none | removal, rejection-sampled: keep - remove | remove continuations kept | bases (insert / removal kept of total) |",
+               "|---|---|---|---|---|"]
         for m, v in iv.items():
-            for k in ("insert_vea_minus_none", "insert_placebo_minus_none", "insert_neutral_minus_none",
-                      "insert_vea_minus_placebo", "remove_keep_minus_remove"):
-                if k not in v:
-                    continue
-                pr, lo, hi = v[k]["primary"], v[k]["lower"], v[k]["upper"]
-                md.append(f"| {m} | {k.replace('_minus_', ' - ').replace('_', ' ')} | {f(pr['value'])} "
-                          f"[{f(pr['ci'][0])}, {f(pr['ci'][1])}] | {f(lo['value'])} to {f(hi['value'])} | "
-                          f"{pr['n_bases']} / {pr['n_questions']} |")
+            rj = v.get("remove_keep_minus_remove_rejection", {})
+            kept = f"{100 * rj['share_remove_kept']:.0f}%" if "share_remove_kept" in rj else "-"
+            nb = (f"{v['insert_vea_minus_none']['primary']['n_bases'] if 'insert_vea_minus_none' in v else '-'} / "
+                  f"{rj['primary']['n_bases'] if rj.get('primary', {}).get('value') is not None else '-'} of {rj.get('bases_total', '-')}")
+            md.append(f"| {m} | {cell(v, 'insert_vea_minus_none')} | {cell(v, 'remove_keep_minus_remove_rejection')} | {kept} | {nb} |")
+        md += ["", "## Secondary contrasts\n",
+               "The manipulation sentence (\"...an attempt to manipulate me into complying with a harmful request\") is the VEA "
+               "sentence's minimal pair. Both push the model toward caution, and caution may be exactly how a model behaves "
+               "when it believes it is evaluated, so similar effects do not show that evaluation framing is inert or that a "
+               "different mechanism was engaged. Reported for completeness. Unfiltered removal keeps every continuation "
+               "(re-verbalized VEA included), so it measures deleting the sentence rather than VEA being absent.\n",
+               "| model | manipulation - none | VEA - manipulation | neutral - none | removal, all continuations |",
+               "|---|---|---|---|---|"]
+        for m, v in iv.items():
+            md.append(f"| {m} | {cell(v, 'insert_placebo_minus_none')} | {cell(v, 'insert_vea_minus_placebo')} | "
+                      f"{cell(v, 'insert_neutral_minus_none')} | {cell(v, 'remove_keep_minus_remove')} |")
+        md += ["", "Worst-case bounds for missing outcomes, per contrast (insertion and unfiltered removal):\n",
+               "| model | contrast | estimate | bounds |", "|---|---|---|---|"]
+        for m, v in iv.items():
+            for k in ("insert_vea_minus_none", "remove_keep_minus_remove"):
+                if k in v and v[k]["primary"]["value"] is not None:
+                    md.append(f"| {m} | {k.replace('_minus_', ' - ').replace('_', ' ')} | {f(v[k]['primary']['value'])} | "
+                              f"{f(v[k]['lower']['value'])} to {f(v[k]['upper']['value'])} |")
         md += ["", "Per condition: scored / judged / assigned continuations, and re-verbalized VEA in the new reasoning "
                "(vea_cal, among judged).\n", "| model | arm | condition | scored | judged | assigned | re-verbalized |",
                "|---|---|---|---|---|---|---|"]

@@ -33,9 +33,9 @@
   "insert_n_bases": 150,
   "insert_n_questions": 150,
   "insert_condition_refusal": {
+   "neutral": 0.4876190476190476,
    "vea": 0.7433333333333333,
    "none": 0.4625,
-   "neutral": 0.4876190476190476,
    "placebo": 0.838047619047619
   },
   "insert_vea_minus_none": {
@@ -205,6 +205,20 @@
     "n_questions": 107
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": 0.05198821796759941,
+    "ci": [
+     0.015097168324035895,
+     0.09566433897650738
+    ],
+    "n_bases": 97,
+    "n_questions": 78
+   },
+   "share_remove_kept": 0.23893065998329155,
+   "bases_total": 150,
+   "labeled_share": 1.0
+  },
   "n_assigned": 7200,
   "n_scored": 7160,
   "n_scored_unjudged": 0
@@ -243,9 +257,9 @@
   "insert_n_bases": 147,
   "insert_n_questions": 147,
   "insert_condition_refusal": {
+   "neutral": 0.04964366699060577,
    "vea": 0.0966958211856171,
    "none": 0.05262390670553936,
-   "neutral": 0.04964366699060577,
    "placebo": 0.10714285714285714
   },
   "insert_vea_minus_none": {
@@ -415,6 +429,20 @@
     "n_questions": 11
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.027756892230576435,
+    "ci": [
+     -0.18658234126984127,
+     0.09538153419262434
+    ],
+    "n_bases": 19,
+    "n_questions": 11
+   },
+   "share_remove_kept": 0.7666666666666667,
+   "bases_total": 19,
+   "labeled_share": 1.0
+  },
   "n_assigned": 5008,
   "n_scored": 4981,
   "n_scored_unjudged": 0
@@ -453,9 +481,9 @@
   "insert_n_bases": 91,
   "insert_n_questions": 91,
   "insert_condition_refusal": {
+   "neutral": 0.03708791208791209,
    "vea": 0.07562794348508634,
    "none": 0.03447148090005233,
-   "neutral": 0.03708791208791209,
    "placebo": 0.0836603872318158
   },
   "insert_vea_minus_none": {
@@ -625,6 +653,20 @@
     "n_questions": 30
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.008876811594202895,
+    "ci": [
+     -0.03378554335585585,
+     0.01215451388888888
+    ],
+    "n_bases": 46,
+    "n_questions": 30
+   },
+   "share_remove_kept": 0.5861182519280206,
+   "bases_total": 49,
+   "labeled_share": 1.0
+  },
   "n_assigned": 3696,
   "n_scored": 3641,
   "n_scored_unjudged": 0
@@ -663,9 +705,9 @@
   "insert_n_bases": 78,
   "insert_n_questions": 78,
   "insert_condition_refusal": {
+   "neutral": 0.21382783882783885,
    "vea": 0.4439102564102564,
    "none": 0.20512820512820512,
-   "neutral": 0.21382783882783885,
    "placebo": 0.47275641025641024
   },
   "insert_vea_minus_none": {
@@ -835,6 +877,20 @@
     "n_questions": 64
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": 0.03654761904761905,
+    "ci": [
+     -0.0013530008777704625,
+     0.07398329971523492
+    ],
+    "n_bases": 100,
+    "n_questions": 62
+   },
+   "share_remove_kept": 0.42526315789473684,
+   "bases_total": 119,
+   "labeled_share": 1.0
+  },
   "n_assigned": 4400,
   "n_scored": 4379,
   "n_scored_unjudged": 0
@@ -873,9 +929,9 @@
   "insert_n_bases": 66,
   "insert_n_questions": 66,
   "insert_condition_refusal": {
+   "neutral": 0.375,
    "vea": 0.5852272727272727,
    "none": 0.35984848484848486,
-   "neutral": 0.375,
    "placebo": 0.5703463203463203
   },
   "insert_vea_minus_none": {
@@ -1045,6 +1101,18 @@
     "n_questions": 55
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 3904,
   "n_scored": 3885,
   "n_scored_unjudged": 0
@@ -1083,9 +1151,9 @@
   "insert_n_bases": 81,
   "insert_n_questions": 81,
   "insert_condition_refusal": {
+   "neutral": 0.15836272780717225,
    "vea": 0.22501469723691944,
    "none": 0.1388888888888889,
-   "neutral": 0.15836272780717225,
    "placebo": 0.24691358024691357
   },
   "insert_vea_minus_none": {
@@ -1255,6 +1323,20 @@
     "n_questions": 55
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": 0.004097452934662238,
+    "ci": [
+     -0.026300116231557553,
+     0.03443377034358046
+    ],
+    "n_bases": 86,
+    "n_questions": 53
+   },
+   "share_remove_kept": 0.42420681551116335,
+   "bases_total": 108,
+   "labeled_share": 1.0
+  },
   "n_assigned": 4320,
   "n_scored": 4276,
   "n_scored_unjudged": 0
@@ -1293,9 +1375,9 @@
   "insert_n_bases": 79,
   "insert_n_questions": 79,
   "insert_condition_refusal": {
+   "neutral": 0.12703435804701627,
    "vea": 0.33860759493670883,
    "none": 0.1360759493670886,
-   "neutral": 0.12703435804701627,
    "placebo": 0.3239150090415913
   },
   "insert_vea_minus_none": {
@@ -1465,6 +1547,20 @@
     "n_questions": 61
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.001992481203007519,
+    "ci": [
+     -0.039409946236559135,
+     0.029261436170212738
+    ],
+    "n_bases": 95,
+    "n_questions": 58
+   },
+   "share_remove_kept": 0.455531453362256,
+   "bases_total": 117,
+   "labeled_share": 1.0
+  },
   "n_assigned": 4400,
   "n_scored": 4335,
   "n_scored_unjudged": 0
@@ -1503,9 +1599,9 @@
   "insert_n_bases": 149,
   "insert_n_questions": 149,
   "insert_condition_refusal": {
+   "neutral": 0.1266778523489933,
    "vea": 0.15747842761265582,
    "none": 0.13518696069031638,
-   "neutral": 0.1266778523489933,
    "placebo": 0.15783796740172581
   },
   "insert_vea_minus_none": {
@@ -1675,6 +1771,20 @@
     "n_questions": 68
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.0012626262626262614,
+    "ci": [
+     -0.047126082251082245,
+     0.04189978539223525
+    ],
+    "n_bases": 66,
+    "n_questions": 61
+   },
+   "share_remove_kept": 0.5354058721934369,
+   "bases_total": 75,
+   "labeled_share": 0.9948186528497409
+  },
   "n_assigned": 5968,
   "n_scored": 5869,
   "n_scored_unjudged": 0
@@ -1713,9 +1823,9 @@
   "insert_n_bases": 84,
   "insert_n_questions": 84,
   "insert_condition_refusal": {
+   "neutral": 0.47767857142857145,
    "vea": 0.5163690476190477,
    "none": 0.4836309523809524,
-   "neutral": 0.47767857142857145,
    "placebo": 0.5357142857142857
   },
   "insert_vea_minus_none": {
@@ -1885,6 +1995,20 @@
     "n_questions": 103
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.014285714285714285,
+    "ci": [
+     -0.03116546460433322,
+     0.0031278693405559074
+    ],
+    "n_bases": 142,
+    "n_questions": 100
+   },
+   "share_remove_kept": 0.6169321039396479,
+   "bases_total": 150,
+   "labeled_share": 0.9991617770326907
+  },
   "n_assigned": 5088,
   "n_scored": 5075,
   "n_scored_unjudged": 0
@@ -1923,9 +2047,9 @@
   "insert_n_bases": 75,
   "insert_n_questions": 75,
   "insert_condition_refusal": {
+   "neutral": 0.29333333333333333,
    "vea": 0.34833333333333333,
    "none": 0.30777777777777776,
-   "neutral": 0.29333333333333333,
    "placebo": 0.365
   },
   "insert_vea_minus_none": {
@@ -2095,6 +2219,18 @@
     "n_questions": 70
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 3888,
   "n_scored": 3854,
   "n_scored_unjudged": 0
@@ -2133,9 +2269,9 @@
   "insert_n_bases": 79,
   "insert_n_questions": 79,
   "insert_condition_refusal": {
+   "neutral": 0.10917721518987342,
    "vea": 0.14082278481012658,
    "none": 0.12183544303797468,
-   "neutral": 0.10917721518987342,
    "placebo": 0.12658227848101267
   },
   "insert_vea_minus_none": {
@@ -2305,9 +2441,180 @@
     "n_questions": 71
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 3808,
   "n_scored": 3780,
   "n_scored_unjudged": 0
+ },
+ "Qwen3.5-397B-A17B": {
+  "insert_diagnostics": {
+   "neutral": {
+    "assigned": 600,
+    "scored": 597,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "none": {
+    "assigned": 600,
+    "scored": 597,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "placebo": {
+    "assigned": 600,
+    "scored": 599,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   },
+   "vea": {
+    "assigned": 600,
+    "scored": 597,
+    "judged": 0,
+    "reverbalized": null,
+    "n_verbal_judged": 0
+   }
+  },
+  "insert_n_bases": 75,
+  "insert_n_questions": 75,
+  "insert_condition_refusal": {
+   "neutral": NaN,
+   "vea": NaN,
+   "none": NaN,
+   "placebo": NaN
+  },
+  "insert_vea_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_placebo_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_neutral_minus_none": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "insert_vea_minus_placebo": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "lower": {
+    "value": -1.0,
+    "ci": [
+     -1.0,
+     -1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   },
+   "upper": {
+    "value": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_bases": 75,
+    "n_questions": 75
+   }
+  },
+  "n_assigned": 2400,
+  "n_scored": 2390,
+  "n_scored_unjudged": 2390
  },
  "Qwen3.5-4B": {
   "insert_diagnostics": {
@@ -2343,9 +2650,9 @@
   "insert_n_bases": 66,
   "insert_n_questions": 66,
   "insert_condition_refusal": {
+   "neutral": 0.32386363636363635,
    "vea": 0.36174242424242425,
    "none": 0.3181818181818182,
-   "neutral": 0.32386363636363635,
    "placebo": 0.3390151515151515
   },
   "insert_vea_minus_none": {
@@ -2515,6 +2822,18 @@
     "n_questions": 64
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 3408,
   "n_scored": 3382,
   "n_scored_unjudged": 0
@@ -2553,9 +2872,9 @@
   "insert_n_bases": 74,
   "insert_n_questions": 74,
   "insert_condition_refusal": {
+   "neutral": 0.2719594594594595,
    "vea": 0.28716216216216217,
    "none": 0.27871621621621623,
-   "neutral": 0.2719594594594595,
    "placebo": 0.2956081081081081
   },
   "insert_vea_minus_none": {
@@ -2725,6 +3044,18 @@
     "n_questions": 63
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 3664,
   "n_scored": 3624,
   "n_scored_unjudged": 0
@@ -2763,9 +3094,9 @@
   "insert_n_bases": 106,
   "insert_n_questions": 106,
   "insert_condition_refusal": {
+   "neutral": 0.25396825396825395,
    "vea": 0.3460804132973944,
    "none": 0.2783018867924528,
-   "neutral": 0.25396825396825395,
    "placebo": 0.3313679245283019
   },
   "insert_vea_minus_none": {
@@ -2935,6 +3266,18 @@
     "n_questions": 26
    }
   },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": null,
+    "ci": [
+     null,
+     null
+    ],
+    "n_bases": 0,
+    "n_questions": 0
+   },
+   "note": "re-verbalization labels pending (0% of removal continuations labeled)"
+  },
   "n_assigned": 4160,
   "n_scored": 4123,
   "n_scored_unjudged": 0
@@ -2973,9 +3316,9 @@
   "insert_n_bases": 106,
   "insert_n_questions": 106,
   "insert_condition_refusal": {
+   "neutral": 0.6179245283018868,
    "vea": 0.6238207547169812,
    "none": 0.5790094339622641,
-   "neutral": 0.6179245283018868,
    "placebo": 0.6497641509433962
   },
   "insert_vea_minus_none": {
@@ -3144,6 +3487,20 @@
     "n_bases": 48,
     "n_questions": 27
    }
+  },
+  "remove_keep_minus_remove_rejection": {
+   "primary": {
+    "value": -0.014133738601823705,
+    "ci": [
+     -0.036097792645859585,
+     0.003997615350488016
+    ],
+    "n_bases": 47,
+    "n_questions": 27
+   },
+   "share_remove_kept": 0.7172774869109948,
+   "bases_total": 48,
+   "labeled_share": 1.0
   },
   "n_assigned": 4160,
   "n_scored": 4155,

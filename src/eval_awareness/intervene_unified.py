@@ -405,7 +405,29 @@ def contrasts(d: pd.DataFrame) -> dict:
                 wide = x.groupby(["base_key", "prompt_qid", "condition"]).R.mean().unstack("condition").reset_index()
                 res[name] = contrast(wide, t, c, rng)
             out[f"{experiment}_{t}_minus_{c}"] = res
+        if experiment == "remove" and {"keep", "remove"} <= conds:
+            out["remove_keep_minus_remove_rejection"] = rejection_filtered(e, rng)
     return out
+
+
+REJECTION_MIN_LABELED = 0.98  # share of scored "remove" continuations that need a VEA label for the estimate
+
+
+def rejection_filtered(e: pd.DataFrame, rng) -> dict:
+    """Keep - remove with the post's rejection sampling: the "remove" arm keeps only continuations whose new
+    reasoning does not re-verbalize VEA (vea_cal V == 0); "keep" keeps all. Bases whose every "remove" continuation
+    re-verbalizes drop out. This conditions on a post-treatment outcome (continuations that avoid VEA may differ
+    in other ways), which the report states next to it; it is the estimate comparable to the post's removal result."""
+    rem = e[(e.condition == "remove") & e.scored]
+    labeled = rem.V.notna().mean() if len(rem) else 0.0
+    if labeled < REJECTION_MIN_LABELED:
+        return {"primary": {"value": None, "ci": [None, None], "n_bases": 0, "n_questions": 0},
+                "note": f"re-verbalization labels pending ({labeled:.0%} of removal continuations labeled)"}
+    kept = e[(e.condition == "keep") | ((e.condition == "remove") & (e.V == 0))]
+    wide = kept.groupby(["base_key", "prompt_qid", "condition"]).R.mean().unstack("condition").reset_index()
+    res = contrast(wide, "keep", "remove", rng)
+    return {"primary": res, "share_remove_kept": float((rem.V == 0).mean()),
+            "bases_total": int(e.base_key.nunique()), "labeled_share": float(labeled)}
 
 
 def analyze(final: bool = False):

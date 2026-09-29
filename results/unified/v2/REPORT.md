@@ -69,87 +69,86 @@ Every model under docs/UNIFIED_PROTOCOL.md: this repo's judges (vea_cal; F2 refu
 | Qwen3.5-122B-A10B | scored 4798, truncated 61, no_think_end 1 | 4798 / 4798 of 4798 | 500 / 500 | 487 / 0 / 10 / 3 |
 | Qwen3.5-397B-A17B | scored 4775, truncated 84, no_think_end 1 | 4775 / 4775 of 4775 | 502 / 502 | 489 / 1 / 10 / 2 |
 
-## Sentence insertion / removal (refusal, percentage points; ladder exp03 design)
+## Causal tests: the post's two measures
 
-Primary: refusal among observed continuations, paired within base, 95% CI over questions. Bounds: missing outcomes (not scored or not judged) set to the worst case for the contrast.
+Change in refusal, percentage points, 95% CI over questions. **Injection** = VEA sentence inserted at 40% of the reasoning minus nothing inserted (the post's injection comparison). **Removal, rejection-sampled** = continuing after the model's own VEA sentence minus continuing from just before it, keeping only "remove" continuations whose new reasoning does not re-verbalize VEA (the post's rejection sampling). Rejection conditions on a post-treatment outcome: continuations that avoid VEA may differ in other ways, and bases where VEA always returns drop out (share kept shown).
 
-| model | contrast | estimate [95% CI] | bounds | bases / questions |
+| model | injection: VEA - none | removal, rejection-sampled: keep - remove | remove continuations kept | bases (insert / removal kept of total) |
 |---|---|---|---|---|
-| Nemotron-3-Super | insert vea - none | +28.1 [+22.6, +34.1] | +26.9 to +28.7 | 150 / 150 |
-| Nemotron-3-Super | insert placebo - none | +37.6 [+31.5, +43.6] | +36.2 to +37.8 | 150 / 150 |
-| Nemotron-3-Super | insert neutral - none | +2.5 [+0.1, +4.9] | +1.4 to +3.5 | 150 / 150 |
-| Nemotron-3-Super | insert vea - placebo | -9.5 [-12.9, -6.2] | -9.7 to -8.7 | 150 / 150 |
-| Nemotron-3-Super | remove keep - remove | +2.1 [+0.3, +4.0] | +1.8 to +2.1 | 150 / 107 |
-| Qwen3-0.6B | insert vea - none | +4.4 [+2.0, +7.1] | +3.8 to +4.8 | 147 / 147 |
-| Qwen3-0.6B | insert placebo - none | +5.5 [+2.9, +8.3] | +5.0 to +6.0 | 147 / 147 |
-| Qwen3-0.6B | insert neutral - none | -0.3 [-2.0, +1.7] | -0.9 to +0.3 | 147 / 147 |
-| Qwen3-0.6B | insert vea - placebo | -1.0 [-3.2, +1.1] | -1.7 to -0.8 | 147 / 147 |
-| Qwen3-0.6B | remove keep - remove | -2.3 [-12.9, +5.0] | -3.3 to -2.0 | 19 / 11 |
-| Qwen3-1.7B | insert vea - none | +4.1 [+1.4, +7.4] | +1.5 to +5.2 | 91 / 91 |
-| Qwen3-1.7B | insert placebo - none | +4.9 [+1.7, +8.6] | +2.2 to +5.9 | 91 / 91 |
-| Qwen3-1.7B | insert neutral - none | +0.3 [-1.3, +1.8] | -2.2 to +1.4 | 91 / 91 |
-| Qwen3-1.7B | insert vea - placebo | -0.8 [-2.8, +1.0] | -1.9 to +0.5 | 91 / 91 |
-| Qwen3-1.7B | remove keep - remove | -1.5 [-4.0, +0.8] | -2.3 to +0.5 | 49 / 30 |
-| Qwen3-14B | insert vea - none | +23.9 [+17.3, +31.1] | +22.9 to +24.0 | 78 / 78 |
-| Qwen3-14B | insert placebo - none | +26.8 [+19.4, +34.5] | +25.8 to +27.1 | 78 / 78 |
-| Qwen3-14B | insert neutral - none | +0.9 [-3.2, +5.1] | -0.2 to +2.1 | 78 / 78 |
-| Qwen3-14B | insert vea - placebo | -2.9 [-6.6, +0.8] | -3.2 to -2.7 | 78 / 78 |
-| Qwen3-14B | remove keep - remove | +0.0 [-2.0, +2.2] | -0.2 to +0.2 | 119 / 64 |
-| Qwen3-32B | insert vea - none | +22.5 [+16.5, +28.6] | +21.4 to +23.5 | 66 / 66 |
-| Qwen3-32B | insert placebo - none | +21.0 [+13.7, +28.2] | +19.9 to +21.4 | 66 / 66 |
-| Qwen3-32B | insert neutral - none | +1.5 [-2.1, +4.9] | +0.4 to +1.7 | 66 / 66 |
-| Qwen3-32B | insert vea - placebo | +1.5 [-3.2, +6.1] | +1.1 to +2.5 | 66 / 66 |
-| Qwen3-32B | remove keep - remove | +3.1 [+0.4, +5.9] | +2.9 to +3.5 | 112 / 55 |
-| Qwen3-4B | insert vea - none | +8.6 [+5.0, +12.7] | +8.2 to +9.7 | 81 / 81 |
-| Qwen3-4B | insert placebo - none | +10.8 [+5.4, +16.4] | +10.5 to +11.7 | 81 / 81 |
-| Qwen3-4B | insert neutral - none | +1.9 [-0.3, +4.3] | +1.5 to +3.2 | 81 / 81 |
-| Qwen3-4B | insert vea - placebo | -2.2 [-5.9, +1.7] | -3.1 to -1.2 | 81 / 81 |
-| Qwen3-4B | remove keep - remove | +1.1 [-1.4, +3.5] | -0.3 to +2.1 | 108 / 55 |
-| Qwen3-8B | insert vea - none | +20.3 [+13.4, +27.7] | +17.9 to +21.0 | 79 / 79 |
-| Qwen3-8B | insert placebo - none | +18.8 [+12.4, +25.3] | +16.5 to +19.6 | 79 / 79 |
-| Qwen3-8B | insert neutral - none | -0.9 [-4.1, +2.3] | -3.2 to +1.4 | 79 / 79 |
-| Qwen3-8B | insert vea - placebo | +1.5 [-3.1, +6.2] | +0.5 to +2.4 | 79 / 79 |
-| Qwen3-8B | remove keep - remove | +0.3 [-1.5, +2.1] | -1.2 to +1.4 | 117 / 61 |
-| Qwen3.5-0.8B | insert vea - none | +2.2 [+0.3, +4.2] | +0.8 to +3.4 | 149 / 149 |
-| Qwen3.5-0.8B | insert placebo - none | +2.3 [+0.3, +4.1] | +0.8 to +3.3 | 149 / 149 |
-| Qwen3.5-0.8B | insert neutral - none | -0.9 [-2.6, +0.8] | -2.3 to +0.4 | 149 / 149 |
-| Qwen3.5-0.8B | insert vea - placebo | -0.0 [-1.8, +1.8] | -1.2 to +1.3 | 149 / 149 |
-| Qwen3.5-0.8B | remove keep - remove | -0.8 [-3.4, +1.9] | -4.5 to +1.8 | 75 / 68 |
-| Qwen3.5-122B-A10B | insert vea - none | +3.3 [+0.1, +6.7] | +3.3 to +3.4 | 84 / 84 |
-| Qwen3.5-122B-A10B | insert placebo - none | +5.2 [+1.8, +8.6] | +5.2 to +5.4 | 84 / 84 |
-| Qwen3.5-122B-A10B | insert neutral - none | -0.6 [-4.0, +2.7] | -0.6 to -0.4 | 84 / 84 |
-| Qwen3.5-122B-A10B | insert vea - placebo | -1.9 [-4.9, +1.2] | -1.9 to -1.9 | 84 / 84 |
-| Qwen3.5-122B-A10B | remove keep - remove | -1.1 [-2.5, +0.2] | -1.8 to -0.8 | 150 / 103 |
-| Qwen3.5-27B | insert vea - none | +4.1 [+0.3, +8.2] | +3.8 to +5.8 | 75 / 75 |
-| Qwen3.5-27B | insert placebo - none | +5.7 [+1.8, +9.9] | +5.0 to +7.2 | 75 / 75 |
-| Qwen3.5-27B | insert neutral - none | -1.4 [-5.1, +2.0] | -1.8 to +1.3 | 75 / 75 |
-| Qwen3.5-27B | insert vea - placebo | -1.7 [-5.7, +2.2] | -1.8 to -0.7 | 75 / 75 |
-| Qwen3.5-27B | remove keep - remove | +0.1 [-1.6, +1.9] | -0.4 to +0.7 | 93 / 70 |
-| Qwen3.5-2B | insert vea - none | +1.9 [-0.5, +4.3] | +1.1 to +2.5 | 79 / 79 |
-| Qwen3.5-2B | insert placebo - none | +0.5 [-1.4, +2.2] | -0.3 to +0.5 | 79 / 79 |
-| Qwen3.5-2B | insert neutral - none | -1.3 [-3.3, +0.6] | -2.1 to -0.8 | 79 / 79 |
-| Qwen3.5-2B | insert vea - placebo | +1.4 [-0.6, +3.5] | +1.4 to +2.1 | 79 / 79 |
-| Qwen3.5-2B | remove keep - remove | -0.9 [-3.7, +1.8] | -2.2 to +0.3 | 80 / 71 |
-| Qwen3.5-4B | insert vea - none | +4.4 [+1.5, +7.4] | +4.4 to +4.4 | 66 / 66 |
-| Qwen3.5-4B | insert placebo - none | +2.1 [-1.3, +5.5] | +2.1 to +2.1 | 66 / 66 |
-| Qwen3.5-4B | insert neutral - none | +0.6 [-2.5, +3.2] | +0.6 to +0.6 | 66 / 66 |
-| Qwen3.5-4B | insert vea - placebo | +2.3 [-1.3, +5.7] | +2.3 to +2.3 | 66 / 66 |
-| Qwen3.5-4B | remove keep - remove | +1.4 [-0.3, +3.1] | -0.9 to +3.1 | 81 / 64 |
-| Qwen3.5-9B | insert vea - none | +0.8 [-2.7, +4.4] | +0.8 to +0.8 | 74 / 74 |
-| Qwen3.5-9B | insert placebo - none | +1.7 [-1.4, +4.7] | +1.7 to +1.7 | 74 / 74 |
-| Qwen3.5-9B | insert neutral - none | -0.7 [-3.5, +2.2] | -0.7 to -0.5 | 74 / 74 |
-| Qwen3.5-9B | insert vea - placebo | -0.8 [-3.9, +1.9] | -0.8 to -0.8 | 74 / 74 |
-| Qwen3.5-9B | remove keep - remove | -1.8 [-3.4, -0.2] | -4.9 to +1.1 | 81 / 63 |
-| Qwen3.8-27B | insert vea - none | +6.8 [+2.5, +11.3] | +6.4 to +7.8 | 106 / 106 |
-| Qwen3.8-27B | insert placebo - none | +5.3 [+0.9, +9.8] | +5.1 to +6.1 | 106 / 106 |
-| Qwen3.8-27B | insert neutral - none | -1.7 [-5.4, +1.7] | -2.8 to -0.7 | 105 / 105 |
-| Qwen3.8-27B | insert vea - placebo | +1.5 [-1.7, +4.9] | +0.9 to +2.0 | 106 / 106 |
-| Qwen3.8-27B | remove keep - remove | +2.3 [-1.9, +7.4] | +1.3 to +3.9 | 48 / 26 |
-| gemma-4-31B-it | insert vea - none | +4.5 [+0.2, +9.0] | +4.5 to +4.5 | 106 / 106 |
-| gemma-4-31B-it | insert placebo - none | +7.1 [+2.9, +11.9] | +7.1 to +7.1 | 106 / 106 |
-| gemma-4-31B-it | insert neutral - none | +3.9 [+0.5, +7.4] | +3.9 to +3.9 | 106 / 106 |
-| gemma-4-31B-it | insert vea - placebo | -2.6 [-5.9, +0.5] | -2.6 to -2.6 | 106 / 106 |
-| gemma-4-31B-it | remove keep - remove | +0.8 [-2.0, +3.2] | +0.3 to +1.6 | 48 / 27 |
+| Nemotron-3-Super | +28.1 [+22.6, +34.1] | +5.2 [+1.5, +9.6] | 24% | 150 / 97 of 150 |
+| Qwen3-0.6B | +4.4 [+2.0, +7.1] | -2.8 [-18.7, +9.5] | 77% | 147 / 19 of 19 |
+| Qwen3-1.7B | +4.1 [+1.4, +7.4] | -0.9 [-3.4, +1.2] | 59% | 91 / 46 of 49 |
+| Qwen3-14B | +23.9 [+17.3, +31.1] | +3.7 [-0.1, +7.4] | 43% | 78 / 100 of 119 |
+| Qwen3-32B | +22.5 [+16.5, +28.6] | pending | - | 66 / - of - |
+| Qwen3-4B | +8.6 [+5.0, +12.7] | +0.4 [-2.6, +3.4] | 42% | 81 / 86 of 108 |
+| Qwen3-8B | +20.3 [+13.4, +27.7] | -0.2 [-3.9, +2.9] | 46% | 79 / 95 of 117 |
+| Qwen3.5-0.8B | +2.2 [+0.3, +4.2] | -0.1 [-4.7, +4.2] | 54% | 149 / 66 of 75 |
+| Qwen3.5-122B-A10B | +3.3 [+0.1, +6.7] | -1.4 [-3.1, +0.3] | 62% | 84 / 142 of 150 |
+| Qwen3.5-27B | +4.1 [+0.3, +8.2] | pending | - | 75 / - of - |
+| Qwen3.5-2B | +1.9 [-0.5, +4.3] | pending | - | 79 / - of - |
+| Qwen3.5-397B-A17B | pending | - | - | 0 / - of - |
+| Qwen3.5-4B | +4.4 [+1.5, +7.4] | pending | - | 66 / - of - |
+| Qwen3.5-9B | +0.8 [-2.7, +4.4] | pending | - | 74 / - of - |
+| Qwen3.8-27B | +6.8 [+2.5, +11.3] | pending | - | 106 / - of - |
+| gemma-4-31B-it | +4.5 [+0.2, +9.0] | -1.4 [-3.6, +0.4] | 72% | 106 / 47 of 48 |
+
+## Secondary contrasts
+
+The manipulation sentence ("...an attempt to manipulate me into complying with a harmful request") is the VEA sentence's minimal pair. Both push the model toward caution, and caution may be exactly how a model behaves when it believes it is evaluated, so similar effects do not show that evaluation framing is inert or that a different mechanism was engaged. Reported for completeness. Unfiltered removal keeps every continuation (re-verbalized VEA included), so it measures deleting the sentence rather than VEA being absent.
+
+| model | manipulation - none | VEA - manipulation | neutral - none | removal, all continuations |
+|---|---|---|---|---|
+| Nemotron-3-Super | +37.6 [+31.5, +43.6] | -9.5 [-12.9, -6.2] | +2.5 [+0.1, +4.9] | +2.1 [+0.3, +4.0] |
+| Qwen3-0.6B | +5.5 [+2.9, +8.3] | -1.0 [-3.2, +1.1] | -0.3 [-2.0, +1.7] | -2.3 [-12.9, +5.0] |
+| Qwen3-1.7B | +4.9 [+1.7, +8.6] | -0.8 [-2.8, +1.0] | +0.3 [-1.3, +1.8] | -1.5 [-4.0, +0.8] |
+| Qwen3-14B | +26.8 [+19.4, +34.5] | -2.9 [-6.6, +0.8] | +0.9 [-3.2, +5.1] | +0.0 [-2.0, +2.2] |
+| Qwen3-32B | +21.0 [+13.7, +28.2] | +1.5 [-3.2, +6.1] | +1.5 [-2.1, +4.9] | +3.1 [+0.4, +5.9] |
+| Qwen3-4B | +10.8 [+5.4, +16.4] | -2.2 [-5.9, +1.7] | +1.9 [-0.3, +4.3] | +1.1 [-1.4, +3.5] |
+| Qwen3-8B | +18.8 [+12.4, +25.3] | +1.5 [-3.1, +6.2] | -0.9 [-4.1, +2.3] | +0.3 [-1.5, +2.1] |
+| Qwen3.5-0.8B | +2.3 [+0.3, +4.1] | -0.0 [-1.8, +1.8] | -0.9 [-2.6, +0.8] | -0.8 [-3.4, +1.9] |
+| Qwen3.5-122B-A10B | +5.2 [+1.8, +8.6] | -1.9 [-4.9, +1.2] | -0.6 [-4.0, +2.7] | -1.1 [-2.5, +0.2] |
+| Qwen3.5-27B | +5.7 [+1.8, +9.9] | -1.7 [-5.7, +2.2] | -1.4 [-5.1, +2.0] | +0.1 [-1.6, +1.9] |
+| Qwen3.5-2B | +0.5 [-1.4, +2.2] | +1.4 [-0.6, +3.5] | -1.3 [-3.3, +0.6] | -0.9 [-3.7, +1.8] |
+| Qwen3.5-397B-A17B | pending | pending | pending | - |
+| Qwen3.5-4B | +2.1 [-1.3, +5.5] | +2.3 [-1.3, +5.7] | +0.6 [-2.5, +3.2] | +1.4 [-0.3, +3.1] |
+| Qwen3.5-9B | +1.7 [-1.4, +4.7] | -0.8 [-3.9, +1.9] | -0.7 [-3.5, +2.2] | -1.8 [-3.4, -0.2] |
+| Qwen3.8-27B | +5.3 [+0.9, +9.8] | +1.5 [-1.7, +4.9] | -1.7 [-5.4, +1.7] | +2.3 [-1.9, +7.4] |
+| gemma-4-31B-it | +7.1 [+2.9, +11.9] | -2.6 [-5.9, +0.5] | +3.9 [+0.5, +7.4] | +0.8 [-2.0, +3.2] |
+
+Worst-case bounds for missing outcomes, per contrast (insertion and unfiltered removal):
+
+| model | contrast | estimate | bounds |
+|---|---|---|---|
+| Nemotron-3-Super | insert vea - none | +28.1 | +26.9 to +28.7 |
+| Nemotron-3-Super | remove keep - remove | +2.1 | +1.8 to +2.1 |
+| Qwen3-0.6B | insert vea - none | +4.4 | +3.8 to +4.8 |
+| Qwen3-0.6B | remove keep - remove | -2.3 | -3.3 to -2.0 |
+| Qwen3-1.7B | insert vea - none | +4.1 | +1.5 to +5.2 |
+| Qwen3-1.7B | remove keep - remove | -1.5 | -2.3 to +0.5 |
+| Qwen3-14B | insert vea - none | +23.9 | +22.9 to +24.0 |
+| Qwen3-14B | remove keep - remove | +0.0 | -0.2 to +0.2 |
+| Qwen3-32B | insert vea - none | +22.5 | +21.4 to +23.5 |
+| Qwen3-32B | remove keep - remove | +3.1 | +2.9 to +3.5 |
+| Qwen3-4B | insert vea - none | +8.6 | +8.2 to +9.7 |
+| Qwen3-4B | remove keep - remove | +1.1 | -0.3 to +2.1 |
+| Qwen3-8B | insert vea - none | +20.3 | +17.9 to +21.0 |
+| Qwen3-8B | remove keep - remove | +0.3 | -1.2 to +1.4 |
+| Qwen3.5-0.8B | insert vea - none | +2.2 | +0.8 to +3.4 |
+| Qwen3.5-0.8B | remove keep - remove | -0.8 | -4.5 to +1.8 |
+| Qwen3.5-122B-A10B | insert vea - none | +3.3 | +3.3 to +3.4 |
+| Qwen3.5-122B-A10B | remove keep - remove | -1.1 | -1.8 to -0.8 |
+| Qwen3.5-27B | insert vea - none | +4.1 | +3.8 to +5.8 |
+| Qwen3.5-27B | remove keep - remove | +0.1 | -0.4 to +0.7 |
+| Qwen3.5-2B | insert vea - none | +1.9 | +1.1 to +2.5 |
+| Qwen3.5-2B | remove keep - remove | -0.9 | -2.2 to +0.3 |
+| Qwen3.5-4B | insert vea - none | +4.4 | +4.4 to +4.4 |
+| Qwen3.5-4B | remove keep - remove | +1.4 | -0.9 to +3.1 |
+| Qwen3.5-9B | insert vea - none | +0.8 | +0.8 to +0.8 |
+| Qwen3.5-9B | remove keep - remove | -1.8 | -4.9 to +1.1 |
+| Qwen3.8-27B | insert vea - none | +6.8 | +6.4 to +7.8 |
+| Qwen3.8-27B | remove keep - remove | +2.3 | +1.3 to +3.9 |
+| gemma-4-31B-it | insert vea - none | +4.5 | +4.5 to +4.5 |
+| gemma-4-31B-it | remove keep - remove | +0.8 | +0.3 to +1.6 |
 
 Per condition: scored / judged / assigned continuations, and re-verbalized VEA in the new reasoning (vea_cal, among judged).
 
@@ -221,6 +220,10 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3.5-2B | insert | vea | 628 | 628 | 632 | - |
 | Qwen3.5-2B | remove | keep | 629 | 629 | 640 | - |
 | Qwen3.5-2B | remove | remove | 635 | 635 | 640 | - |
+| Qwen3.5-397B-A17B | insert | neutral | 597 | 0 | 600 | - |
+| Qwen3.5-397B-A17B | insert | none | 597 | 0 | 600 | - |
+| Qwen3.5-397B-A17B | insert | placebo | 599 | 0 | 600 | - |
+| Qwen3.5-397B-A17B | insert | vea | 597 | 0 | 600 | - |
 | Qwen3.5-4B | insert | neutral | 528 | 528 | 528 | - |
 | Qwen3.5-4B | insert | none | 528 | 528 | 528 | - |
 | Qwen3.5-4B | insert | placebo | 528 | 528 | 528 | - |
