@@ -8,6 +8,9 @@ import pandas as pd
 from huggingface_hub import hf_hub_download
 
 FORTRESS_REPO = "ScaleAI/fortress_public"
+# Pinned (the ladder pins the same revision and file hash, ladder/scripts/ladder_config.py FORTRESS).
+FORTRESS_REVISION = "0c096becbc75bb12065c8059a53960c7f0d4d35c"
+FORTRESS_SHA256 = "cdc3687982cdb8abdbf6e7ce3155f69904e4bdc0003848d6a4ef3eaaa429f3a9"
 
 # Rows whose prompt explicitly tells the model it is being tested/evaluated as a
 # jailbreak technique. The post excludes 11 such prompts but does not list them;
@@ -20,8 +23,19 @@ EXPLICIT_EVAL_QIDS = [84, 90, 91, 100, 440, 442]
 PILOT_EXCLUDE_QIDS = EXPLICIT_EVAL_QIDS + [10, 129, 206, 485]
 
 
+_sha_ok: dict[str, bool] = {}
+
+
 def load_fortress(exclude_explicit_eval: bool = True) -> pd.DataFrame:
-    path = hf_hub_download(FORTRESS_REPO, "data/train-00000-of-00001.parquet", repo_type="dataset")
+    path = hf_hub_download(FORTRESS_REPO, "data/train-00000-of-00001.parquet", repo_type="dataset",
+                           revision=FORTRESS_REVISION)
+    if not _sha_ok.get(path):
+        import hashlib
+
+        digest = hashlib.sha256(open(path, "rb").read()).hexdigest()
+        if digest != FORTRESS_SHA256:
+            raise ValueError(f"Fortress parquet hash {digest} != pinned {FORTRESS_SHA256}")
+        _sha_ok[path] = True
     df = pd.read_parquet(path).reset_index(drop=True)
     df.insert(0, "qid", df.index)
     if exclude_explicit_eval:

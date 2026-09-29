@@ -9,8 +9,26 @@ judges and one intervention arm need new compute.
   Qwen3.8-27B.
 
 Code: `src/eval_awareness/unified.py` (rollouts and main metrics), `src/eval_awareness/intervene_unified.py`
-(insertion / removal), `scripts/run_unified.sh` (judging). Outputs: `data/unified/` (gitignored, contains
-harmful completions) and `results/unified/`.
+(insertion / removal), `scripts/run_unified.sh` (judging). Outputs: `data/unified/<version>/` (gitignored,
+contains harmful completions) and `results/unified/<version>/`. The current version is **v2**; `data/unified/`
+itself holds v1.
+
+## v2 (after the 2026-09-28 audit, `audits/2026-09-28/REVIEW.md`)
+
+| Audit finding | Change |
+|---|---|
+| Retried rollouts gave long trajectories a second chance to be scored | Each rollout's **first generation attempt** is used; changed keys are re-judged on that text. v1 (last attempt) is the sensitivity analysis. |
+| Unparseable VEA outputs counted as "no VEA" and never retried | `parse_vea` returns missing without a QUOTE line; a thinking judge must close `</think>`; `parse_ok` is kept for every task and invalid labels are missing in all analyses. `judge.py --redo-invalid` redoes them (`run_unified.sh` adds a 16,384-token rescue pass for VEA). The F1/F2 rubric text is unchanged. |
+| Derived files could freeze incomplete input | Every derived file has a manifest (sources + hashes, row counts, code revision, protocol constants), written last. A rebuild with changed sources stops; a file without a manifest is rebuilt. Reused labels are recorded in `<file>.seed.json`. A torn final JSONL line is cut off before the next append; corruption elsewhere raises. |
+| Partial runs looked final | Scripts exit non-zero on any failure. Tables report assigned / scored / valid-label counts; `analyze --final` refuses incomplete labels, otherwise the report is marked PARTIAL. |
+| Intervention analysis dropped missing outcomes | Every assigned continuation is kept: per-condition scored / judged counts, worst-case bounds for missing outcomes, base and question counts, and re-verbalization (vea_cal on the new reasoning). |
+| Removal check used only the quote's start | The whole quote must lie in the removed span; the removed text is stored per base. |
+| Empty answers were scored | New status `empty_answer` (not scored). |
+| Weak provenance for continuations | Continuation ids hash (base, arm, condition, index); bases and runs have manifests with sampling, model snapshot and code revision; a resume with changed bases or settings stops. Full answers are stored (`response_full`) next to the 384-token view. |
+| Submodule and dataset pinning | Root `.gitmodules` for `ladder/third_party/Non-verbal-Eval-Awareness` (6975868b); Fortress pinned to revision 0c096bec with a sha256 check. |
+
+v1 intervention continuations for Gemma (4,160, only 384 answer tokens kept) are superseded: v2 regenerates them
+with v2 bases and full answers.
 
 ## Rules
 

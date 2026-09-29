@@ -1,0 +1,3 @@
+[submodule "ladder/third_party/Non-verbal-Eval-Awareness"]
+	path = ladder/third_party/Non-verbal-Eval-Awareness
+	url = https://github.com/lmmontoya-ai/Non-verbal-Eval-Awareness.git

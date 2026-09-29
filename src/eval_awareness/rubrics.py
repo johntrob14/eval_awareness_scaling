@@ -130,10 +130,11 @@ PREFILTER_RE = re.compile(
 )
 
 
-def parse_vea(text: str) -> tuple[bool, str | None]:
+def parse_vea(text: str) -> tuple[bool | None, str | None]:
+    """(vea, quote) from the judge's final answer; (None, None) if it has no QUOTE line (invalid, not negative)."""
     m = re.search(r"QUOTE:\s*(.*)", text, re.S)
     if not m:
-        return False, None
+        return None, None
     quote = m.group(1).strip().split("\nNOTE")[0].strip().strip('"').strip()
     if not quote or quote.lower().rstrip(".") in {"none", "n/a", "<none>"}:
         return False, None

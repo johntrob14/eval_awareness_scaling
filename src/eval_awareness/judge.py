@@ -147,8 +147,36 @@ def build_items(task: str, rollouts: list[dict], prompts: dict[int, str], args) 
     return items
 
 
-def parse(task: str, raw: str) -> dict:
-    raw = raw.split("</think>")[-1]  # a thinking judge's verdict follows its reasoning
+def verdict_text(raw: str, thinking: bool) -> str | None:
+    """The judge's final answer: the text after </think>. A thinking judge that never closed its reasoning
+    (it hit --judge-max-tokens) has no verdict, even if its reasoning happens to contain "QUOTE:"."""
+    if thinking and "</think>" not in raw:
+        return None
+    return raw.split("</think>")[-1]
+
+
+def parse(task: str, raw: str, thinking: bool = False) -> dict:
+    """Parsed fields plus parse_ok. An invalid output yields None fields (missing), never a negative label."""
+    text = verdict_text(raw, thinking)
+    out = _parse(task, text) if text is not None else {}
+    main = {"vea": "vea", "vea_response": "vea", "vea_cal": "vea", "refusal": "refusal", "safety": "safety",
+            "category": "category"}[task]
+    if text is None or out.get(main) is None:
+        return {k: None for k in (["vea", "quote"] if task.startswith("vea") else [main] + (["subcategory"] if task == "category" else []))} | {"parse_ok": False}
+    return out | {"parse_ok": True}
+
+
+def valid(j: dict) -> bool:
+    """A stored judgment counts as done: decided without the judge, or parsed from a complete verdict.
+    Rows written before parse_ok existed for every task are valid if their main field is set."""
+    if j.get("judge") is None:
+        return True
+    if "parse_ok" in j:
+        return bool(j["parse_ok"])
+    return any(j.get(f) is not None for f in ("refusal", "category", "safety"))
+
+
+def _parse(task: str, raw: str) -> dict:
     if task in ("vea", "vea_response", "vea_cal"):
         vea, quote = rubrics.parse_vea(raw)
         return {"vea": vea, "quote": quote}
@@ -179,6 +207,8 @@ def main():
                     help="vllm: judge reasoning (Qwen3.8 reasoning_effort); off = thinking disabled")
     ap.add_argument("--out-dir", type=Path, default=Path("data/judgments"))
     ap.add_argument("--judge-max-tokens", type=int, default=400, help="vllm/mlx: judge output limit")
+    ap.add_argument("--redo-invalid", action="store_true",
+                    help="re-judge keys whose latest judgment is invalid (parse_ok False) instead of skipping them")
     ap.add_argument("--text-only", action="store_true", help="vllm: disable image/video inputs of a multimodal judge")
     add_vllm_args(ap)
     args = ap.parse_args()
@@ -188,7 +218,13 @@ def main():
     if args.task in ("category", "safety") and not args.vea_judgments:
         args.vea_judgments = [judgment_path(args.rollouts, "vea", judge_model, args.out_dir)]
     out = judgment_path(args.rollouts, args.task, judge_model, args.out_dir)
-    done = {key(j) for j in read_jsonl(out)}
+    existing = read_jsonl(out)
+    # --redo-invalid: judge again every key whose latest row is invalid (e.g. a thinking judge that ran out of
+    # tokens: pass a larger --judge-max-tokens). The new row is appended; readers keep the last row per key.
+    latest = {key(j): j for j in existing}
+    done = {k for k, j in latest.items() if valid(j)} if args.redo_invalid else set(latest)
+    if args.redo_invalid:
+        print(f"{out}: {len(latest) - len(done)} invalid judgments will be redone")
 
     prompts = {}
     if args.task in ("refusal", "category"):  # the only tasks whose judge prompt includes the user request
@@ -224,8 +260,10 @@ def main():
     for i in tqdm(range(0, len(todo), args.chunk)):
         chunk = todo[i: i + args.chunk]
         raws = judge([p for _, p in chunk])
-        append_jsonl(out, [stub | parse(args.task, raw) | {"judge": judge_model, "raw": raw}
-                           | ({"parse_ok": "QUOTE:" in raw.split("</think>")[-1]} if args.task.startswith("vea") else {})
+        thinking = args.backend == "vllm" and args.judge_thinking != "off"
+        append_jsonl(out, [stub | parse(args.task, raw, thinking) | {"judge": judge_model, "raw": raw,
+                                                                    "judge_max_tokens": args.judge_max_tokens,
+                                                                    "judge_thinking": args.judge_thinking}
                            for (stub, _), raw in zip(chunk, raws)])
 
 
