@@ -73,7 +73,7 @@ def positions(models):
     return np.array(xs)
 
 
-def finish(fig, ax, name, title, subtitle, ylabel, models, xs, legend=True, extra_handles=None):
+def finish(fig, ax, name, title, subtitle, ylabel, models, xs, legend=True, extra_handles=None, caption=None):
     ax.set_xticks(xs)
     ax.set_xticklabels([LABEL.get(m, m) for m in models], rotation=40, ha="right", fontsize=9.5)
     ax.tick_params(axis="x", length=0)
@@ -86,7 +86,9 @@ def finish(fig, ax, name, title, subtitle, ylabel, models, xs, legend=True, extr
     if handles:
         ax.legend(handles=handles, frameon=False, ncol=len(handles), loc="lower left",
                   bbox_to_anchor=(0, 1.0), fontsize=9.5, handlelength=1.2, columnspacing=1.2)
-    fig.subplots_adjust(top=0.76, bottom=0.2, left=0.08, right=0.99)
+    fig.subplots_adjust(top=0.76, bottom=0.2 if caption is None else 0.34, left=0.08, right=0.99)
+    if caption:
+        fig.text(0.012, 0.012, caption, fontsize=9.5, color=INK2, va="bottom", linespacing=1.4)
     OUT.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT / f"{name}.png", dpi=200)
     plt.close(fig)
@@ -165,7 +167,7 @@ def main():
     ax.axhline(0, color=INK2, linewidth=1, zorder=4)
     bars_with_ci(ax, xs, v, lo, hi, colors)
     finish(fig, ax, "04_within_question_gap", "Rollouts that verbalize eval awareness refuse more",
-           "For each question, the refusal rate of rollouts that mention being tested minus that of rollouts that don't, averaged\nover questions (questions where every rollout refuses are left out). Error bars: 95% confidence intervals.",
+           "The difference in refusal rates between rollouts with and without VEA.",
            "Refusal difference (percentage points)", models, xs)
 
     # 05 refusal on questions with / without any VEA rollout (post Fig. 5 split)
