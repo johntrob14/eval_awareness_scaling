@@ -28,3 +28,6 @@ results/judge_compare/**/disagreements.md
 results/judge_compare/calibration_errors.json
 # unified pipeline: harmonized rollouts and judgments
 data/unified/
+# ladder cache upload (unpacked into ladder/cache/)
+cache.zip
+ladder/cache/
