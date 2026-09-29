@@ -1,7 +1,7 @@
 # Unified results (v2)
 
 - Rollout tables: complete: every scored primary rollout has valid labels
-- Interventions: 15 of 16 models fully judged; pending: Qwen3.5-397B-A17B
+- Interventions: 16 of 16 models fully judged
 - Status: not final: re-run with --final once every part is complete
 
 Every model under docs/UNIFIED_PROTOCOL.md: this repo's judges (vea_cal; F2 refusal on the first 384 answer tokens), reasoning cap 8,192 tokens, 14 prompts excluded. Percent, 95% CIs from 2,000 bootstrap draws over questions. Judge-scored (Qwen3.8-27B), not human-verified.
@@ -86,7 +86,7 @@ Change in refusal, percentage points, 95% CI over questions. **Injection** = VEA
 | Qwen3.5-122B-A10B | +3.3 [+0.1, +6.7] | -1.4 [-3.1, +0.3] | 62% | 84 / 142 of 150 |
 | Qwen3.5-27B | +4.1 [+0.3, +8.2] | pending | - | 75 / - of - |
 | Qwen3.5-2B | +1.9 [-0.5, +4.3] | pending | - | 79 / - of - |
-| Qwen3.5-397B-A17B | pending | - | - | 0 / - of - |
+| Qwen3.5-397B-A17B | +6.3 [+2.7, +10.1] | pending | - | 79 / - of - |
 | Qwen3.5-4B | +4.4 [+1.5, +7.4] | pending | - | 66 / - of - |
 | Qwen3.5-9B | +0.8 [-2.7, +4.4] | pending | - | 74 / - of - |
 | Qwen3.8-27B | +6.8 [+2.5, +11.3] | pending | - | 106 / - of - |
@@ -109,7 +109,7 @@ The manipulation sentence ("...an attempt to manipulate me into complying with a
 | Qwen3.5-122B-A10B | +5.2 [+1.8, +8.6] | -1.9 [-4.9, +1.2] | -0.6 [-4.0, +2.7] | -1.1 [-2.5, +0.2] |
 | Qwen3.5-27B | +5.7 [+1.8, +9.9] | -1.7 [-5.7, +2.2] | -1.4 [-5.1, +2.0] | +0.1 [-1.6, +1.9] |
 | Qwen3.5-2B | +0.5 [-1.4, +2.2] | +1.4 [-0.6, +3.5] | -1.3 [-3.3, +0.6] | -0.9 [-3.7, +1.8] |
-| Qwen3.5-397B-A17B | pending | pending | pending | - |
+| Qwen3.5-397B-A17B | +9.2 [+5.2, +13.5] | -2.8 [-5.8, +0.2] | +1.9 [-1.9, +5.6] | -0.1 [-0.3, +0.2] |
 | Qwen3.5-4B | +2.1 [-1.3, +5.5] | +2.3 [-1.3, +5.7] | +0.6 [-2.5, +3.2] | +1.4 [-0.3, +3.1] |
 | Qwen3.5-9B | +1.7 [-1.4, +4.7] | -0.8 [-3.9, +1.9] | -0.7 [-3.5, +2.2] | -1.8 [-3.4, -0.2] |
 | Qwen3.8-27B | +5.3 [+0.9, +9.8] | +1.5 [-1.7, +4.9] | -1.7 [-5.4, +1.7] | +2.3 [-1.9, +7.4] |
@@ -141,6 +141,8 @@ Worst-case bounds for missing outcomes, per contrast (insertion and unfiltered r
 | Qwen3.5-27B | remove keep - remove | +0.1 | -0.4 to +0.7 |
 | Qwen3.5-2B | insert vea - none | +1.9 | +1.1 to +2.5 |
 | Qwen3.5-2B | remove keep - remove | -0.9 | -2.2 to +0.3 |
+| Qwen3.5-397B-A17B | insert vea - none | +6.3 | +6.0 to +7.0 |
+| Qwen3.5-397B-A17B | remove keep - remove | -0.1 | -3.6 to +2.3 |
 | Qwen3.5-4B | insert vea - none | +4.4 | +4.4 to +4.4 |
 | Qwen3.5-4B | remove keep - remove | +1.4 | -0.9 to +3.1 |
 | Qwen3.5-9B | insert vea - none | +0.8 | +0.8 to +0.8 |
@@ -220,10 +222,12 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3.5-2B | insert | vea | 628 | 628 | 632 | - |
 | Qwen3.5-2B | remove | keep | 629 | 629 | 640 | - |
 | Qwen3.5-2B | remove | remove | 635 | 635 | 640 | - |
-| Qwen3.5-397B-A17B | insert | neutral | 597 | 0 | 600 | - |
-| Qwen3.5-397B-A17B | insert | none | 597 | 0 | 600 | - |
-| Qwen3.5-397B-A17B | insert | placebo | 599 | 0 | 600 | - |
-| Qwen3.5-397B-A17B | insert | vea | 597 | 0 | 600 | - |
+| Qwen3.5-397B-A17B | insert | neutral | 629 | 629 | 632 | - |
+| Qwen3.5-397B-A17B | insert | none | 629 | 629 | 632 | - |
+| Qwen3.5-397B-A17B | insert | placebo | 631 | 631 | 632 | - |
+| Qwen3.5-397B-A17B | insert | vea | 629 | 629 | 632 | - |
+| Qwen3.5-397B-A17B | remove | keep | 1156 | 1156 | 1200 | - |
+| Qwen3.5-397B-A17B | remove | remove | 1173 | 1173 | 1200 | - |
 | Qwen3.5-4B | insert | neutral | 528 | 528 | 528 | - |
 | Qwen3.5-4B | insert | none | 528 | 528 | 528 | - |
 | Qwen3.5-4B | insert | placebo | 528 | 528 | 528 | - |
