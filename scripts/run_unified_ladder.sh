@@ -12,7 +12,10 @@
 #   STEPS="build judge" GPUS="0 1 2 3 4 5" scripts/run_unified_ladder.sh
 set -eu -o pipefail
 cd "$(dirname "$0")/.."
-export HF_HUB_CACHE=${HF_HUB_CACHE:-/home/jtr2875/.cache/huggingface/hub} HF_HOME=${HF_HOME:-/home/jtr2875/.cache/huggingface}
+# The ladder's code finds pinned tokenizers under $HF_HOME/hub; on this box the login shell's HF_HOME points at the
+# full /ssd1 cache, so it is set explicitly (LADDER_HF_HOME overrides).
+export HF_HOME=${LADDER_HF_HOME:-/home/jtr2875/.cache/huggingface}
+export HF_HUB_CACHE=$HF_HOME/hub
 export VLLM_USE_FLASHINFER_SAMPLER=0
 VERSION=${VERSION:-v2}
 STEPS=${STEPS:-"build judge iconvert ijudge analyze"}
