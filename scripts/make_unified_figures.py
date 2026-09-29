@@ -183,7 +183,7 @@ def main():
     ax.bar(xs + w / 2 + 0.02, [r[2] for r in rows], width=w - 0.04, color=GREY, linewidth=0, zorder=2)
     ax.set_ylim(0, 100)
     finish(fig, ax, "05_refusal_by_question_vea", "Questions that draw VEA are usually refused more often",
-           "Refusal rate of questions where at least one of 10 rollouts mentions being tested (colored) vs questions where none do (grey).\nThis compares different questions, so it mixes any effect of VEA with how the questions themselves differ.",
+           "Refusal rate of questions where at least one of 10 rollouts mentions being tested (colored) vs questions where none do (grey).",
            "Refusal rate (%)", models, xs, legend=True,
            extra_handles=[Patch(color=GREY, label="no VEA rollout")])
 
