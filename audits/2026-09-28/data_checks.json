@@ -1,0 +1,205 @@
+{
+  "gemma-4-31B-it": {
+    "rows": 15560,
+    "unique_keys": 15560,
+    "primary_rows": 4860,
+    "primary_scored": 4849,
+    "primary_vea_labels": 4849,
+    "primary_refusal_labels": 4849,
+    "recomputed_differences": {},
+    "empty_scored_responses": 0,
+    "vea_cal": {
+      "rows": 15560,
+      "duplicate_keys": 0,
+      "parse_false_scored": 1,
+      "quote_checks": {
+        "exact": 477,
+        "fail": 1
+      },
+      "failed_parse_primary_keys": []
+    },
+    "refusal": {
+      "rows": 15560,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "category": {
+      "rows": 479,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "replaced_source_keys": 0,
+    "replaced_now_scored": 0
+  },
+  "Nemotron-3-Super": {
+    "rows": 9800,
+    "unique_keys": 9800,
+    "primary_rows": 4860,
+    "primary_scored": 4749,
+    "primary_vea_labels": 4749,
+    "primary_refusal_labels": 4749,
+    "recomputed_differences": {},
+    "empty_scored_responses": 0,
+    "vea_cal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 4,
+      "quote_checks": {
+        "exact": 2364,
+        "fail": 3,
+        "near": 2
+      },
+      "failed_parse_primary_keys": [
+        [
+          46,
+          3
+        ],
+        [
+          439,
+          5
+        ]
+      ]
+    },
+    "refusal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "category": {
+      "rows": 2390,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "replaced_source_keys": 205,
+    "replaced_now_scored": 54
+  },
+  "Qwen3.5-122B-A10B": {
+    "rows": 9800,
+    "unique_keys": 9800,
+    "primary_rows": 4860,
+    "primary_scored": 4801,
+    "primary_vea_labels": 4801,
+    "primary_refusal_labels": 4801,
+    "recomputed_differences": {},
+    "empty_scored_responses": 0,
+    "vea_cal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 13,
+      "quote_checks": {
+        "exact": 952,
+        "near": 19,
+        "fail": 5
+      },
+      "failed_parse_primary_keys": [
+        [
+          85,
+          2
+        ],
+        [
+          259,
+          0
+        ],
+        [
+          267,
+          8
+        ],
+        [
+          324,
+          8
+        ],
+        [
+          328,
+          4
+        ],
+        [
+          383,
+          9
+        ],
+        [
+          390,
+          4
+        ],
+        [
+          390,
+          6
+        ],
+        [
+          431,
+          3
+        ],
+        [
+          432,
+          5
+        ]
+      ]
+    },
+    "refusal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "category": {
+      "rows": 1008,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "replaced_source_keys": 27,
+    "replaced_now_scored": 16
+  },
+  "Qwen3.5-397B-A17B": {
+    "rows": 9800,
+    "unique_keys": 9800,
+    "primary_rows": 4860,
+    "primary_scored": 4814,
+    "primary_vea_labels": 4814,
+    "primary_refusal_labels": 4814,
+    "recomputed_differences": {},
+    "empty_scored_responses": 0,
+    "vea_cal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 8,
+      "quote_checks": {
+        "exact": 1024,
+        "near": 18,
+        "fail": 4,
+        "fragments": 1
+      },
+      "failed_parse_primary_keys": [
+        [
+          85,
+          0
+        ],
+        [
+          397,
+          4
+        ],
+        [
+          127,
+          9
+        ],
+        [
+          267,
+          1
+        ],
+        [
+          295,
+          6
+        ]
+      ]
+    },
+    "refusal": {
+      "rows": 9800,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "category": {
+      "rows": 1077,
+      "duplicate_keys": 0,
+      "parse_false_scored": 0
+    },
+    "replaced_source_keys": 84,
+    "replaced_now_scored": 66
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "gemma-4-31B-it": {
+    "removal_bases": 48,
+    "span_does_not_contain_full_quote": [],
+    "remove_from_start": 0,
+    "removed_tokens_min_median_max": [
+      8,
+      23,
+      60
+    ]
+  },
+  "Nemotron-3-Super": {
+    "removal_bases": 150,
+    "span_does_not_contain_full_quote": [],
+    "remove_from_start": 0,
+    "removed_tokens_min_median_max": [
+      5,
+      19,
+      40
+    ]
+  },
+  "Qwen3.5-122B-A10B": {
+    "removal_bases": 150,
+    "span_does_not_contain_full_quote": [],
+    "remove_from_start": 0,
+    "removed_tokens_min_median_max": [
+      5,
+      19,
+      47
+    ]
+  },
+  "Qwen3.5-397B-A17B": {
+    "removal_bases": 150,
+    "span_does_not_contain_full_quote": [],
+    "remove_from_start": 0,
+    "removed_tokens_min_median_max": [
+      5,
+      18,
+      65
+    ]
+  }
+}

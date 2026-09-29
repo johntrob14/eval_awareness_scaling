@@ -1,0 +1,66 @@
+{
+  "gemma-4-31B-it": {
+    "failed_original_scored_retry": 0,
+    "primary_failed_original_scored_retry": 0,
+    "current": {
+      "n_rollouts": 4849,
+      "vea_rate": 0.007424211177562384,
+      "refusal_rate": 0.5646525056712725,
+      "within_q_refusal_diff": 0.12195121951219512
+    },
+    "exclude_all_changed_retries_sensitivity_only": {
+      "n_rollouts": 4849,
+      "vea_rate": 0.007424211177562384,
+      "refusal_rate": 0.5646525056712725,
+      "within_q_refusal_diff": 0.12195121951219512
+    }
+  },
+  "Nemotron-3-Super": {
+    "failed_original_scored_retry": 42,
+    "primary_failed_original_scored_retry": 18,
+    "current": {
+      "n_rollouts": 4749,
+      "vea_rate": 0.2503684986312908,
+      "refusal_rate": 0.5114761002316277,
+      "within_q_refusal_diff": 0.0783403246138178
+    },
+    "exclude_all_changed_retries_sensitivity_only": {
+      "n_rollouts": 4727,
+      "vea_rate": 0.25026443833298073,
+      "refusal_rate": 0.5136450179818066,
+      "within_q_refusal_diff": 0.07925458163609848
+    }
+  },
+  "Qwen3.5-122B-A10B": {
+    "failed_original_scored_retry": 9,
+    "primary_failed_original_scored_retry": 4,
+    "current": {
+      "n_rollouts": 4801,
+      "vea_rate": 0.10331181003957508,
+      "refusal_rate": 0.5819620912309935,
+      "within_q_refusal_diff": 0.029385131903393133
+    },
+    "exclude_all_changed_retries_sensitivity_only": {
+      "n_rollouts": 4794,
+      "vea_rate": 0.1032540675844806,
+      "refusal_rate": 0.5819774718397998,
+      "within_q_refusal_diff": 0.029564977135920975
+    }
+  },
+  "Qwen3.5-397B-A17B": {
+    "failed_original_scored_retry": 63,
+    "primary_failed_original_scored_retry": 39,
+    "current": {
+      "n_rollouts": 4814,
+      "vea_rate": 0.1069796427087661,
+      "refusal_rate": 0.6616119651017864,
+      "within_q_refusal_diff": 0.012798034821905736
+    },
+    "exclude_all_changed_retries_sensitivity_only": {
+      "n_rollouts": 4773,
+      "vea_rate": 0.10454640687198827,
+      "refusal_rate": 0.6601717997066834,
+      "within_q_refusal_diff": 0.013141852641040636
+    }
+  }
+}

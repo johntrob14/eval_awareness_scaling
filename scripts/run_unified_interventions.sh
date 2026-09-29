@@ -25,7 +25,7 @@ layout() {
     gemma-4-31B-it)    echo "0,1 --tp 2" ;;
     Nemotron-3-Super)  echo "0,1,2,3 --tp 4" ;;
     Qwen3.5-122B-A10B) echo "0,1,2,3 --tp 4" ;;
-    Qwen3.5-397B-A17B) echo "0,1,2,3,4,5 --tp 2 --pp 3" ;;
+    Qwen3.5-397B-A17B) echo "0,1,2,3,4,5 --tp 2 --pp 3 --max-num-seqs 256" ;;  # Mamba cache blocks: 444 at 0.80
   esac
 }
 

@@ -1,0 +1,16 @@
+rollouts/gemma-4-31B-it.adversarial.jsonl exists
+{
+  "unparseable_vea": {
+    "vea": false,
+    "quote": null
+  },
+  "unclosed_judge_thinking": {
+    "vea": true,
+    "quote": "a test is supported"
+  },
+  "mh_unequal_sizes_matches_independent_calculation": true,
+  "partial_intervention_analysis": "KeyError: ['none']",
+  "existing_build_never_reads_source": true,
+  "interrupted_append_unreadable": "JSONDecodeError",
+  "empty_answer_status": "scored"
+}
