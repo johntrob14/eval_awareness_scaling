@@ -2,7 +2,7 @@
 
 - Rollout tables: complete: every scored primary rollout has valid labels
 - Interventions: 16 of 16 models fully judged
-- Status: not final: re-run with --final once every part is complete
+- Status: FINAL (--final passed for both)
 
 Every model under docs/UNIFIED_PROTOCOL.md: this repo's judges (vea_cal; F2 refusal on the first 384 answer tokens), reasoning cap 8,192 tokens, 14 prompts excluded. Percent, 95% CIs from 2,000 bootstrap draws over questions. Judge-scored (Qwen3.8-27B), not human-verified.
 
@@ -85,11 +85,11 @@ Change in refusal, percentage points, 95% CI over questions. **Injection** = VEA
 | Qwen3.5-0.8B | +2.2 [+0.3, +4.2] | -0.3 [-4.8, +4.1] | 54% | 149 / 66 of 75 |
 | Qwen3.5-122B-A10B | +3.3 [+0.1, +6.7] | -1.4 [-3.1, +0.3] | 62% | 84 / 142 of 150 |
 | Qwen3.5-27B | +4.1 [+0.3, +8.2] | +0.7 [-1.7, +3.4] | 60% | 75 / 89 of 93 |
-| Qwen3.5-2B | +1.9 [-0.5, +4.3] | pending | - | 79 / - of - |
-| Qwen3.5-397B-A17B | +6.3 [+2.7, +10.1] | pending | - | 79 / - of - |
+| Qwen3.5-2B | +1.9 [-0.5, +4.3] | +1.6 [-1.8, +4.9] | 51% | 79 / 68 of 80 |
+| Qwen3.5-397B-A17B | +6.3 [+2.7, +10.1] | +0.4 [+0.1, +1.0] | 33% | 79 / 108 of 150 |
 | Qwen3.5-4B | +4.4 [+1.5, +7.4] | +0.6 [-0.5, +1.9] | 58% | 66 / 70 of 81 |
 | Qwen3.5-9B | +0.8 [-2.7, +4.4] | -1.9 [-4.1, -0.0] | 58% | 74 / 71 of 81 |
-| Qwen3.8-27B | +6.8 [+2.5, +11.3] | pending | - | 106 / - of - |
+| Qwen3.8-27B | +6.8 [+2.5, +11.3] | +1.8 [-2.5, +6.1] | 56% | 106 / 45 of 48 |
 | gemma-4-31B-it | +4.5 [+0.2, +9.0] | -1.4 [-3.6, +0.4] | 72% | 106 / 47 of 48 |
 
 ## Secondary contrasts
@@ -219,15 +219,15 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3.5-2B | insert | neutral | 629 | 629 | 632 | 10.3% |
 | Qwen3.5-2B | insert | none | 627 | 627 | 632 | 9.2% |
 | Qwen3.5-2B | insert | placebo | 632 | 632 | 632 | 12.5% |
-| Qwen3.5-2B | insert | vea | 628 | 628 | 632 | 16.2% |
-| Qwen3.5-2B | remove | keep | 629 | 629 | 640 | 48.1% |
-| Qwen3.5-2B | remove | remove | 635 | 635 | 640 | 51.5% |
-| Qwen3.5-397B-A17B | insert | neutral | 629 | 629 | 632 | - |
-| Qwen3.5-397B-A17B | insert | none | 629 | 629 | 632 | - |
-| Qwen3.5-397B-A17B | insert | placebo | 631 | 631 | 632 | - |
-| Qwen3.5-397B-A17B | insert | vea | 629 | 629 | 632 | - |
-| Qwen3.5-397B-A17B | remove | keep | 1156 | 1156 | 1200 | - |
-| Qwen3.5-397B-A17B | remove | remove | 1173 | 1173 | 1200 | - |
+| Qwen3.5-2B | insert | vea | 628 | 628 | 632 | 16.1% |
+| Qwen3.5-2B | remove | keep | 629 | 629 | 640 | 46.7% |
+| Qwen3.5-2B | remove | remove | 635 | 635 | 640 | 48.6% |
+| Qwen3.5-397B-A17B | insert | neutral | 629 | 629 | 632 | 4.1% |
+| Qwen3.5-397B-A17B | insert | none | 629 | 629 | 632 | 2.8% |
+| Qwen3.5-397B-A17B | insert | placebo | 631 | 631 | 632 | 5.2% |
+| Qwen3.5-397B-A17B | insert | vea | 629 | 629 | 632 | 10.0% |
+| Qwen3.5-397B-A17B | remove | keep | 1156 | 1156 | 1200 | 24.4% |
+| Qwen3.5-397B-A17B | remove | remove | 1173 | 1173 | 1200 | 67.1% |
 | Qwen3.5-4B | insert | neutral | 528 | 528 | 528 | 3.2% |
 | Qwen3.5-4B | insert | none | 528 | 528 | 528 | 1.7% |
 | Qwen3.5-4B | insert | placebo | 528 | 528 | 528 | 7.8% |
@@ -240,12 +240,12 @@ Per condition: scored / judged / assigned continuations, and re-verbalized VEA i
 | Qwen3.5-9B | insert | vea | 592 | 592 | 592 | 6.9% |
 | Qwen3.5-9B | remove | keep | 631 | 631 | 648 | 30.7% |
 | Qwen3.5-9B | remove | remove | 626 | 626 | 648 | 42.1% |
-| Qwen3.8-27B | insert | neutral | 836 | 836 | 848 | - |
-| Qwen3.8-27B | insert | none | 842 | 842 | 848 | - |
-| Qwen3.8-27B | insert | placebo | 845 | 845 | 848 | - |
-| Qwen3.8-27B | insert | vea | 842 | 842 | 848 | - |
-| Qwen3.8-27B | remove | keep | 378 | 378 | 384 | - |
-| Qwen3.8-27B | remove | remove | 380 | 380 | 384 | - |
+| Qwen3.8-27B | insert | neutral | 836 | 836 | 848 | 1.9% |
+| Qwen3.8-27B | insert | none | 842 | 842 | 848 | 2.0% |
+| Qwen3.8-27B | insert | placebo | 845 | 845 | 848 | 2.8% |
+| Qwen3.8-27B | insert | vea | 842 | 842 | 848 | 4.2% |
+| Qwen3.8-27B | remove | keep | 378 | 378 | 384 | 9.9% |
+| Qwen3.8-27B | remove | remove | 380 | 380 | 384 | 44.0% |
 | gemma-4-31B-it | insert | neutral | 848 | 848 | 848 | 0.9% |
 | gemma-4-31B-it | insert | none | 848 | 848 | 848 | 0.8% |
 | gemma-4-31B-it | insert | placebo | 848 | 848 | 848 | 1.7% |

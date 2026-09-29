@@ -1261,12 +1261,12 @@
  },
  "_meta": {
   "version": "v2",
-  "final": false,
+  "final": true,
   "labels_complete": true,
   "incomplete_models": [],
-  "created": "2026-09-29T09:25:14",
+  "created": "2026-09-29T13:14:50",
   "code": {
-   "git_head": "cb01959d5bf59d493d727e8a33ff55cb00313c41",
+   "git_head": "7fd18dde8c4deceaf68c910cf0a24a3d785a7221",
    "uncommitted_changes_in_src": false
   }
  }
