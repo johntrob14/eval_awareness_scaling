@@ -122,7 +122,7 @@ def main():
     bars_with_ci(ax, xs, v, [100 * p(m, "vea_rate_ci")[0] for m in models], [100 * p(m, "vea_rate_ci")[1] for m in models],
                  colors, fmt="{:.1f}")
     finish(fig, ax, "01_vea_rate", "How often each model verbalizes eval awareness",
-           "Share of rollouts in which the model's reasoning says it might be being tested or evaluated.\n10 rollouts on each of 486 Fortress questions per model. Error bars: 95% confidence intervals.",
+           "Share of rollouts in which the model's reasoning says it might be being tested or evaluated.",
            "VEA rate (% of rollouts)", models, xs)
 
     # 02 safety-relevant share
