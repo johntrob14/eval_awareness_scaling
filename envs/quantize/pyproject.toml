@@ -1,0 +1,10 @@
+[project]
+name = "eval-awareness-quantize"
+version = "0.1.0"
+description = "llm-compressor environment for making the quantized checkpoints (see src/eval_awareness/quant/quantize.py)"
+requires-python = ">=3.12"
+dependencies = [
+    "llmcompressor==0.15.0",
+    "datasets>=4.0",
+    "pandas>=2.2",
+]

@@ -2,6 +2,10 @@
 
 Status: **plan, not started** (2026-11-05). Branch `quantization`. Compute: TACC Lonestar6 (`tacc`, see sauce).
 
+Decisions (John, 2026-11-05): regenerate **every** baseline at bf16 on Lonestar6 rather than reuse v2 rollouts (some v2
+data came from inference providers at unknown precision); run **all generation and judging on Lonestar6**; charge
+**DMS26009 only, never MLL**; results in `$WORK/results/eval_awareness_scaling`; **no 3-bit**.
+
 ## Question
 
 Does post-training quantization change (1) how often a reasoning model refuses Fortress requests, (2) how often it
@@ -28,7 +32,7 @@ does not describe the deployed one, and a VEA-based explanation of refusal may n
 
 | # | Hypothesis | Measurement | Refuted if |
 |---|---|---|---|
-| H1 | W4 GPTQ lowers refusal; the drop grows as bits fall and is larger for small models | Paired per-question Δrefusal vs bf16, per model | W4 Δrefusal CIs inside ±2 pp for every model, and W3 too |
+| H1 | W4 GPTQ lowers refusal (more than W8), and more for small models | Paired per-question Δrefusal vs bf16, per model | W4 Δrefusal CIs inside ±2 pp for every model |
 | H2a | Quantization damage lowers VEA (VEA as a capability that noise erodes) | ΔVEA rate | VEA rises or stays flat while capability (GSM8K) drops |
 | H2b | Quantization raises VEA only through longer CoTs | ΔVEA rate vs ΔVEA per 1k reasoning tokens, and length-matched comparison | VEA per 1k tokens rises too |
 | H2c | VEA is a stable verbal habit and does not move at W4/W8 | ΔVEA | ΔVEA CI excludes 0 at W4 |
@@ -50,17 +54,18 @@ gaps; refusal is near the floor, so a refusal drop is hard to see, a rise is eas
 
 | Condition | Recipe | Why |
 |---|---|---|
-| bf16 rerun | existing weights, regenerated on Lonestar6 | Stack check: new hardware and vLLM must reproduce the v2 rates within CI. Can replace the old baseline if those rollouts are not available |
+| **bf16 baseline** | original weights, regenerated on Lonestar6 for every model | The reference for every comparison, at known precision on the same stack. Compared with v2 rates only as a sanity check |
 | **GPTQ W8A16** | g128, symmetric | Near-lossless control |
-| **GPTQ W4A16 (primary)** | g128, symmetric, static act-order, damp 0.01 | The common deployed format |
-| GPTQ W3A16 | g128 | Stress test where reasoning degrades. Only if vLLM serves it on A100 (verify in the pilot); otherwise W4 per-channel |
+| **GPTQ W4A16 (primary)** | g128, symmetric, static act-order, damp 0.05 | The common deployed format |
 | GPTQ W4, calibration seed B | same recipe, different calibration subset | Noise floor (H4) |
 | RTN W4 | round-to-nearest, no GPTQ error correction | Does GPTQ's error correction matter? |
 | Off-the-shelf W4 | RedHatAI `Qwen3.5-{4B,9B}-quantized.w4a16`, `Qwen3-{8B,14B,32B}-quantized.w4a16`; `Qwen/Qwen3.5-27B-GPTQ-Int4`; `Qwen/Qwen3-{0.6B,1.7B}-GPTQ-Int8` | What people download (H5) |
 
 **Default GPTQ recipe:** llm-compressor `GPTQModifier`, W4A16, group 128, symmetric, `actorder="static"`,
-calibration 1,024 samples of Open-Platypus at up to 8,192 tokens (RedHat's recipe, so our Qwen3.5-4B/9B W4 can be
-checked against theirs). Qwen3.5: quantize the MLPs and the 8 full-attention layers; keep the 24 Gated-DeltaNet
+dampening 0.05, calibration 1,024 Open-Platypus rows (train[0:1024]; seed-B replicate train[1024:2048]) as raw
+instruction text, no chat template, truncated to 8,192 tokens. This is RedHat's published Qwen3.5 recipe, so our
+Qwen3.5-4B/9B W4 can be checked against theirs. Raw-text calibration is a known weakness for chat models; the
+calibration ablation in Phase 4 tests chat-formatted reasoning traces. Qwen3.5: quantize the MLPs and the 8 full-attention layers; keep the 24 Gated-DeltaNet
 `linear_attn` layers, embeddings, `lm_head`, the vision tower and MTP heads in bf16, as RedHat does. (The official
 `Qwen3.5-27B-GPTQ-Int4` is MLP-only, `-:.*attn.*`, a different recipe; it enters only as an off-the-shelf arm.)
 Qwen3: every decoder Linear except `lm_head`. Calibration text must not overlap Fortress.
@@ -90,17 +95,27 @@ why the main comparison uses one recipe of our own across all sizes.
 - Hand-check: read 20 rollouts per condition for the pilot model (coherence, any new failure mode); re-check judge
   precision on 50 quantized-model VEA positives (the judge was calibrated on bf16 text).
 
+## Code
+
+- `src/eval_awareness/quant/config.py`: variants (`<base>@<condition>`), recipes, pinned off-the-shelf revisions.
+- `quant/quantize.py` (env `envs/quantize`, llm-compressor 0.15.0): makes our checkpoints.
+- `quant/generate.py`: the ladder's prompts, sampling, caps, seeds and generation functions; writes unified-format
+  rollouts to `QUANT_DATA/rollouts/<variant>.<split>.jsonl`, appended per chunk (resumable).
+- `scripts/quant_judge.sh`: the unified v2 judge passes, judge pinned to Qwen3.8-27B@1d4bf0f (`judge.py --judge-revision`).
+- `quant/analyze.py`: per-variant metrics and paired differences vs bf16 -> `results/quant/`.
+- `scripts/tacc/{generate,judge,quantize}.sbatch`: Lonestar6 jobs (`tacc submit ... -- --export=ALL,VARIANTS=a,b`).
+
 ## Phases
 
 1. **Setup (Lonestar6).** Repo and venvs on `$WORK` (one vLLM venv as pinned here; a separate llm-compressor
    venv, since its torch/transformers pins may conflict). Check the A100 driver: the `+cu129` note in AGENTS.md
    applies only to old drivers. Weights and `HF_HOME` on `$SCRATCH`; our quantized checkpoints on `$WORK` (and
-   pushed to private HF repos). Baseline rollouts: copy v2 `data/unified` if available.
+   pushed to private HF repos). Judge (Qwen3.8-27B bf16) also runs on Lonestar6.
 2. **Pilot: Qwen3.5-4B** (VEA 15%, refusal 49%: both mid-range; small and cheap). Smoke first (20 questions × 4)
-   per condition. Then full Fortress for bf16 rerun, W8, W4, W4 seed B, RTN W4, W3, RedHat W4. Deliver: rendered
+   per condition. Then full Fortress for bf16, W8, W4, W4 seed B, RTN W4, RedHat W4. Deliver: rendered
    prompt per condition, one transcript per condition, stack-check result, GSM8K, and the H1-H5 table for one model.
-   Decide W3 and the off-the-shelf arm from this.
-3. **Scale:** W8 / W4 / (W3) for the other four Qwen3.5 sizes, then Qwen3 8B/14B/32B; seed-B W4 on 0.8B and 27B;
+   Decide the off-the-shelf arm from this.
+3. **Scale:** bf16 / W8 / W4 for the other four Qwen3.5 sizes, then Qwen3 8B/14B/32B; seed-B W4 on 0.8B and 27B;
    off-the-shelf arms.
 4. **Mechanism (only if Phases 2-3 show effects):** calibration-data ablation (generic chat vs the model's own
    benign reasoning traces vs a held-out refusal-heavy set, never Fortress); recipe ablation (MLP-only vs MLP +
@@ -118,12 +133,12 @@ Lonestar6 charges: `gpu-a100` 3 SU/node-hour (3× A100 40 GB), `gpu-a100-small` 
 - Judging: Qwen3.8-27B bf16 (54 GB) needs TP=2 on A100-40GB or one H100. ~20M prefill + ~2.5M decode tokens per
   condition: very roughly 1-2 node-hours, 3-6 SU.
 - Quantization: minutes to ~1 GPU-hour per checkpoint (27B layer-sequential on one A100).
-- Pilot (7 conditions on 4B): roughly 50-80 SU. Full plan (~35-40 conditions): roughly 300-600 SU.
-  DMS26009 has 5,822 SU; MLL has 142,900.
+- Pilot (6 conditions on 4B): roughly 40-70 SU. Full plan (~30-35 conditions, every baseline regenerated): roughly
+  300-550 SU. Budget: DMS26009, 5,822 SU.
 
 ## Risks
 
-- vLLM support for 3-bit compressed-tensors on Ampere, and for quantized Qwen3.5 checkpoints in the pinned vLLM 0.30.
+- vLLM support for quantized Qwen3.5 checkpoints in the pinned vLLM 0.30.
 - Judge drift: the Qwen3.8-27B judge was validated on bf16 text; quantized text may be stranger. Hence the re-check.
 - Off-policy is not an issue here (no edits), but sampling differs by condition only through the weights; the seeds
   are matched per rollout, which does not couple samples across different weights.

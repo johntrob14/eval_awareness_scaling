@@ -121,6 +121,8 @@ class VLLMJudge:
         extra = {"limit_mm_per_prompt": {"image": 0, "video": 0}} if args.text_only else {}
         if args.max_num_seqs:
             extra["max_num_seqs"] = args.max_num_seqs
+        if args.judge_revision:
+            extra |= {"revision": args.judge_revision, "tokenizer_revision": args.judge_revision}
         self.llm = load_vllm(model, args.tensor_parallel_size, args.gpu_memory_utilization, args.max_model_len,
                          pipeline_parallel_size=args.pipeline_parallel_size,
                              **extra)
@@ -227,6 +229,7 @@ def main():
     ap.add_argument("--task", choices=["vea", "vea_response", "vea_cal", "refusal", "category", "safety"], required=True)
     ap.add_argument("--backend", choices=["openai", "mlx", "vllm"], default="openai")
     ap.add_argument("--judge-model")
+    ap.add_argument("--judge-revision", help="vllm: pin the judge checkpoint to this HF revision")
     ap.add_argument("--provider", choices=["openai", "openrouter"], default="openai",
                     help="--backend openai: which OpenAI-compatible API (openrouter reads OPENROUTER_API_KEY from .env)")
     ap.add_argument("--extra-body", help='--backend openai: JSON of provider options, e.g. \'{"reasoning": {"enabled": false}}\'')
@@ -296,7 +299,7 @@ def main():
                                                 tokenize=False, **judge.template_kwargs())
         append_jsonl(out.with_suffix(".config.jsonl"), [{
             "started": time.strftime("%Y-%m-%dT%H:%M:%S"), "task": args.task, "judge_model": judge_model,
-            "vllm": vllm.__version__, "sampling": repr(judge.params), "judge_thinking": args.judge_thinking,
+            "judge_revision": args.judge_revision, "vllm": vllm.__version__, "sampling": repr(judge.params), "judge_thinking": args.judge_thinking,
             "tensor_parallel_size": args.tensor_parallel_size, "max_model_len": args.max_model_len,
             "n_to_judge": len(todo), "example_rendered_prompt": example,
         }])

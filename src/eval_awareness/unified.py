@@ -76,12 +76,12 @@ def ladder_models() -> list[str]:
     return list(ladder_modules()[0].RUN_ORDER)
 
 
-def rollouts_path(model: str, split: str) -> Path:
-    return OUT / "rollouts" / f"{model}.{split}.jsonl"
+def rollouts_path(model: str, split: str, root: Path | None = None) -> Path:
+    return (root or OUT) / "rollouts" / f"{model}.{split}.jsonl"
 
 
-def judgments_path(model: str, split: str, task: str) -> Path:
-    return OUT / "judgments" / f"{model}.{split}.{task}.{JUDGE}.jsonl"
+def judgments_path(model: str, split: str, task: str, root: Path | None = None) -> Path:
+    return (root or OUT) / "judgments" / f"{model}.{split}.{task}.{JUDGE}.jsonl"
 
 
 # --- build -------------------------------------------------------------------------------------------------
@@ -287,18 +287,18 @@ def build(model: str, splits: list[str]) -> None:
 # --- analyze -----------------------------------------------------------------------------------------------
 
 
-def load_table(model: str, split: str) -> pd.DataFrame | None:
+def load_table(model: str, split: str, root: Path | None = None) -> pd.DataFrame | None:
     """One row per rollout with its labels. A judgment whose output didn't parse (parse_ok False) is missing,
     never a negative label. quote_check = where the VEA quote was found in the reasoning (pilot.locate_quote)."""
     from eval_awareness.pilot import locate_quote
 
-    p = rollouts_path(model, split)
+    p = rollouts_path(model, split, root)
     if not p.exists():
         return None
     raw = pd.DataFrame(read_jsonl(p))
     df = raw.drop(columns=["cot", "response"])
     for task, cols in (("vea_cal", ["vea", "quote"]), ("refusal", ["refusal"]), ("category", ["category", "subcategory"])):
-        jp = judgments_path(model, split, task)
+        jp = judgments_path(model, split, task, root)
         j = pd.DataFrame(read_jsonl(jp)) if jp.exists() else pd.DataFrame(columns=["qid", "sample_idx"])
         if len(j):
             j = j.drop_duplicates(["qid", "sample_idx"], keep="last")
