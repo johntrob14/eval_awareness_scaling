@@ -8,6 +8,8 @@ grep -q QUANT_DATA .sauce/env.sh || cat >> .sauce/env.sh <<ENV
 export QUANT_DATA=$WORK/results/eval_awareness_scaling/data
 export QUANT_CHECKPOINTS=$WORK/results/eval_awareness_scaling/checkpoints
 ENV
+# TACC's guide: Python venvs on \$SCRATCH, not \$WORK (many small files). Rebuilt by this script if purged.
+grep -q UV_PROJECT_ENVIRONMENT .sauce/env.sh || echo "export UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/eval_awareness_scaling" >> .sauce/env.sh
 . .sauce/env.sh
 mkdir -p "$QUANT_DATA/logs" "$QUANT_CHECKPOINTS"
 echo "== node $(hostname), $(date -Is)"
@@ -25,8 +27,8 @@ uv sync 2>&1 | tail -3
 uv run --no-sync python -c "import torch, vllm; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'available', torch.cuda.is_available(), 'vllm', vllm.__version__)"
 
 echo "== quantize venv (llm-compressor)"
-uv sync --project envs/quantize 2>&1 | tail -3
-uv run --no-sync --project envs/quantize python -c "import llmcompressor, transformers, torch; print('llmcompressor', llmcompressor.__version__, 'transformers', transformers.__version__, 'torch', torch.__version__, torch.cuda.is_available())"
+UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv sync --project envs/quantize 2>&1 | tail -3
+UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python -c "import llmcompressor, transformers, torch; print('llmcompressor', llmcompressor.__version__, 'transformers', transformers.__version__, 'torch', torch.__version__, torch.cuda.is_available())"
 
 echo "== downloads"
 PILOT="Qwen/Qwen3.5-4B@851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a
@@ -36,7 +38,7 @@ for spec in $PILOT ${MODELS:-}; do
   echo "-- $spec"
   uv run --no-sync hf download "${spec%@*}" --revision "${spec#*@}" --quiet > /dev/null
 done
-uv run --no-sync --project envs/quantize python -c "
+UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python -c "
 from datasets import load_dataset
 ds = load_dataset('garage-bAInd/Open-Platypus', revision='37141edbdb7826378cce118c46a109b813e1f038', split='train')
 print('Open-Platypus rows', len(ds))"

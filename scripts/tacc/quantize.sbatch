@@ -10,7 +10,7 @@
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"
 for v in ${VARIANTS//,/ }; do
   echo "quantizing $v"
-  uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
+  UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
     > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 || { echo "FAILED $v"; exit 1; }
 done
 echo "quantization done"

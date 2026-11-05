@@ -1,6 +1,7 @@
 """Make one of our quantized checkpoints with llm-compressor (separate env: envs/quantize).
 
-    uv run --project envs/quantize python src/eval_awareness/quant/quantize.py --variant Qwen3.5-4B@gptq-w4
+    UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --project envs/quantize python src/eval_awareness/quant/quantize.py \
+        --variant Qwen3.5-4B@gptq-w4
 
 Recipe (config.RECIPES): GPTQ W4A16 / W8A16, group 128, symmetric, static act-order (the scheme's defaults),
 dampening 0.05, calibrated on 1,024 Open-Platypus rows as raw instruction text truncated to 8,192 tokens; or RTN
