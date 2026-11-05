@@ -8,7 +8,7 @@ Rollouts 0-9 per adversarial question and 0-1 per benign twin (the unified prima
 QUANT_DATA/rollouts/<variant>.<split>.jsonl in the unified format (qid, sample_idx, status, cot, response, ...).
 Requests run in chunks and each chunk is appended, so a killed job resumes and skips (qid, sample_idx) pairs
 already written. Every invocation appends its settings, weights, versions and throughput to <file>.runs.jsonl.
-Needs ladder/cache/exp02/prompts.jsonl (ladder/scripts/ladder_prepare_prompts.py).
+Needs QUANT_DATA/prompts.jsonl (python -m eval_awareness.quant.prepare, on a node with network access).
 """
 
 from __future__ import annotations
@@ -30,6 +30,15 @@ def ladder():
     cfg = qc.ladder_config()
     import ladder_generate
     return cfg, ladder_generate
+
+
+def load_prompts(family: str) -> dict[str, list[dict]]:
+    by_set: dict[str, list[dict]] = {}
+    for line in (qc.DATA / "prompts.jsonl").open():
+        row = json.loads(line)
+        if row["family"] == family:
+            by_set.setdefault(row["prompt_set"], []).append(row)
+    return by_set
 
 
 def git_revision() -> str:
@@ -106,7 +115,7 @@ def main() -> None:
     cfg, gen = ladder()
     base, condition = qc.split_variant(args.variant)
     family_name = cfg.ALL_SUBJECTS[base]["family"]
-    prompts = gen.load_prompts(family_name)
+    prompts = load_prompts(family_name)
     qid_of = fortress_qids()
     splits = ["adversarial"] if args.smoke else args.splits
     suffix = ".smoke" if args.smoke else ""
