@@ -26,3 +26,17 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/eval_awareness"]
+
+# Lonestar6 A100 nodes run NVIDIA driver 570 (CUDA 12.8). PyPI's torch/vLLM wheels are built for CUDA 13
+# (driver >= 580), so use the +cu129 builds, which run on 570 via CUDA minor-version compatibility.
+[tool.uv.sources]
+vllm = { url = "https://github.com/vllm-project/vllm/releases/download/v0.30.0/vllm-0.30.0+cu129-cp38-abi3-manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" }
+torch = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
+torchaudio = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
+torchcodec = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
+torchvision = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true

@@ -5,6 +5,16 @@ description = "llm-compressor environment for making the quantized checkpoints (
 requires-python = ">=3.12"
 dependencies = [
     "llmcompressor==0.15.0",
+    "torch",  # direct, so the cu129 source below applies
     "datasets>=4.0",
     "pandas>=2.2",
 ]
+
+# Lonestar6 driver 570 (CUDA 12.8): torch from the cu129 index, not PyPI's CUDA 13 build.
+[tool.uv.sources]
+torch = { index = "pytorch-cu129", marker = "sys_platform == 'linux'" }
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true
