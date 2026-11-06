@@ -9,6 +9,7 @@
 # checkpoints for those whose condition is one of our recipes (quant/config.py), one after another.
 # DOWNLOAD_ONLY=1 skips quantization (e.g. bf16 and hf-w4 variants).
 #   tacc submit scripts/tacc/quantize.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-9B@gptq-w4+Qwen3.5-9B@hf-w4
+git -C "$WORK/eval_awareness_scaling" pull -q --ff-only origin quantization  # this job body is fixed at submit; the checkout is not
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"
 read -ra ALL <<< "${VARIANTS//[,+]/ }"
 echo "downloading for ${ALL[*]}"
