@@ -5,8 +5,9 @@
 #SBATCH -n 1
 #SBATCH -t 08:00:00
 #SBATCH -o quant-gen-%j.out
-# Generate rollouts for VARIANTS separated by + (commas break sbatch --export), TP GPUs each, as many at once as the node's GPUs allow.
-#   tacc submit scripts/tacc/generate.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-4B@bf16+Qwen3.5-4B@gptq-w4
+#SBATCH --signal=B:TERM@180   # 3 min before the limit, so the EXIT trap stages data out
+# Generate rollouts for VARIANTS (separated by spaces or +), TP GPUs each, as many at once as the node's GPUs allow.
+#   tacc submit scripts/tacc/generate.sbatch --cd $SCRATCH/eval_awareness_scaling/logs --env VARIANTS=Qwen3.5-4B@bf16+Qwen3.5-4B@gptq-w4
 #   GEN_ARGS=--smoke for the 20-question smoke test; TP=2 for bf16 27B/32B on A100-40GB.
 git -C "$WORK/eval_awareness_scaling" pull -q --ff-only origin quantization  # this job body is fixed at submit; the checkout is not
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"

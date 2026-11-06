@@ -105,7 +105,9 @@ why the main comparison uses one recipe of our own across all sizes.
   rollouts to `QUANT_DATA/rollouts/<variant>.<split>.jsonl`, appended per chunk (resumable).
 - `scripts/quant_judge.sh`: the unified v2 judge passes, judge pinned to Qwen3.8-27B@1d4bf0f (`judge.py --judge-revision`).
 - `quant/analyze.py`: per-variant metrics and paired differences vs bf16 -> `results/quant/`.
-- `scripts/tacc/{generate,judge,quantize}.sbatch`: Lonestar6 jobs (`tacc submit ... -- --export=ALL,VARIANTS=a,b`).
+- `scripts/tacc/{generate,judge,quantize}.sbatch`: Lonestar6 jobs (`tacc submit ... --env VARIANTS='a b'`; TACC says not to use
+  `sbatch --export`). Jobs do their I/O in `$SCRATCH/eval_awareness_scaling/data` and copy it to the `$WORK` archive on exit
+  (`scripts/tacc/common.sh`), per TACC's rule that compute nodes touch `$WORK` only to stage data in or out.
 
 ## Phases
 
