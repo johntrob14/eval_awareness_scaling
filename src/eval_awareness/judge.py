@@ -129,6 +129,12 @@ class VLLMJudge:
         self.tok = self.llm.get_tokenizer()
         self.params = SamplingParams(temperature=0, max_tokens=max_tokens)
 
+    def reconfigure(self, thinking: str, max_tokens: int) -> None:
+        from vllm import SamplingParams
+
+        self.thinking = thinking
+        self.params = SamplingParams(temperature=0, max_tokens=max_tokens)
+
     def __call__(self, prompts: list[str]) -> list[str]:
         texts = [
             self.tok.apply_chat_template([{"role": "user", "content": p}], add_generation_prompt=True,
@@ -223,7 +229,9 @@ def _parse(task: str, raw: str) -> dict:
     return {"category": cat, "subcategory": sub}
 
 
-def main():
+def main(argv: list[str] | None = None, engine: "VLLMJudge | None" = None):
+    """CLI entry point. `engine`: an already-loaded VLLMJudge to reuse (eval_awareness.quant.judge_all runs
+    every pass of every variant through one engine); it is reconfigured for this call's thinking and max tokens."""
     ap = argparse.ArgumentParser()
     ap.add_argument("rollouts", type=Path)
     ap.add_argument("--task", choices=["vea", "vea_response", "vea_cal", "refusal", "category", "safety"], required=True)
@@ -250,7 +258,7 @@ def main():
                     help="re-judge keys whose latest judgment is invalid (parse_ok False) instead of skipping them")
     ap.add_argument("--text-only", action="store_true", help="vllm: disable image/video inputs of a multimodal judge")
     add_vllm_args(ap)
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
     args.chunk = args.chunk or DEFAULT_CHUNK[args.backend]
 
     judge_model = args.judge_model or DEFAULT_JUDGE[args.backend]
@@ -280,10 +288,12 @@ def main():
     append_jsonl(out, decided)
     print(f"{out}: {len(done)} existing, {len(decided)} decided without judge, {len(todo)} to judge")
     if not todo:
-        return
+        return engine
 
     extra_body = json.loads(args.extra_body) if args.extra_body else None
-    judge = {"openai": lambda: OpenAIJudge(judge_model, provider=args.provider, max_tokens=args.judge_max_tokens,
+    if engine is not None:
+        engine.reconfigure(args.judge_thinking, args.judge_max_tokens)
+    judge = engine or {"openai": lambda: OpenAIJudge(judge_model, provider=args.provider, max_tokens=args.judge_max_tokens,
                                            extra_body=extra_body),
              "mlx": lambda: MLXJudge(judge_model, args.judge_max_tokens),
              "vllm": lambda: VLLMJudge(judge_model, args, args.judge_max_tokens)}[args.backend]()
@@ -311,6 +321,7 @@ def main():
                                                                     "judge_max_tokens": args.judge_max_tokens,
                                                                     "judge_thinking": args.judge_thinking}
                            for (stub, _), raw in zip(chunk, raws)])
+    return judge
 
 
 if __name__ == "__main__":
