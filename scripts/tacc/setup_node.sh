@@ -9,6 +9,7 @@ export QUANT_DATA=$WORK/results/eval_awareness_scaling/data
 export QUANT_CHECKPOINTS=$WORK/results/eval_awareness_scaling/checkpoints
 ENV
 # TACC's guide: Python venvs on \$SCRATCH, not \$WORK (many small files). Rebuilt by this script if purged.
+grep -q PYTHONUNBUFFERED .sauce/env.sh || echo "export PYTHONUNBUFFERED=1  # vLLM logs to stdout; unbuffered so job logs show progress" >> .sauce/env.sh
 grep -q UV_PROJECT_ENVIRONMENT .sauce/env.sh || echo "export UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/eval_awareness_scaling" >> .sauce/env.sh
 . .sauce/env.sh
 mkdir -p "$QUANT_DATA/logs" "$QUANT_CHECKPOINTS"
