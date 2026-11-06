@@ -50,11 +50,12 @@ def main() -> None:
     ap.add_argument("--splits", nargs="+", default=["adversarial", "benign"])
     ap.add_argument("--tasks", nargs="+", default=["vea_cal", "refusal", "category"])
     ap.add_argument("--tp", type=int, default=2)
+    ap.add_argument("--pp", type=int, default=1, help="pipeline stages (3 = all three A100-40GB of a node, TP=1)")
     ap.add_argument("--gpu-memory-utilization", default="0.85")
     ap.add_argument("--max-num-seqs", default="256")
     args = ap.parse_args()
     engine_args = ["--backend", "vllm", "--judge-model", JUDGE, "--judge-revision", JUDGE_REVISION,
-                   "--tp", str(args.tp), "--text-only", "--no-prefilter", "--max-model-len", "40960",
+                   "--tp", str(args.tp), "--pp", str(args.pp), "--text-only", "--no-prefilter", "--max-model-len", "40960",
                    "--max-num-seqs", args.max_num_seqs, "--gpu-memory-utilization", args.gpu_memory_utilization,
                    "--out-dir", str(qc.DATA / "judgments"), "--redo-invalid"]
     engine = None
