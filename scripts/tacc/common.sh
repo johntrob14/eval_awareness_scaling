@@ -17,6 +17,7 @@ rsync -a --ignore-existing "$QUANT_DATA_ARCHIVE/" "$QUANT_DATA/"
 stage_out() {
   rsync -a --update "$QUANT_DATA/" "$QUANT_DATA_ARCHIVE/" &&
   rsync -a --update "$JOBLOGS/" "$WORK/results/eval_awareness_scaling/logs/" &&
+  { cp -p "$SCRATCH"/quant-*-"$SLURM_JOB_ID".out "$WORK/results/eval_awareness_scaling/logs/" 2>/dev/null || true; } &&
   echo "staged out to $QUANT_DATA_ARCHIVE at $(date -Is)"
 }
 trap stage_out EXIT
