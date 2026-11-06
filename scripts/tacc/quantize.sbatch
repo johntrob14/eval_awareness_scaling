@@ -5,10 +5,18 @@
 #SBATCH -n 1
 #SBATCH -t 04:00:00
 #SBATCH -o quant-make-%j.out
-# Make our quantized checkpoints for VARIANTS separated by + (commas break sbatch --export) (recipes in quant/config.py), one after another.
-#   tacc submit scripts/tacc/quantize.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-4B@gptq-w4
+# Download the pinned weights for VARIANTS (separated by +; commas break sbatch --export), then make our quantized
+# checkpoints for those whose condition is one of our recipes (quant/config.py), one after another.
+# DOWNLOAD_ONLY=1 skips quantization (e.g. bf16 and hf-w4 variants).
+#   tacc submit scripts/tacc/quantize.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-9B@gptq-w4+Qwen3.5-9B@hf-w4
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"
-for v in ${VARIANTS//[,+]/ }; do
+read -ra ALL <<< "${VARIANTS//[,+]/ }"
+echo "downloading for ${ALL[*]}"
+HF_HUB_OFFLINE=0 uv run --no-sync python -m eval_awareness.quant.download --variants "${ALL[@]}" \
+  > "$QUANT_DATA/logs/download_${SLURM_JOB_ID}.log" 2>&1 || { echo "FAILED download"; exit 1; }
+[[ ${DOWNLOAD_ONLY:-0} == 1 ]] && { echo "download done"; exit 0; }
+for v in "${ALL[@]}"; do
+  case ${v#*@} in gptq-*|rtn-*) ;; *) continue ;; esac
   echo "quantizing $v"
   UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
     > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 || { echo "FAILED $v"; exit 1; }
