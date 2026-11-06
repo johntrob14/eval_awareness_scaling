@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -59,7 +60,7 @@ def main() -> None:
     import transformers
     from llmcompressor import oneshot
     from llmcompressor.modifiers.quantization import GPTQModifier, QuantizationModifier
-    from transformers import AutoModelForCausalLM, AutoProcessor, AutoTokenizer
+    from transformers import AutoModelForCausalLM, AutoTokenizer
 
     cfg = qc.ladder_config()
     model_info = cfg.ALL_SUBJECTS[base]
@@ -81,15 +82,20 @@ def main() -> None:
         recipe = GPTQModifier(targets="Linear", scheme=recipe_cfg["scheme"], ignore=qc.IGNORE,
                               dampening_frac=qc.GPTQ_DAMPENING)
         # llm-compressor >= 0.11 takes sequential_targets in oneshot, not in the modifier (RedHat used 0.10)
+        # text-only calibration: the tokenizer is the processor (Qwen3.5's AutoProcessor needs torchvision)
         oneshot(model=model, dataset=ds, recipe=recipe, max_seq_length=qc.CALIBRATION["max_seq_len"],
-                num_calibration_samples=hi - lo, sequential_targets=[layer])
+                num_calibration_samples=hi - lo, sequential_targets=[layer], processor=tokenizer)
     else:
-        oneshot(model=model, recipe=QuantizationModifier(targets="Linear", scheme=recipe_cfg["scheme"], ignore=qc.IGNORE))
+        oneshot(model=model, recipe=QuantizationModifier(targets="Linear", scheme=recipe_cfg["scheme"], ignore=qc.IGNORE),
+                processor=tokenizer)
 
     out.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(out, save_compressed=True)
-    (AutoProcessor if qwen35 else AutoTokenizer).from_pretrained(src).save_pretrained(out)
-    tokenizer.save_pretrained(out)
+    # Tokenizer, chat template and (Qwen3.5) processor configs copied verbatim from the bf16 checkpoint.
+    for f in Path(src).iterdir():
+        if f.suffix in (".json", ".jinja", ".txt", ".model") and not (out / f.name).exists() \
+                and f.name not in ("config.json", "model.safetensors.index.json"):
+            shutil.copy(f, out / f.name)
     provenance = {"variant": args.variant, "base_repo": model_info["repo"], "base_revision": model_info["revision"],
                   "recipe": recipe_cfg, "ignore": qc.IGNORE, "dampening": qc.GPTQ_DAMPENING,
                   "calibration": qc.CALIBRATION if recipe_cfg["method"] == "gptq" else None,
