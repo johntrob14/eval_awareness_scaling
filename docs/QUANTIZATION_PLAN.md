@@ -4,7 +4,9 @@ Status: **plan, not started** (2026-11-05). Branch `quantization`. Compute: TACC
 
 Decisions (John, 2026-11-05): regenerate **every** baseline at bf16 on Lonestar6 rather than reuse v2 rollouts (some v2
 data came from inference providers at unknown precision); run **all generation and judging on Lonestar6**; charge
-**DMS26009 only, never MLL**; results in `$WORK/results/eval_awareness_scaling`; **no 3-bit**.
+**DMS26009 only, never MLL**; results in `$WORK/results/eval_awareness_scaling`; **no 3-bit**. Judge stays
+**Qwen3.8-27B bf16** (2026-11-06), even though it makes judging the bottleneck (~4-5 A100-pair hours per variant;
+H100 TP=2 preferred); an FP8 judge was offered and declined.
 
 ## Question
 
