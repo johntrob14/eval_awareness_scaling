@@ -78,10 +78,11 @@ def main() -> None:
     if recipe_cfg["method"] == "gptq":
         lo, hi = recipe_cfg["calibration_slice"]
         ds = calibration_dataset(tokenizer, lo, hi)
-        recipe = GPTQModifier(targets="Linear", scheme=recipe_cfg["scheme"], sequential_targets=[layer],
-                              ignore=qc.IGNORE, dampening_frac=qc.GPTQ_DAMPENING)
+        recipe = GPTQModifier(targets="Linear", scheme=recipe_cfg["scheme"], ignore=qc.IGNORE,
+                              dampening_frac=qc.GPTQ_DAMPENING)
+        # llm-compressor >= 0.11 takes sequential_targets in oneshot, not in the modifier (RedHat used 0.10)
         oneshot(model=model, dataset=ds, recipe=recipe, max_seq_length=qc.CALIBRATION["max_seq_len"],
-                num_calibration_samples=hi - lo)
+                num_calibration_samples=hi - lo, sequential_targets=[layer])
     else:
         oneshot(model=model, recipe=QuantizationModifier(targets="Linear", scheme=recipe_cfg["scheme"], ignore=qc.IGNORE))
 
