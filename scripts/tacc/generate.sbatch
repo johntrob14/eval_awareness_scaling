@@ -5,13 +5,13 @@
 #SBATCH -n 1
 #SBATCH -t 08:00:00
 #SBATCH -o quant-gen-%j.out
-# Generate rollouts for comma-separated VARIANTS, TP GPUs each, as many at once as the node's GPUs allow.
-#   tacc submit scripts/tacc/generate.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-4B@bf16,Qwen3.5-4B@gptq-w4
+# Generate rollouts for VARIANTS separated by + (commas break sbatch --export), TP GPUs each, as many at once as the node's GPUs allow.
+#   tacc submit scripts/tacc/generate.sbatch --cd $RESULTS/logs -- --export=ALL,VARIANTS=Qwen3.5-4B@bf16+Qwen3.5-4B@gptq-w4
 #   GEN_ARGS=--smoke for the 20-question smoke test; TP=2 for bf16 27B/32B on A100-40GB.
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"
 TP=${TP:-1}
 SLOTS=$(( $(nvidia-smi -L | wc -l) / TP ))
-read -ra ALL <<< "${VARIANTS//,/ }"
+read -ra ALL <<< "${VARIANTS//[,+]/ }"
 fail=0
 for ((start = 0; start < ${#ALL[@]}; start += SLOTS)); do
   pids=(); names=()
