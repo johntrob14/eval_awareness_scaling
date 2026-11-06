@@ -13,7 +13,7 @@ L=$QUANT_DATA/logs/judge_$(date +%Y%m%d-%H%M%S)_${SLURM_JOB_ID:-local}.log
 echo "judging ${VARIANTS} -> $L"
 CUDA_VISIBLE_DEVICES=${GPUS:-0,1} uv run --no-sync python -m eval_awareness.quant.judge_all \
   --variants $VARIANTS --splits ${SPLITS:-adversarial benign} --tp "${TP:-2}" \
-  --gpu-memory-utilization "${GPU_MEM:-0.85}" --max-num-seqs "${MAX_NUM_SEQS:-256}" > "$L" 2>&1
+  --gpu-memory-utilization "${GPU_MEM:-0.90}" --max-num-seqs "${MAX_NUM_SEQS:-256}" > "$L" 2>&1
 status=$?
 tail -3 "$L"
 exit $status
