@@ -9,6 +9,7 @@ checkpoints), and for hf-w4 the off-the-shelf checkpoint, each at its pinned rev
 from __future__ import annotations
 
 import argparse
+import time
 
 from huggingface_hub import snapshot_download
 
@@ -27,9 +28,20 @@ def main() -> None:
         wanted[(m["repo"], m["revision"])] = None
         if condition == "hf-w4":
             wanted[qc.OFF_THE_SHELF[base]] = None
+    failed = []
     for repo, revision in wanted:
-        path = snapshot_download(repo, revision=revision)
-        print(f"{repo}@{revision[:8]} -> {path}", flush=True)
+        for attempt in range(1, 4):  # network errors on multi-GB files are the usual failure
+            try:
+                path = snapshot_download(repo, revision=revision)
+                print(f"{repo}@{revision[:8]} -> {path}", flush=True)
+                break
+            except Exception as exc:  # noqa: BLE001
+                print(f"{repo}@{revision[:8]} attempt {attempt} failed: {exc!r}", flush=True)
+                time.sleep(30 * attempt)
+        else:
+            failed.append(repo)
+    if failed:
+        raise SystemExit(f"download failed for {failed}")
 
 
 if __name__ == "__main__":

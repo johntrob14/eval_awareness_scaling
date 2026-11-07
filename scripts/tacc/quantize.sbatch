@@ -15,12 +15,14 @@ git -C "$WORK/eval_awareness_scaling" pull -q --ff-only origin quantization  # t
 read -ra ALL <<< "${VARIANTS//[,+]/ }"
 echo "downloading for ${ALL[*]}"
 HF_HUB_OFFLINE=0 uv run --no-sync python -m eval_awareness.quant.download --variants "${ALL[@]}" \
-  > "$QUANT_DATA/logs/download_${SLURM_JOB_ID}.log" 2>&1 || { echo "FAILED download"; exit 1; }
+  > "$QUANT_DATA/logs/download_${SLURM_JOB_ID}.log" 2>&1 || { echo "FAILED download (see download_${SLURM_JOB_ID}.log)"; tail -5 "$QUANT_DATA/logs/download_${SLURM_JOB_ID}.log"; exit 1; }
 [[ ${DOWNLOAD_ONLY:-0} == 1 ]] && { echo "download done"; exit 0; }
+failed=()
 for v in "${ALL[@]}"; do
   case ${v#*@} in gptq-*|rtn-*) ;; *) continue ;; esac
-  echo "quantizing $v"
+  echo "quantizing $v ($(date +%H:%M))"
   UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
-    > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 || { echo "FAILED $v"; exit 1; }
+    > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 || { echo "FAILED $v (see quantize_$v.log)"; failed+=("$v"); }
 done
+(( ${#failed[@]} )) && { echo "quantization failed for: ${failed[*]}"; exit 1; }
 echo "quantization done"
