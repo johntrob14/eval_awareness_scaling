@@ -21,8 +21,12 @@ failed=()
 for v in "${ALL[@]}"; do
   case ${v#*@} in gptq-*|rtn-*) ;; *) continue ;; esac
   echo "quantizing $v ($(date +%H:%M))"
-  UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
-    > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 || { echo "FAILED $v (see quantize_$v.log)"; failed+=("$v"); }
+  # one retry: a transient $SCRATCH read error once broke `import numpy` (job 3559831, 2026-11-07)
+  for try in 1 2; do
+    UV_PROJECT_ENVIRONMENT=$SCRATCH/venvs/quantize uv run --no-sync --project envs/quantize python src/eval_awareness/quant/quantize.py --variant "$v" \
+      > "$QUANT_DATA/logs/quantize_$v.log" 2>&1 && break
+    echo "attempt $try for $v failed (see quantize_$v.log)"; (( try == 2 )) && failed+=("$v"); sleep 30
+  done
 done
 (( ${#failed[@]} )) && { echo "quantization failed for: ${failed[*]}"; exit 1; }
 echo "quantization done"
