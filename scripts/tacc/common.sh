@@ -8,6 +8,9 @@ cd "$WORK/eval_awareness_scaling"
 git pull -q --ff-only origin quantization || echo "warning: could not update the checkout; running $(git rev-parse --short HEAD)"
 . .sauce/env.sh
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1  # downloads happen in their own jobs
+# Caches go to $SCRATCH, never $HOME (10 GB quota; jobs fail near it). vLLM's compile cache alone reached 1.6 GB there.
+export XDG_CACHE_HOME=$SCRATCH/.cache VLLM_CACHE_ROOT=$SCRATCH/.cache/vllm TRITON_CACHE_DIR=$SCRATCH/.cache/triton \
+       TORCHINDUCTOR_CACHE_DIR=$SCRATCH/.cache/torchinductor CUDA_CACHE_PATH=$SCRATCH/.cache/nv
 export QUANT_DATA_ARCHIVE=$WORK/results/eval_awareness_scaling/data
 export QUANT_DATA=$SCRATCH/eval_awareness_scaling/data
 JOBLOGS=$SCRATCH/eval_awareness_scaling/logs
