@@ -27,3 +27,25 @@ Reading, with what is not yet established:
   is not done.
 - Quote check: the first 40 characters of the VEA quote appear verbatim for 94% (bf16) and 93% (W4) of positives;
   the rest are likely whitespace/quote-character differences (not yet inspected).
+
+## 2026-11-09 (later): RedHat's W4 moves the other way
+
+`hf-w4` = RedHatAI/Qwen3.5-4B-quantized.w4a16 @7a61387 (GPTQ W4A16 g128, same ignore list and Open-Platypus
+calibration as ours, made with llm-compressor 0.10.1.dev; ours used 0.15.0). Fully judged. Analysis run on the
+Claude box from data copied off TACC with read-only `cat` (data/quant_tacc/, gitignored); recomputed independently
+from the raw JSONL (identical; same variant names and per-rollout seeds; no unlabeled scored rollouts).
+
+| vs bf16 (479 questions) | our GPTQ W4 | RedHat GPTQ W4 |
+|---|---|---|
+| VEA | -3.17 pp [-4.4, -1.9] | **+3.10 pp [+1.6, +4.5]** |
+| refusal | -1.54 pp [-2.9, -0.2] | **+1.56 pp [+0.1, +3.0]** |
+| within-question gap | +0.5 pp [-8.1, +8.9] | +7.0 pp [-0.9, +15.6] |
+| VEA per 1k CoT tokens | 0.054 (bf16 0.062) | 0.073 |
+
+Per-question VEA-rate correlation is 0.81 for every pair (bf16/ours/RedHat); refusal 0.93-0.95.
+
+Reading: two nominally identical W4 recipes shift VEA by about 3 pp in OPPOSITE directions, and refusal moves with
+VEA in both. So at W4 there is no consistent quantization effect on VEA so far; the shift looks checkpoint-specific
+(calibration subset, library version, or GPTQ's own noise). The calibration-seed replicate (gptq-w4-calB, same
+library and recipe as ours, different 1,024 calibration rows) is the test: if it differs from ours by ~3 pp too,
+the effect of "W4" is within quantization noise (H4), and the per-checkpoint spread is itself the finding.
