@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J quant-make
-#SBATCH -p gpu-a100-small
+#SBATCH -p gpu-a100   # not gpu-a100-small: its VM nodes (v330-*) fail `import numpy` in this env (jobs 3559831, 3562622)
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -t 04:00:00
