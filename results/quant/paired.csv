@@ -1,0 +1,6 @@
+variant,base,condition,n_questions,delta_refusal,delta_refusal_ci,delta_vea,delta_vea_ci,delta_within_q_gap,delta_within_q_gap_ci
+Qwen3.5-4B@gptq-w4,Qwen3.5-4B,gptq-w4,479,-0.015399757977800022,"[-0.02848177266456911, -0.0024183489573063955]",-0.03167272845760849,"[-0.04334118096857162, -0.01938229166741047]",0.0052578224776500745,"[-0.08116918173941566, 0.08907183037233721]"
+Qwen3.5-4B@gptq-w4-calB,Qwen3.5-4B,gptq-w4-calB,0,,"[nan, nan]",,"[nan, nan]",,"[nan, nan]"
+Qwen3.5-4B@gptq-w8,Qwen3.5-4B,gptq-w8,0,,"[nan, nan]",,"[nan, nan]",,"[nan, nan]"
+Qwen3.5-4B@hf-w4,Qwen3.5-4B,hf-w4,0,,"[nan, nan]",,"[nan, nan]",,"[nan, nan]"
+Qwen3.5-4B@rtn-w4,Qwen3.5-4B,rtn-w4,0,,"[nan, nan]",,"[nan, nan]",,"[nan, nan]"
