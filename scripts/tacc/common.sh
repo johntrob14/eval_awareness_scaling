@@ -25,4 +25,4 @@ stage_out() {
 }
 trap stage_out EXIT
 echo "job $SLURM_JOB_ID on $(hostname) at $(date -Is); code $(git rev-parse --short HEAD); data $QUANT_DATA"
-nvidia-smi --query-gpu=index,name,driver_version,memory.total --format=csv,noheader
+nvidia-smi --query-gpu=index,name,driver_version,memory.total --format=csv,noheader 2>/dev/null || echo "no GPU on this node"
