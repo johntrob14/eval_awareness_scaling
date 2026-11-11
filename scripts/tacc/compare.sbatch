@@ -8,6 +8,9 @@
 #SBATCH --signal=B:TERM@180   # 3 min before the limit, so the EXIT trap stages data out
 # Weight-level comparison of quantized checkpoints (CPU only). BASE and VARIANTS (separated by spaces or +).
 #   tacc submit scripts/tacc/compare.sbatch --cd $SCRATCH --env BASE=Qwen3.5-4B --env VARIANTS=gptq-w4+hf-w4+gptq-w4-calB+rtn-w4
+# Untracked analysis outputs left in the checkout (results/quant/, from a 2026-11-09 node run) block the pull; the committed
+# copies are newer, so remove only untracked files there, then update.
+git -C "$WORK/eval_awareness_scaling" clean -fq -- results/quant
 git -C "$WORK/eval_awareness_scaling" pull -q --ff-only origin quantization  # this job body is fixed at submit; the checkout is not
 . "$WORK/eval_awareness_scaling/scripts/tacc/common.sh"
 read -ra ALL <<< "${VARIANTS//[,+]/ }"
