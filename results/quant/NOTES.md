@@ -49,3 +49,24 @@ VEA in both. So at W4 there is no consistent quantization effect on VEA so far; 
 (calibration subset, library version, or GPTQ's own noise). The calibration-seed replicate (gptq-w4-calB, same
 library and recipe as ours, different 1,024 calibration rows) is the test: if it differs from ours by ~3 pp too,
 the effect of "W4" is within quantization noise (H4), and the per-checkpoint spread is itself the finding.
+
+## 2026-11-11: weight-level comparison of the Qwen3.5-4B W4 checkpoints
+
+`quant.compare_weights` (job 3573397; output `weights_compare_Qwen3.5-4B.json`), 128 quantized Linear layers
+present in all four checkpoints, means weighted by layer size:
+
+| pair | identical 4-bit integers | median rel. scale difference |
+|---|---|---|
+| ours (gptq-w4) vs RedHat (hf-w4) | 87.5% (79.1-90.0% by layer) | 0 |
+| ours vs gptq-w4-calB (other calibration rows) | 81.8% | 0 |
+| RedHat vs calB | 81.8% | 0 |
+| GPTQ (ours / RedHat / calB) vs RTN | 84.6-84.7% | 0 |
+
+Reconstruction error ||W_deq - W_bf16|| / ||W_bf16||: ours 0.137, RedHat 0.137, calB 0.137, RTN 0.114 (unpacking
+sane; RTN lower by construction, since GPTQ minimises output error on calibration data, not weight error).
+
+- Scales are identical everywhere: llm-compressor sets the group scales from the bf16 weights; checkpoints differ
+  only in which integer each weight is rounded to.
+- Ours and RedHat's are the closest pair (1 in 8 integers differ, from the library version), yet they move VEA by
+  -3.2 and +3.1 pp. calB differs from ours more (18%), so under the noise hypothesis its behavioural shift should be
+  at least as large as the ours-RedHat gap. calB judging is running (job 3559829, started 2026-11-11 13:23 UTC).
