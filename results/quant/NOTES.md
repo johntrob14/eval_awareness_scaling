@@ -70,3 +70,22 @@ sane; RTN lower by construction, since GPTQ minimises output error on calibratio
 - Ours and RedHat's are the closest pair (1 in 8 integers differ, from the library version), yet they move VEA by
   -3.2 and +3.1 pp. calB differs from ours more (18%), so under the noise hypothesis its behavioural shift should be
   at least as large as the ours-RedHat gap. calB judging is running (job 3559829, started 2026-11-11 13:23 UTC).
+
+## 2026-11-12: RTN W4 (no GPTQ error correction)
+
+rtn-w4 fully judged in one job (3559830, 3h53m). Analysis on the box from data copied with `tacc exec cat`;
+recomputed independently from the raw JSONL (identical; no unlabeled scored rollouts).
+
+| vs bf16, 479 questions | our GPTQ W4 | RedHat GPTQ W4 | RTN W4 |
+|---|---|---|---|
+| VEA | -3.2 [-4.3, -1.9] | +3.1 [+1.8, +4.4] | +1.7 [+0.4, +3.0] |
+| refusal | -1.5 [-2.8, -0.2] | +1.6 [+0.2, +2.9] | **-3.1 [-4.5, -1.7]** |
+| within-question gap | +0.5 [-8.1, +8.9] | +7.0 [-0.9, +15.6] | +0.0 [-7.5, +8.4] |
+| benign refusal (bf16 3.6%) | 3.9% | 4.3% | 3.4% |
+
+- RTN has the largest refusal drop of the three W4 checkpoints, consistent with cruder quantization costing more
+  refusal, but it is one checkpoint (RTN is deterministic, so it has no calibration noise of its own).
+- In RTN, VEA and refusal move in opposite directions, so "refusal moves with VEA" (seen in both GPTQ checkpoints)
+  does not hold in general.
+- Three W4 checkpoints now give VEA changes of -3.2, +1.7 and +3.1 pp: no consistent sign. calB (noise floor) still
+  pending (VEA done; job 3573223 queued for refusal/category).
