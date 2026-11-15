@@ -89,3 +89,22 @@ recomputed independently from the raw JSONL (identical; no unlabeled scored roll
   does not hold in general.
 - Three W4 checkpoints now give VEA changes of -3.2, +1.7 and +3.1 pp: no consistent sign. calB (noise floor) still
   pending (VEA done; job 3573223 queued for refusal/category).
+
+## 2026-11-15: GPTQ W8
+
+gptq-w8 fully judged (VEA in 3559828, refusal/category/benign in 3571475, 39 min). Analysis on the box from data
+copied with `tacc exec cat`; recomputed independently (identical; no unlabeled scored rollouts; 475 paired questions,
+4 fewer than the W4 variants because W8 truncated slightly more, 3.5%).
+
+| vs bf16 | W8 GPTQ | W4 GPTQ (ours) | W4 GPTQ (RedHat) | W4 RTN |
+|---|---|---|---|---|
+| VEA | -1.4 [-2.6, -0.3] | -3.2 | +3.1 | +1.7 |
+| refusal | **+0.1 [-0.9, +1.0]** | -1.5 | +1.6 | -3.1 |
+| within-question gap | +0.9 [-6.9, +8.9] | +0.5 | +7.0 | +0.0 |
+| benign refusal (bf16 3.6%) | 4.1% | 3.9% | 4.3% | 3.4% |
+
+- W8 leaves refusal unchanged (CI within +/-1 pp), as expected for near-lossless 8-bit; every W4 checkpoint moved it
+  by 1.5-3 pp. This is the first dose-response point: refusal shifts grow at 4 bits.
+- VEA still moves at W8 (-1.4 pp, CI just excluding 0), smaller than any W4 shift (1.7-3.2 pp in magnitude). VEA is
+  the more sensitive of the two measures.
+- Remaining: calB (noise floor; VEA done, job 3573223 queued for refusal/category).
