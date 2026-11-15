@@ -108,3 +108,31 @@ copied with `tacc exec cat`; recomputed independently (identical; no unlabeled s
 - VEA still moves at W8 (-1.4 pp, CI just excluding 0), smaller than any W4 shift (1.7-3.2 pp in magnitude). VEA is
   the more sensitive of the two measures.
 - Remaining: calB (noise floor; VEA done, job 3573223 queued for refusal/category).
+
+## 2026-11-15: calB noise floor (pilot complete)
+
+gptq-w4-calB (same llm-compressor version and recipe as our W4, calibrated on Open-Platypus rows 1024:2048 instead
+of 0:1024) fully judged (VEA in 3559829, refusal/category/benign in 3573223). Analysis on the box from data copied
+with `tacc exec cat`; recomputed independently from the raw JSONL (identical: VEA 18.30%, refusal 43.56%, 4743
+scored rollouts, no unlabeled ones). Paired bootstrap over questions, 2000 draws, seed 17.
+
+| vs bf16, 479 questions | W8 GPTQ | W4 GPTQ (ours) | W4 GPTQ calB | W4 GPTQ (RedHat) | W4 RTN |
+|---|---|---|---|---|---|
+| VEA | -1.4 | -3.2 | **+1.6 [+0.3, +2.8]** | +3.1 | +1.7 |
+| refusal | +0.1 | -1.5 | **-4.9 [-6.2, -3.5]** | +1.6 | -3.1 |
+| within-question gap | +0.9 | +0.5 | +0.7 [-7.5, +8.6] | +7.0 | +0.0 |
+| benign refusal (bf16 3.6%) | 4.1% | 3.9% | 2.6% | 4.3% | 3.4% |
+
+Direct checkpoint-to-checkpoint comparisons (481 questions):
+- calB minus ours: VEA +4.7 [+3.4, +6.0], refusal -3.3 [-4.6, -2.0]. Only the calibration rows differ.
+- RedHat minus ours: VEA +6.1 [+4.7, +7.6], refusal +3.1 [+2.0, +4.2].
+
+Conclusions from the Qwen3.5-4B pilot:
+- Changing only the 1024 calibration rows moves VEA by 4.7 pp and refusal by 3.3 pp. The W4 effects relative to bf16
+  are the same size, so the direction of a W4 effect on VEA is not a property of "4-bit GPTQ" but of the particular
+  checkpoint. Across the four W4 checkpoints, VEA changes are -3.2, +1.6, +3.1, +1.7 (mean +0.8, SD 2.7).
+- Refusal fell in 3 of 4 W4 checkpoints (-1.5, -4.9, -3.1, +1.6; mean -2.0, SD 2.7) and was unchanged at W8 (+0.1).
+  A small average refusal loss at 4 bits is plausible, but checkpoint variance is as large as the mean, so one W4
+  checkpoint per model size cannot establish it.
+- Implication for the scale-up: a per-size estimate needs several W4 checkpoints per model (e.g. 2-3 calibration
+  seeds), or the result has to be framed as a distribution over checkpoints, not a single shift.
