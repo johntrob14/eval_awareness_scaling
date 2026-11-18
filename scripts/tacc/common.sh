@@ -9,8 +9,11 @@ git pull -q --ff-only origin quantization || echo "warning: could not update the
 . .sauce/env.sh
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1  # downloads happen in their own jobs
 # Caches go to $SCRATCH, never $HOME (10 GB quota; jobs fail near it). vLLM's compile cache alone reached 1.6 GB there.
-export XDG_CACHE_HOME=$SCRATCH/.cache VLLM_CACHE_ROOT=$SCRATCH/.cache/vllm TRITON_CACHE_DIR=$SCRATCH/.cache/triton \
-       TORCHINDUCTOR_CACHE_DIR=$SCRATCH/.cache/torchinductor CUDA_CACHE_PATH=$SCRATCH/.cache/nv
+# Compile caches are per job on node-local /tmp: concurrent jobs sharing one Triton cache on $SCRATCH raced
+# (a .cubin vanished mid-autotune and killed Qwen3-32B@bf16's engine start, job 3591733, 2026-11-18).
+JOBCACHE=/tmp/eval_awareness_cache_${SLURM_JOB_ID:-local}
+export XDG_CACHE_HOME=$SCRATCH/.cache VLLM_CACHE_ROOT=$JOBCACHE/vllm TRITON_CACHE_DIR=$JOBCACHE/triton \
+       TORCHINDUCTOR_CACHE_DIR=$JOBCACHE/torchinductor CUDA_CACHE_PATH=$JOBCACHE/nv
 export QUANT_DATA_ARCHIVE=$WORK/results/eval_awareness_scaling/data
 export QUANT_DATA=$SCRATCH/eval_awareness_scaling/data
 JOBLOGS=$SCRATCH/eval_awareness_scaling/logs
