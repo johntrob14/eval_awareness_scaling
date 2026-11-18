@@ -147,3 +147,15 @@ Lonestar6 charges: `gpu-a100` 3 SU/node-hour (3× A100 40 GB), `gpu-a100-small` 
 - Off-policy is not an issue here (no edits), but sampling differs by condition only through the weights; the seeds
   are matched per rollout, which does not couple samples across different weights.
 - Harmful completions: rollouts stay gitignored and on TACC / the box only.
+
+## Scale-up (approved 2026-11-18, about 245 node-hours on DMS26009)
+
+The pilot showed that changing only the calibration rows moves VEA and refusal as much as quantizing does, so every
+size gets three W4 calibration seeds: gptq-w4 (rows 0:1024), gptq-w4-calB (1024:2048), gptq-w4-calC (2048:3072).
+Grid: Qwen3.5 0.8B/2B/9B/27B and Qwen3 8B/14B/32B x {bf16, gptq-w8, three W4 seeds, hf-w4 where listed}, plus
+Qwen3.5-4B@gptq-w4-calC; 41 new variants. RTN is not repeated at scale.
+
+Jobs (fewer, longer): four generation jobs (two TP=1 jobs whose GPU slots share a queue and quantize missing
+checkpoints on the fly; two PP=3 jobs for bf16/W8 27B and 32B plus bf16 14B), then one judge job per model
+(PP=3, 5-6 variants in one engine, about 4 node-hours per variant), each depending on the generation jobs that
+produce its variants.

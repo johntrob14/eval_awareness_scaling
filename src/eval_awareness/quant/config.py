@@ -23,11 +23,13 @@ SPLITS = {"adversarial": ("fortress_adv", 10), "benign": ("fortress_benign", 2)}
 CALIBRATION = {"repo": "garage-bAInd/Open-Platypus", "revision": "37141edbdb7826378cce118c46a109b813e1f038",
                "n_samples": 1024, "max_seq_len": 8192}
 
-# Our recipes. "calibration_slice" picks rows of Open-Platypus train; slice B is the noise-floor replicate.
+# Our recipes. "calibration_slice" picks rows of Open-Platypus train; slices B and C are calibration replicates
+# (the pilot showed calibration rows alone move VEA and refusal as much as quantizing does).
 RECIPES = {
     "gptq-w8": {"method": "gptq", "scheme": "W8A16", "calibration_slice": (0, 1024)},
     "gptq-w4": {"method": "gptq", "scheme": "W4A16", "calibration_slice": (0, 1024)},
     "gptq-w4-calB": {"method": "gptq", "scheme": "W4A16", "calibration_slice": (1024, 2048)},
+    "gptq-w4-calC": {"method": "gptq", "scheme": "W4A16", "calibration_slice": (2048, 3072)},  # third seed (scale-up)
     "rtn-w4": {"method": "rtn", "scheme": "W4A16", "calibration_slice": None},
 }
 GPTQ_DAMPENING = 0.05  # RedHat's value for Qwen3.5

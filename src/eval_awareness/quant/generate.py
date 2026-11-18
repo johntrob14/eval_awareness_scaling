@@ -1,7 +1,7 @@
 """Generate Fortress rollouts for one variant with the ladder's exact prompts, sampling, caps and seeds.
 
     uv run python -m eval_awareness.quant.generate --variant Qwen3.5-4B@gptq-w4
-    uv run python -m eval_awareness.quant.generate --variant Qwen3.5-27B@bf16 --tp 2
+    uv run python -m eval_awareness.quant.generate --variant Qwen3.5-27B@bf16 --pp 3
     uv run python -m eval_awareness.quant.generate --variant Qwen3.5-4B@bf16 --smoke   # 20 questions x 4
 
 Rollouts 0-9 per adversarial question and 0-1 per benign twin (the unified primary design), written to
@@ -88,6 +88,7 @@ def make_llm(variant: str, family: str, args):
     return LLM(model=str(w["path"]), tokenizer=str(w["tokenizer"]), dtype="bfloat16", seed=cfg.VLLM_ENGINE_SEED,
                max_model_len=cfg.VLLM_MAX_MODEL_LEN, gpu_memory_utilization=args.gpu_memory_utilization,
                max_num_seqs=cfg.VLLM_MAX_NUM_SEQS, tensor_parallel_size=args.tp,
+               pipeline_parallel_size=args.pp,
                generation_config="vllm",  # sampling is always explicit; never inherit model defaults
                enable_prefix_caching=True, **extra)
 
@@ -108,6 +109,7 @@ def main() -> None:
     ap.add_argument("--splits", nargs="+", default=list(qc.SPLITS), choices=list(qc.SPLITS))
     ap.add_argument("--smoke", action="store_true", help="adversarial only, the ladder's 20 smoke questions x 4")
     ap.add_argument("--tp", type=int, default=1)
+    ap.add_argument("--pp", type=int, default=1, help="pipeline-parallel GPUs (bf16 27B/32B on a 3x A100-40GB node)")
     ap.add_argument("--gpu-memory-utilization", type=float, default=0.88)
     ap.add_argument("--chunk", type=int, default=1200, help="requests per append")
     args = ap.parse_args()
@@ -155,7 +157,7 @@ def main() -> None:
                "generation_mode": cfg.FAMILIES[family_name]["generation_mode"],
                "caps": {"think": cfg.THINK_CAP_TOKENS, "answer": cfg.ANSWER_CAP_TOKENS,
                         "one_pass_max": cfg.QWEN35_ONE_PASS_MAX_TOKENS},
-               "engine": {"seed": cfg.VLLM_ENGINE_SEED, "max_model_len": cfg.VLLM_MAX_MODEL_LEN, "tp": args.tp,
+               "engine": {"seed": cfg.VLLM_ENGINE_SEED, "max_model_len": cfg.VLLM_MAX_MODEL_LEN, "tp": args.tp, "pp": args.pp,
                           "gpu_memory_utilization": args.gpu_memory_utilization, "dtype": "bfloat16"},
                "n_generated": len(reqs), "status_counts": status, "generated_tokens": n_tok,
                "seconds": time.time() - t1, "engine_load_s": load_s, "tokens_per_s": n_tok / (time.time() - t1),
