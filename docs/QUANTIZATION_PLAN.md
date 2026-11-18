@@ -159,3 +159,8 @@ Jobs (fewer, longer): four generation jobs (two TP=1 jobs whose GPU slots share 
 checkpoints on the fly; two PP=3 jobs for bf16/W8 27B and 32B plus bf16 14B), then one judge job per model
 (PP=3, 5-6 variants in one engine, about 4 node-hours per variant), each depending on the generation jobs that
 produce its variants.
+
+Revised the same day (John): one job per model instead of separate generation and judge jobs, so each model waits
+in the queue once (a dependent judge job would queue a second time after its generation job). scripts/tacc/model.sbatch
+generates a model's variants and then judges them on the same node. bf16/W8/hf-w4 for 27B and 32B are generated
+by their own PP=3 job (generate.sbatch); the model job judges them last, waiting at most 2 h for them.
