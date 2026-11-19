@@ -32,6 +32,17 @@ generate_all() {  # generate_all TP PP VARIANT...: the node's GPUs form slots of
   # variant from a shared queue (list the longest first), makes our checkpoint if missing, then generates.
   local tp=$1 pp=$2; shift 2
   (( $# )) || return 0
+  if (( tp * pp == 1 )); then  # 27B/32B do not fit one A100-40GB: generate them on the whole node first
+    # (Qwen3.5-27B W4 is 24.5 GB with linear attention kept in bf16; vLLM OOMed in CUDA-graph profiling, job 3591734)
+    local big=() rest=() v
+    for v in "$@"; do case $v in Qwen3.5-27B@*|Qwen3-32B@*) big+=("$v") ;; *) rest+=("$v") ;; esac; done
+    if (( ${#big[@]} )); then
+      local bigfail=0
+      generate_all 1 "$(nvidia-smi -L | wc -l)" "${big[@]}" || bigfail=1
+      generate_all 1 1 "${rest[@]}" || bigfail=1
+      return $bigfail
+    fi
+  fi
   local per=$((tp * pp)) slots queue p fail=0 pids=() slot
   slots=$(( $(nvidia-smi -L | wc -l) / per ))
   queue=$(mktemp -p "$SCRATCH"); printf '%s\n' "$@" > "$queue"
