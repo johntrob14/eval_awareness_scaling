@@ -136,3 +136,63 @@ Conclusions from the Qwen3.5-4B pilot:
   checkpoint per model size cannot establish it.
 - Implication for the scale-up: a per-size estimate needs several W4 checkpoints per model (e.g. 2-3 calibration
   seeds), or the result has to be framed as a distribution over checkpoints, not a single shift.
+
+## 2026-11-24: scale-up to 8 models, three W4 calibration seeds each
+
+Grid: Qwen3.5 0.8B/2B/4B/9B/27B and Qwen3 8B/14B/32B x {bf16, GPTQ W8, GPTQ W4 with calibration rows 0:1k, 1k:2k,
+2k:3k}, plus off-the-shelf W4 where one exists (RedHat 4B/9B/8B/14B/32B, Qwen 27B Int4). 46 variants, each 4,890
+adversarial + 978 benign Fortress rollouts, all judged by Qwen3.8-27B bf16 (vea_cal, F2 refusal, category, benign
+refusal). Every judgment file was checked for complete counts on $WORK before copying. Compute: 13 jobs on DMS26009
+(Nov 18-24), about 552 SU (184 node-hours) against the approved 245 node-hours.
+
+Analysis: `python -m eval_awareness.quant.analyze` (REPORT.md, per_variant.csv, paired.csv, seeds.json). Independent
+recomputation from raw JSONL without repo code: scripts/quant_verify_independent.py, output in
+verify_independent.txt. The two agree to within 0.2 pp on every per-seed delta (question sets differ slightly:
+468 vs 471 questions common to all variants).
+
+bf16 baselines (VEA / refusal): Qwen3.5 0.8B 33.3/28.6, 2B 27.1/35.9, 4B 16.6/48.5, 9B 12.7/50.9, 27B 10.1/59.9;
+Qwen3 8B 4.6/4.5, 14B 4.7/7.6, 32B 4.7/7.1 (%).
+
+Change from bf16, mean of the three W4 seeds (pp; per-seed values and CIs in REPORT.md):
+
+| model | VEA | refusal | W4 seed SD (VEA / refusal) |
+|---|---|---|---|
+| Qwen3.5-0.8B | -2.0 | -2.6 | 4.2 / 6.6 |
+| Qwen3.5-2B | -5.1 | +0.7 | 3.8 / 1.6 |
+| Qwen3.5-4B | -0.4 | -2.2 | 2.4 / 2.3 |
+| Qwen3.5-9B | -0.6 | -0.3 | 1.1 / 1.5 |
+| Qwen3.5-27B | -2.2 | -0.2 | 0.9 / 1.2 |
+| Qwen3-8B | -0.4 | -1.6 | 0.4 / 0.2 |
+| Qwen3-14B | -0.5 | +0.9 | 1.0 / 0.6 |
+| Qwen3-32B | -0.5 | +0.2 | 0.3 / 0.7 |
+
+Pooled over models (independent script; hierarchical CI resamples questions and, within each model, the three seeds):
+
+| | VEA | refusal |
+|---|---|---|
+| W4, all 8 models | -1.5 [-2.3, -0.6]; 19/24 checkpoints negative, sign test p = 0.007 | -0.6 [-1.5, +0.3]; 14/24 negative, p = 0.54 |
+| W4, 6 models >= 4B | -0.8 [-1.5, -0.2]; 14/18 negative, p = 0.031 | -0.5 [-1.1, +0.1]; 11/18 negative, p = 0.48 |
+| W8, all 8 models | +0.0 | +0.0 |
+
+Findings:
+- W4 lowers verbalized eval awareness slightly. The seed-mean is negative in all 8 models, and the effect survives
+  resampling the calibration seeds. Excluding 0.8B and 2B (see the truncation caveat), the drop is 0.8 pp; for the
+  Qwen3 models (VEA about 4.7%) that is about 10% relative, for Qwen3.5-27B (10.1%) about 20%.
+- W4 has no reliable effect on refusal. The question-only CIs exclude zero, but they ignore checkpoint variance;
+  with seeds resampled the CI includes zero and the checkpoint signs are at chance.
+- W8 changes neither measure (pooled +0.0 pp for both). The pilot's dose-response holds: 8-bit is behaviourally
+  lossless here, 4-bit is not.
+- Checkpoint-to-checkpoint spread shrinks with model size: the W4 seed SD is 4-7 pp at 0.8B and at most 1.2 pp at
+  27B/32B. Single-checkpoint W4 results on small models are dominated by which calibration rows were used. The pilot's
+  4B conclusion (W4 effects within calibration noise) applies to the small models, not to the larger ones.
+- Off-the-shelf W4 checkpoints do not follow our seeds' pattern consistently (e.g. 4B RedHat VEA +3.0, 32B RedHat
+  refusal -1.0); they use different recipes and are single checkpoints.
+
+Caveats:
+- Truncation confound at 0.8B and 2B: W4 raises truncation by 22 and 10 pp (reasoning loops that hit the 8,192-token
+  cap). Rates are over scored rollouts, so these two models' deltas mix the behavioural change with a change in which
+  rollouts are scored. Models >= 4B show no truncation change (|delta| <= 0.6 pp) and no label-coverage change.
+- One judge (Qwen3.8-27B) and one prompt set (Fortress). The judge sees the CoT, and W4 changes CoT length a little
+  (-98 to +182 mean tokens for models >= 4B), so part of a VEA change could come through length; VEA per 1k CoT tokens is
+  in REPORT.md.
+- The pooled estimate treats these 8 models as the population; it is not an estimate for other model families.
